@@ -90,3 +90,4 @@ L'application sera accessible sur http://localhost:3000
 - Le webhook Stripe doit être configuré en production pour que les abonnements fonctionnent correctement
 
 
+

@@ -1,212 +1,129 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabaseClient';
-import Link from 'next/link';
+import Link from "next/link";
+
+const PRICE_ID_PRO = process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO ?? "price_pro_placeholder";
+const PRICE_ID_PREMIUM = process.env.NEXT_PUBLIC_STRIPE_PRICE_PREMIUM ?? "price_premium_placeholder";
 
 export default function PricingPage() {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
-
-  useEffect(() => {
-    checkUser();
-  }, []);
-
-  const checkUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    setUser(user);
-    setLoading(false);
+  const goCheckout = async (priceId: string) => {
+    const res = await fetch("/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ priceId, mode: "subscription" }),
+    });
+    const data = await res.json();
+    if (data?.url) window.location.href = data.url;
   };
-
-  const handleCheckout = async (plan: 'free' | 'pro') => {
-    if (plan === 'free') {
-      router.push('/');
-      return;
-    }
-
-    if (!user) {
-      router.push('/login');
-      return;
-    }
-
-    try {
-      const response = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ plan: 'pro', userId: user.id }),
-      });
-
-      const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else if (data.error) {
-        alert(data.error);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Une erreur est survenue lors du traitement du paiement.');
-    }
-  };
-
-  if (loading) {
-    return (
-      <div 
-        className="min-h-screen flex items-center justify-center"
-        style={{ backgroundColor: '#0f1117' }}
-      >
-        <div className="text-white">Chargement...</div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <div 
-        className="min-h-screen flex items-center justify-center py-12 px-4"
-        style={{ backgroundColor: '#0f1117' }}
-      >
-        <div 
-          className="w-full max-w-md rounded-xl shadow-2xl p-8 text-center"
-          style={{ backgroundColor: '#1a1d24' }}
-        >
-          <h2 className="text-xl font-semibold text-white mb-4">
-            Connexion requise
-          </h2>
-          <p className="text-gray-400 mb-6">
-            Vous devez être connecté pour voir les tarifs.
-          </p>
-          <Link
-            href="/login"
-            className="inline-block px-6 py-3 rounded-lg text-white font-medium transition-all duration-300 transform hover:scale-105"
-            style={{
-              background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
-              boxShadow: '0 4px 15px rgba(59, 130, 246, 0.3)'
-            }}
-          >
-            Se connecter
-          </Link>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div 
-      className="min-h-screen py-12 px-4"
-      style={{ 
-        backgroundColor: '#0f1117',
-        fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
-      }}
+    <main
+      className="min-h-screen w-full text-white"
+      style={{ backgroundColor: "#0e0f12", fontFamily: "Poppins, sans-serif" }}
     >
-      <div className="max-w-4xl mx-auto">
-        <header className="text-center mb-12">
-          <h1 className="text-3xl font-semibold text-white mb-4">
-            Tarifs Comptalyze
-          </h1>
-          <p className="text-gray-400">
-            Choisissez le plan qui vous convient
-          </p>
-        </header>
+      <section className="px-4 py-16 sm:py-20">
+        <div className="mx-auto max-w-5xl text-center">
+          <h1 className="text-3xl font-semibold sm:text-4xl">Des plans simples et transparents</h1>
+          <p className="mt-3 text-gray-300">Commencez gratuitement, passez au Pro quand vous en avez besoin.</p>
+        </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Free Plan */}
-          <div 
-            className="rounded-xl shadow-2xl p-8"
-            style={{ backgroundColor: '#1a1d24', border: '1px solid #2d3441' }}
-          >
-            <h2 className="text-2xl font-semibold text-white mb-2">Gratuit</h2>
+        <div className="mx-auto mt-10 grid max-w-6xl gap-6 px-0 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Gratuit */}
+          <div className="rounded-2xl p-6" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
+            <div className="mb-2 text-sm text-gray-400">Gratuit</div>
             <div className="mb-4">
-              <span className="text-4xl font-bold text-white">0€</span>
+              <span className="text-4xl font-bold">0 €</span>
               <span className="text-gray-400">/mois</span>
             </div>
-            <ul className="space-y-3 mb-8">
-              <li className="flex items-start text-gray-300">
-                <span className="mr-2 text-green-400">✓</span>
-                <span>3 simulations par mois</span>
-              </li>
-              <li className="flex items-start text-gray-300">
-                <span className="mr-2 text-green-400">✓</span>
-                <span>Historique limité</span>
-              </li>
-              <li className="flex items-start text-gray-300">
-                <span className="mr-2 text-green-400">✓</span>
-                <span>Calculs URSSAF</span>
-              </li>
+            <ul className="space-y-2 text-sm text-gray-300">
+              <li>3 simulations / mois</li>
+              <li>Accès au simulateur</li>
+            </ul>
+            <Link
+              href="/signup"
+              className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm"
+              style={{ border: "1px solid #2b2f36", backgroundColor: "#0e0f12" }}
+            >
+              Commencer gratuitement
+            </Link>
+          </div>
+
+          {/* Pro (highlighted) */}
+          <div
+            className="relative rounded-2xl p-6"
+            style={{
+              backgroundColor: "#161922",
+              border: "1px solid rgba(46,108,246,0.55)",
+              boxShadow: "0 0 40px rgba(46,108,246,0.18)",
+            }}
+          >
+            <div className="absolute right-4 top-4 rounded-md px-2 py-1 text-xs" style={{ backgroundColor: "#2E6CF6" }}>
+              Recommandé
+            </div>
+            <div className="mb-2 text-sm text-blue-300">Pro</div>
+            <div className="mb-4">
+              <span className="text-4xl font-bold">5,90 €</span>
+              <span className="text-gray-400">/mois</span>
+            </div>
+            <ul className="space-y-2 text-sm text-gray-200">
+              <li>Simulations illimitées</li>
+              <li>Export PDF</li>
+              <li>Sauvegarde en ligne</li>
             </ul>
             <button
-              onClick={() => handleCheckout('free')}
-              className="w-full px-4 py-2.5 rounded-lg text-white font-medium transition-all duration-300 border-2"
-              style={{
-                borderColor: '#2d3441',
-                backgroundColor: '#23272f',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = '#3b82f6';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = '#2d3441';
-              }}
+              onClick={() => goCheckout(PRICE_ID_PRO)}
+              className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white"
+              style={{ background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)" }}
             >
-              Plan actuel
+              Passer au Pro
             </button>
           </div>
 
-          {/* Pro Plan */}
-          <div 
-            className="rounded-xl shadow-2xl p-8 relative"
-            style={{ 
-              backgroundColor: '#1a1d24',
-              border: '2px solid #3b82f6',
-              boxShadow: '0 8px 30px rgba(59, 130, 246, 0.2)'
-            }}
-          >
-            <div 
-              className="absolute top-0 right-0 px-3 py-1 rounded-bl-lg text-xs font-semibold text-white"
-              style={{ backgroundColor: '#3b82f6' }}
-            >
-              Recommandé
-            </div>
-            <h2 className="text-2xl font-semibold text-white mb-2">Pro</h2>
+          {/* Premium */}
+          <div className="rounded-2xl p-6" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
+            <div className="mb-2 text-sm text-gray-400">Premium</div>
             <div className="mb-4">
-              <span className="text-4xl font-bold text-white">5€</span>
+              <span className="text-4xl font-bold">9,90 €</span>
               <span className="text-gray-400">/mois</span>
             </div>
-            <ul className="space-y-3 mb-8">
-              <li className="flex items-start text-gray-300">
-                <span className="mr-2 text-green-400">✓</span>
-                <span>Simulations illimitées</span>
-              </li>
-              <li className="flex items-start text-gray-300">
-                <span className="mr-2 text-green-400">✓</span>
-                <span>Historique complet</span>
-              </li>
-              <li className="flex items-start text-gray-300">
-                <span className="mr-2 text-green-400">✓</span>
-                <span>Tous les calculs URSSAF</span>
-              </li>
-              <li className="flex items-start text-gray-300">
-                <span className="mr-2 text-green-400">✓</span>
-                <span>Support prioritaire</span>
-              </li>
+            <ul className="space-y-2 text-sm text-gray-300">
+              <li>Tout le plan Pro</li>
+              <li>Rappels URSSAF automatiques</li>
+              <li>Support prioritaire</li>
             </ul>
             <button
-              onClick={() => handleCheckout('pro')}
-              className="w-full px-4 py-2.5 rounded-lg text-white font-medium transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
-              style={{
-                background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
-                boxShadow: '0 4px 15px rgba(59, 130, 246, 0.3)'
-              }}
+              onClick={() => goCheckout(PRICE_ID_PREMIUM)}
+              className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white"
+              style={{ background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)" }}
             >
-              Passer à Pro
+              Choisir Premium
             </button>
           </div>
         </div>
-      </div>
-    </div>
+
+        {/* FAQ Tarifs */}
+        <div className="mx-auto mt-14 max-w-3xl">
+          <h2 className="mb-4 text-center text-xl font-semibold">FAQ tarifs</h2>
+          <div className="divide-y" style={{ borderColor: "#1f232b" }}>
+            <div className="py-4">
+              <div className="font-medium">Puis-je annuler à tout moment ?</div>
+              <p className="mt-1 text-sm text-gray-400">Oui, vous pouvez annuler votre abonnement quand vous le souhaitez.</p>
+            </div>
+            <div className="py-4">
+              <div className="font-medium">Une carte bancaire est-elle requise pour commencer ?</div>
+              <p className="mt-1 text-sm text-gray-400">Non pour le plan Gratuit. Les plans payants passent par Stripe.</p>
+            </div>
+            <div className="py-4">
+              <div className="font-medium">Les prix incluent-ils la TVA ?</div>
+              <p className="mt-1 text-sm text-gray-400">Le paiement est géré par Stripe avec la taxe automatique activée.</p>
+            </div>
+            <div className="py-4">
+              <div className="font-medium">Puis-je passer de Gratuit à Pro plus tard ?</div>
+              <p className="mt-1 text-sm text-gray-400">Bien sûr, vous pouvez upgrader en un clic depuis cette page.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }
-
