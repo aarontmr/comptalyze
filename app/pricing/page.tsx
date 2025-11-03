@@ -1,19 +1,42 @@
 "use client";
 
 import Link from "next/link";
-
-const PRICE_ID_PRO = process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO ?? "price_pro_placeholder";
-const PRICE_ID_PREMIUM = process.env.NEXT_PUBLIC_STRIPE_PRICE_PREMIUM ?? "price_premium_placeholder";
+import { useState } from "react";
 
 export default function PricingPage() {
-  const goCheckout = async (priceId: string) => {
-    const res = await fetch("/api/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ priceId, mode: "subscription" }),
-    });
-    const data = await res.json();
-    if (data?.url) window.location.href = data.url;
+  const [loading, setLoading] = useState<string | null>(null);
+
+  const handleCheckout = async (plan: "pro" | "premium") => {
+    try {
+      setLoading(plan);
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        // Si la réponse n'est pas OK, afficher le message d'erreur
+        const errorMessage = data.error || "Une erreur est survenue lors de la création de la session de paiement";
+        alert(`Erreur: ${errorMessage}`);
+        console.error("Erreur API checkout:", data);
+        return;
+      }
+
+      if (data.url) {
+        window.location.href = data.url; // Redirect to Stripe Checkout
+      } else {
+        alert("Erreur: Aucune URL de redirection reçue du serveur.");
+        console.error("Réponse API sans URL:", data);
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'appel API:", error);
+      alert("Une erreur est survenue lors de la connexion au serveur. Vérifiez votre connexion internet.");
+    } finally {
+      setLoading(null);
+    }
   };
 
   return (
@@ -71,11 +94,15 @@ export default function PricingPage() {
               <li>Sauvegarde en ligne</li>
             </ul>
             <button
-              onClick={() => goCheckout(PRICE_ID_PRO)}
-              className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white"
-              style={{ background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)" }}
+              onClick={() => handleCheckout("pro")}
+              disabled={loading !== null}
+              className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed transition-transform duration-200 hover:scale-[1.02] disabled:hover:scale-100"
+              style={{
+                background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
+              }}
             >
-              Passer au Pro
+              {loading === "pro" ? "Redirection..." : "Passer à Pro"}
             </button>
           </div>
 
@@ -92,11 +119,15 @@ export default function PricingPage() {
               <li>Support prioritaire</li>
             </ul>
             <button
-              onClick={() => goCheckout(PRICE_ID_PREMIUM)}
-              className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white"
-              style={{ background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)" }}
+              onClick={() => handleCheckout("premium")}
+              disabled={loading !== null}
+              className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed transition-transform duration-200 hover:scale-[1.02] disabled:hover:scale-100"
+              style={{
+                background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
+              }}
             >
-              Choisir Premium
+              {loading === "premium" ? "Redirection..." : "Passer à Premium"}
             </button>
           </div>
         </div>
