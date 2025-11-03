@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import Link from 'next/link';
+import Image from 'next/image';
+import logo from '@/public/logo.png';
 
 interface HistoryEntry {
   id?: string;
@@ -252,12 +254,20 @@ export default function Dashboard() {
       }}
     >
       <div className="max-w-4xl mx-auto">
+        {/* Top-centered Logo */}
+        <div className="w-full flex justify-center mb-8">
+          <Image
+            src={logo}
+            alt="Comptalyze"
+            priority
+            width={600}
+            height={200}
+            className="h-[100px] w-auto sm:h-[110px] md:h-[120px]"
+          />
+        </div>
         {/* Header with User Info */}
         <header className="mb-8 flex justify-between items-center animate-fade-in">
           <div>
-            <h1 className="text-2xl font-semibold text-white mb-2">
-              Comptalyze – Simulateur URSSAF
-            </h1>
             <p className="text-sm text-gray-400">
               Bienvenue, {user?.email || 'Utilisateur'}
               {!isPro && (
