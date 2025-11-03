@@ -23,10 +23,14 @@ export async function POST(req: Request) {
 
     const stripe = getStripeClient();
 
-    const { plan } = await req.json(); // "pro" or "premium"
+    const { plan, userId } = await req.json(); // "pro" or "premium", userId from frontend
 
     if (!plan) {
       return NextResponse.json({ error: "Le plan est requis" }, { status: 400 });
+    }
+
+    if (!userId) {
+      return NextResponse.json({ error: "Vous devez être connecté pour souscrire à un abonnement" }, { status: 401 });
     }
 
     // Vérifier que le plan est valide
@@ -65,6 +69,12 @@ export async function POST(req: Request) {
       success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/cancel`,
       automatic_tax: { enabled: true },
+      // Passer l'userId pour que le webhook puisse identifier l'utilisateur
+      client_reference_id: userId,
+      metadata: {
+        userId: userId,
+        plan: plan, // "pro" ou "premium"
+      },
     });
 
     if (!session.url) {

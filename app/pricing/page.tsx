@@ -1,18 +1,37 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabaseClient";
+import { User } from "@supabase/supabase-js";
 
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+
+  // Récupérer l'utilisateur connecté
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user || null);
+    };
+    getCurrentUser();
+  }, []);
 
   const handleCheckout = async (plan: "pro" | "premium") => {
+    // Vérifier que l'utilisateur est connecté
+    if (!user) {
+      alert("Vous devez être connecté pour souscrire à un abonnement. Redirection vers la page de connexion...");
+      window.location.href = "/login";
+      return;
+    }
+
     try {
       setLoading(plan);
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan }),
+        body: JSON.stringify({ plan, userId: user.id }),
       });
 
       const data = await res.json();

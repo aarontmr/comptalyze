@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import Link from 'next/link';
@@ -10,11 +10,43 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   const router = useRouter();
+
+  // Vérifier si l'utilisateur est déjà connecté
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        router.push('/dashboard');
+      }
+    };
+    checkSession();
+  }, [router]);
+
+  // Écouter les changements d'authentification
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          setSuccessMessage('Connexion réussie...');
+          // Petit délai pour afficher le message
+          setTimeout(() => {
+            router.push('/dashboard');
+          }, 500);
+        }
+      }
+    );
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccessMessage('');
     setLoading(true);
 
     try {
@@ -25,11 +57,10 @@ export default function LoginPage() {
 
       if (error) throw error;
 
-      router.push('/');
-      router.refresh();
+      // Le message de succès sera affiché via onAuthStateChange
+      setSuccessMessage('Connexion réussie...');
     } catch (err: any) {
       setError(err.message || 'Une erreur est survenue lors de la connexion.');
-    } finally {
       setLoading(false);
     }
   };
@@ -56,6 +87,15 @@ export default function LoginPage() {
             style={{ backgroundColor: '#2d1b1b', border: '1px solid #ef4444' }}
           >
             {error}
+          </div>
+        )}
+
+        {successMessage && (
+          <div 
+            className="mb-4 p-3 rounded-lg text-sm text-green-400"
+            style={{ backgroundColor: '#1b2d1b', border: '1px solid #10b981' }}
+          >
+            {successMessage}
           </div>
         )}
 

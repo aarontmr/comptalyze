@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import Link from 'next/link';
@@ -10,11 +10,43 @@ export default function SignupPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   const router = useRouter();
+
+  // Vérifier si l'utilisateur est déjà connecté
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        router.push('/dashboard');
+      }
+    };
+    checkSession();
+  }, [router]);
+
+  // Écouter les changements d'authentification
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          setSuccessMessage('Inscription réussie...');
+          // Petit délai pour afficher le message
+          setTimeout(() => {
+            router.push('/dashboard');
+          }, 500);
+        }
+      }
+    );
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [router]);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccessMessage('');
     setLoading(true);
 
     try {
@@ -25,10 +57,23 @@ export default function SignupPage() {
 
       if (error) throw error;
 
-      router.push('/');
-      router.refresh();
+      // Le message de succès sera affiché via onAuthStateChange si l'email n'est pas confirmé
+      // Sinon, la redirection se fera automatiquement
+      setSuccessMessage('Inscription réussie...');
+      
+      // Vérifier si la session est créée immédiatement (email confirmé automatiquement)
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        setTimeout(() => {
+          router.push('/dashboard');
+        }, 500);
+      } else {
+        // Si l'email doit être confirmé, afficher un message
+        setSuccessMessage('Vérifiez votre email pour confirmer votre compte.');
+      }
     } catch (err: any) {
       setError(err.message || 'Une erreur est survenue lors de l\'inscription.');
+      setLoading(false);
     } finally {
       setLoading(false);
     }
@@ -56,6 +101,15 @@ export default function SignupPage() {
             style={{ backgroundColor: '#2d1b1b', border: '1px solid #ef4444' }}
           >
             {error}
+          </div>
+        )}
+
+        {successMessage && (
+          <div 
+            className="mb-4 p-3 rounded-lg text-sm text-green-400"
+            style={{ backgroundColor: '#1b2d1b', border: '1px solid #10b981' }}
+          >
+            {successMessage}
           </div>
         )}
 
