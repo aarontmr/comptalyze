@@ -56,7 +56,26 @@ export async function POST(request: NextRequest) {
         const { data: userData } = await supabaseAdmin.auth.admin.getUserById(userId);
         
         if (userData?.user) {
-          // Mettre à jour les métadonnées avec le plan et le statut
+          // Déterminer le price_id depuis le plan
+          const priceId = plan === 'premium' 
+            ? (process.env.NEXT_PUBLIC_STRIPE_PRICE_PREMIUM || process.env.STRIPE_PRICE_PREMIUM)
+            : (process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO || process.env.STRIPE_PRICE_PRO);
+
+          // Créer ou mettre à jour l'enregistrement dans la table subscriptions
+          await supabaseAdmin
+            .from('subscriptions')
+            .upsert({
+              user_id: userId,
+              status: 'active',
+              price_id: priceId,
+              stripe_subscription_id: subscriptionId,
+              stripe_customer_id: session.customer as string,
+              updated_at: new Date().toISOString(),
+            }, {
+              onConflict: 'user_id',
+            });
+
+          // Mettre à jour les métadonnées avec le plan et le statut (pour compatibilité)
           await supabaseAdmin.auth.admin.updateUserById(userId, {
             user_metadata: { 
               ...userData.user.user_metadata,
@@ -79,26 +98,42 @@ export async function POST(request: NextRequest) {
       const subscription = event.data.object as Stripe.Subscription;
       const userId = subscription.metadata?.userId || subscription.metadata?.client_reference_id;
       
-      if (userId && subscription.status === 'active') {
+      if (userId) {
         // Déterminer le plan depuis le Price ID
         const priceId = subscription.items.data[0]?.price.id;
-        const plan = priceId === process.env.STRIPE_PRICE_PREMIUM ? 'premium' : 'pro';
+        const premiumPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_PREMIUM || process.env.STRIPE_PRICE_PREMIUM;
+        const plan = priceId === premiumPriceId ? 'premium' : 'pro';
         
         const { data: userData } = await supabaseAdmin.auth.admin.getUserById(userId);
         
         if (userData?.user) {
+          // Mettre à jour la table subscriptions
+          await supabaseAdmin
+            .from('subscriptions')
+            .upsert({
+              user_id: userId,
+              status: subscription.status,
+              price_id: priceId,
+              stripe_subscription_id: subscription.id,
+              stripe_customer_id: subscription.customer as string,
+              updated_at: new Date().toISOString(),
+            }, {
+              onConflict: 'user_id',
+            });
+
+          // Mettre à jour les métadonnées (pour compatibilité)
           await supabaseAdmin.auth.admin.updateUserById(userId, {
             user_metadata: { 
               ...userData.user.user_metadata,
               subscription_plan: plan,
-              is_pro: true,
-              is_premium: plan === 'premium',
+              is_pro: subscription.status === 'active' || subscription.status === 'trialing',
+              is_premium: plan === 'premium' && (subscription.status === 'active' || subscription.status === 'trialing'),
               stripe_subscription_id: subscription.id,
               subscription_status: subscription.status,
             },
           });
           
-          console.log(`✅ Abonnement ${userId} mis à jour vers le plan ${plan}`);
+          console.log(`✅ Abonnement ${userId} mis à jour vers le plan ${plan} (status: ${subscription.status})`);
         }
       }
     }
@@ -112,7 +147,19 @@ export async function POST(request: NextRequest) {
         const { data: userData } = await supabaseAdmin.auth.admin.getUserById(userId);
         
         if (userData?.user) {
-          // Retirer le statut premium/pro
+          // Mettre à jour la table subscriptions
+          await supabaseAdmin
+            .from('subscriptions')
+            .upsert({
+              user_id: userId,
+              status: 'canceled',
+              stripe_subscription_id: subscription.id,
+              updated_at: new Date().toISOString(),
+            }, {
+              onConflict: 'user_id',
+            });
+
+          // Retirer le statut premium/pro dans les métadonnées
           await supabaseAdmin.auth.admin.updateUserById(userId, {
             user_metadata: { 
               ...userData.user.user_metadata,

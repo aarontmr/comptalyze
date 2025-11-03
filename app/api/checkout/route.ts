@@ -46,16 +46,44 @@ export async function POST(req: Request) {
 
     // Vérifier que le Price ID n'est pas vide et a le bon format
     if (!prices[plan] || !prices[plan].startsWith("price_")) {
-      const errorMessage = !prices[plan]
-        ? `STRIPE_PRICE_${plan.toUpperCase()} n'est pas défini dans votre fichier .env.local.\n\n` +
-          `1. Créez ou ouvrez le fichier .env.local à la racine du projet\n` +
-          `2. Ajoutez : STRIPE_PRICE_${plan.toUpperCase()}=price_VOTRE_ID_ICI\n` +
-          `3. Redémarrez le serveur (Ctrl+C puis npm run dev)\n\n` +
-          `Pour obtenir votre Price ID :\n` +
-          `- Allez dans Stripe Dashboard > Products\n` +
-          `- Créez le produit "Comptalyze ${plan.charAt(0).toUpperCase() + plan.slice(1)}"\n` +
-          `- Copiez le Price ID (commence par "price_")`
-        : `Le Price ID pour le plan ${plan} est invalide. Il doit commencer par "price_". Vérifiez STRIPE_PRICE_${plan.toUpperCase()} dans .env.local`;
+      const isProduction = process.env.VERCEL || process.env.NODE_ENV === 'production';
+      
+      let errorMessage: string;
+      
+      if (!prices[plan]) {
+        if (isProduction) {
+          // Instructions pour Vercel/Production
+          errorMessage = `STRIPE_PRICE_${plan.toUpperCase()} n'est pas configuré sur Vercel.\n\n` +
+            `🔧 Configuration sur Vercel :\n` +
+            `1. Allez sur vercel.com et connectez-vous\n` +
+            `2. Sélectionnez votre projet Comptalyze\n` +
+            `3. Allez dans Settings > Environment Variables\n` +
+            `4. Ajoutez la variable : STRIPE_PRICE_${plan.toUpperCase()}\n` +
+            `5. Valeur : price_VOTRE_ID_ICI (votre Price ID Stripe)\n` +
+            `6. Sélectionnez "Production", "Preview" et "Development"\n` +
+            `7. Cliquez sur "Save"\n` +
+            `8. Redéployez votre application (Settings > Deployments > Redeploy)\n\n` +
+            `💡 Pour obtenir votre Price ID :\n` +
+            `- Allez dans Stripe Dashboard > Products\n` +
+            `- Créez le produit "Comptalyze ${plan.charAt(0).toUpperCase() + plan.slice(1)}"\n` +
+            `- Copiez le Price ID (commence par "price_")`;
+        } else {
+          // Instructions pour développement local
+          errorMessage = `STRIPE_PRICE_${plan.toUpperCase()} n'est pas défini dans votre fichier .env.local.\n\n` +
+            `1. Créez ou ouvrez le fichier .env.local à la racine du projet\n` +
+            `2. Ajoutez : STRIPE_PRICE_${plan.toUpperCase()}=price_VOTRE_ID_ICI\n` +
+            `3. Redémarrez le serveur (Ctrl+C puis npm run dev)\n\n` +
+            `Pour obtenir votre Price ID :\n` +
+            `- Allez dans Stripe Dashboard > Products\n` +
+            `- Créez le produit "Comptalyze ${plan.charAt(0).toUpperCase() + plan.slice(1)}"\n` +
+            `- Copiez le Price ID (commence par "price_")`;
+        }
+      } else {
+        errorMessage = `Le Price ID pour le plan ${plan} est invalide. Il doit commencer par "price_". ` +
+          (isProduction 
+            ? `Vérifiez STRIPE_PRICE_${plan.toUpperCase()} dans les Environment Variables de Vercel.`
+            : `Vérifiez STRIPE_PRICE_${plan.toUpperCase()} dans .env.local`);
+      }
       
       return NextResponse.json({ error: errorMessage }, { status: 500 });
     }

@@ -135,6 +135,7 @@ export default function PricingPage() {
             <ul className="space-y-2 text-sm text-gray-300">
               <li>Tout le plan Pro</li>
               <li>Rappels URSSAF automatiques</li>
+              <li>Chatbot IA personnalisé</li>
               <li>Support prioritaire</li>
             </ul>
             <button

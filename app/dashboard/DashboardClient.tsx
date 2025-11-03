@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import UrssafCalculator from '@/app/components/UrssafCalculator';
+import EmailReminderToggle from '@/app/components/EmailReminderToggle';
+import { getUserSubscription } from '@/lib/subscriptionUtils';
 import { User } from '@supabase/supabase-js';
 
 interface DashboardClientProps {
@@ -65,7 +67,7 @@ export default function DashboardClient({ user: serverUser }: DashboardClientPro
     return (
       <div
         className="min-h-screen flex items-center justify-center"
-        style={{ backgroundColor: '#0f1117' }}
+        style={{ backgroundColor: '#0e0f12' }}
       >
         <div className="text-white text-lg">Chargement...</div>
       </div>
@@ -75,7 +77,7 @@ export default function DashboardClient({ user: serverUser }: DashboardClientPro
   return (
     <div
       className="min-h-screen"
-      style={{ backgroundColor: '#0f1117', fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}
+      style={{ backgroundColor: '#0e0f12', fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}
     >
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
@@ -103,7 +105,14 @@ export default function DashboardClient({ user: serverUser }: DashboardClientPro
           </p>
         </div>
 
-        {/* Calculator */}
+        {/* Email Reminder Toggle (Premium only) */}
+        {user && getUserSubscription(user).isPremium && (
+          <div className="mb-6">
+            <EmailReminderToggle userId={user.id} isPremium={true} />
+          </div>
+        )}
+
+        {/* Calculator (contient chatbot, graphique, pré-remplissage et historique) */}
         <UrssafCalculator user={user} />
       </div>
     </div>
