@@ -1,0 +1,110 @@
+I want you to create the complete content of the file `app/page.tsx` for my Next.js application called **Comptalyze**.  
+This app helps French micro-entrepreneurs estimate and understand their URSSAF contributions, net income, and keep a local history of previous months.
+
+⚠️ IMPORTANT:  
+All the interface text, labels, and messages must be written in **French**.  
+Only the code and variable names can stay in English.
+
+---
+
+### 🎯 Main goal:
+Build a clear and functional interface that allows the user to:
+
+1. Enter their **monthly revenue (CA)**.  
+2. Select their **type of activity** among:
+   - “Vente de marchandises” (12.3% contributions)
+   - “Prestation de services” (21.2%)
+   - “Activité libérale” (21.1%)
+3. Instantly see:
+   - The **URSSAF contributions amount**.
+   - The **net income after contributions**.
+   - A short **French explanation text** describing the calculation.
+4. Optionally check a box “Afficher projection annuelle” to see yearly results.
+5. Save each calculation in a **local history** using `localStorage`.
+
+---
+
+### 🧮 Calculations:
+- `charges = CA * rate`
+- `net = CA - charges`
+- If annual projection checked → multiply by 12
+- Rates:
+  - Vente: 12.3%
+  - Services: 21.2%
+  - Libéral: 21.1%
+
+---
+
+### 🧩 Page structure:
+
+1. **Header:**
+   - Title: “Comptalyze – Simulateur URSSAF pour micro-entrepreneurs”
+
+2. **Input section:**
+   - Input field for chiffre d’affaires (CA)
+     - Numeric input
+     - Placeholder: “Entrez votre chiffre d’affaires (en €)”
+   - Dropdown (select) for activity type:
+     - Label: “Type d’activité”
+     - Options: “Vente de marchandises”, “Prestation de services”, “Libéral”
+   - Checkbox: “Afficher projection annuelle”
+
+3. **Results section:**
+   - If CA and activity selected → show:
+     - “Cotisations URSSAF : XX €”
+     - “Revenu net : XX €”
+     - If projection checked → “Projection annuelle : XX € nets / XX € de cotisations”
+   - If no CA or activity → show:
+     - “Veuillez entrer un chiffre d’affaires et choisir votre activité.”
+
+4. **Explanatory text (dynamic):**
+   Example (in French):
+   > “Pour une activité de prestation de services, le taux de cotisation est de 21,2 %.  
+   > Cela signifie que sur un chiffre d’affaires de 1000 €, vous paierez 212 € de cotisations et conserverez 788 € nets.”
+
+5. **History section:**
+   - Each calculation is saved in `localStorage` under key `"comptalyzeHistory"`  
+   - Data structure example:
+     ```ts
+     { month: "Novembre 2025", activity: "Services", ca: 1000, charges: 212, net: 788 }
+     ```
+   - Display a table with columns:
+     - Mois | Activité | Chiffre d’affaires | Cotisations | Revenu net
+   - If no history: show “Aucun historique enregistré pour le moment.”
+   - Add a red “Effacer l’historique” button that clears localStorage.
+
+---
+
+### 💅 Design:
+- Use **TailwindCSS**
+- Light background (#f9fafb)
+- Centered card layout with shadow and rounded corners
+- Title: `text-2xl font-semibold text-gray-800`
+- Results: `text-lg font-medium text-green-700`
+- Explanation: `text-sm text-gray-500`
+- History table: alternating row colors (`bg-gray-50` every other line)
+- “Effacer l’historique” button: red background (`bg-red-500 hover:bg-red-600 text-white`)
+
+---
+
+### ⚙️ Features required:
+- Automatic recalculation when CA, activity, or checkbox changes
+- Proper euro formatting with 2 decimals
+- History automatically loads on page refresh
+- History stored locally (no backend)
+- Ability to clear the history completely
+- Fully typed with TypeScript
+
+---
+
+### ✅ Final expected result:
+A complete, functional, and styled **Next.js page** that:
+1. Simulates URSSAF contributions in real time.  
+2. Displays all results and explanations in French.  
+3. Saves each monthly calculation automatically.  
+4. Shows a clean and sortable history table.  
+5. Can serve as the MVP of the SaaS “Comptalyze”.
+
+---
+
+Generate **the full code** of `app/page.tsx` with all required imports (Tailwind included), ready to paste and run in my existing Next.js project.
