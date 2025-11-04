@@ -775,6 +775,7 @@ export default function LandingPage() {
                   <span className="text-gray-400">/mois</span>
                 </div>
                 <div className="space-y-4 min-h-[280px]">
+                  <div className="text-xs text-gray-500 mb-3">FONCTIONNALITÉS CLÉS</div>
                   <ul className="space-y-2.5 text-sm">
                     <li className="flex items-start gap-2 text-gray-200">
                       <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
