@@ -232,6 +232,18 @@ export default function CheckoutPage() {
   }
 
   const currentPlan = planDetails[plan as keyof typeof planDetails];
+  
+  // Helper pour obtenir le style du titre du plan
+  const getPlanTitleStyle = () => {
+    if (plan.includes("premium") && 'gradient' in currentPlan && currentPlan.gradient) {
+      return {
+        background: currentPlan.gradient,
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+      };
+    }
+    return { color: currentPlan.color || "#2E6CF6" };
+  };
 
   if (!currentPlan) {
     return (
@@ -309,15 +321,7 @@ export default function CheckoutPage() {
             <div className="mb-6">
               <div
                 className="text-lg font-semibold mb-1"
-                style={
-                  plan.includes("premium") && currentPlan.gradient
-                    ? {
-                        background: currentPlan.gradient,
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                      }
-                    : { color: currentPlan.color || "#2E6CF6" }
-                }
+                style={getPlanTitleStyle()}
               >
                 Plan {currentPlan.name}
               </div>
