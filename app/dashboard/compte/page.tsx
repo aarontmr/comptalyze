@@ -112,16 +112,279 @@ export default function ComptePage() {
     <div>
       <h1 className="text-3xl font-semibold text-white mb-8">Mon compte</h1>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Section suppression du compte */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {/* Informations utilisateur */}
+        <Card>
+          <h2 className="text-lg font-semibold text-white mb-4">Informations</h2>
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(46, 108, 246, 0.1)' }}>
+                <Mail className="w-6 h-6" style={{ color: '#2E6CF6' }} />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm text-gray-400 mb-1">E-mail</p>
+                <p className="text-base font-medium text-white">{user?.email}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(46, 108, 246, 0.1)' }}>
+                <CreditCard className="w-6 h-6" style={{ color: '#2E6CF6' }} />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm text-gray-400 mb-1">Plan d'abonnement</p>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <BadgePlan plan={getPlanType()} />
+                  {!subscription.isPremium && (
+                    <Link
+                      href="/pricing"
+                      className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                    >
+                      Passer à {subscription.isPro ? 'Premium' : 'Pro'}
+                    </Link>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        {/* Actions rapides */}
+        <Card>
+          <h2 className="text-lg font-semibold text-white mb-4">Actions</h2>
+          <div className="space-y-3">
+            <Link
+              href="/pricing"
+              className="block px-4 py-3 rounded-lg text-center font-medium transition-all hover:scale-[1.02]"
+              style={{
+                background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                boxShadow: "0 4px 15px rgba(46,108,246,0.3)",
+              }}
+            >
+              {subscription.isPremium ? 'Gérer mon abonnement' : 'Passer à un plan supérieur'}
+            </Link>
+            <button
+              onClick={async () => {
+                await supabase.auth.signOut();
+                window.location.href = '/';
+              }}
+              className="w-full px-4 py-3 rounded-lg text-white font-medium transition-all hover:bg-gray-800 flex items-center justify-center gap-2"
+              style={{ backgroundColor: '#23272f', border: '1px solid #2d3441' }}
+            >
+              <LogOut className="w-5 h-5" />
+              Déconnexion
+            </button>
+          </div>
+        </Card>
+      </div>
+
+      {/* Préférences email (Premium) */}
+      {subscription.isPremium && user && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="lg:col-span-2"
+          className="mb-6"
         >
-          <h2 className="text-xl font-semibold text-white mb-4">Zone de danger</h2>
           <Card>
+            <h2 className="text-lg font-semibold text-white mb-4">Préférences</h2>
+            <div className="flex items-start gap-3">
+              <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(0, 208, 132, 0.1)' }}>
+                <Bell className="w-6 h-6" style={{ color: '#00D084' }} />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-base font-semibold text-white mb-2">Rappel mensuel</h3>
+                <EmailReminderToggle userId={user.id} isPremium={true} />
+              </div>
+            </div>
+          </Card>
+        </motion.div>
+      )}
+
+      {/* Gestion de l'essai gratuit */}
+      {subscription.isTrial && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="mb-6"
+        >
+          <Card>
+            <h2 className="text-lg font-semibold text-white mb-4">Essai gratuit</h2>
+            <div className="space-y-4">
+              {subscription.trialEndsAt && (() => {
+                const trialEnd = new Date(subscription.trialEndsAt);
+                const daysLeft = Math.ceil((trialEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+                return (
+                  <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(0, 208, 132, 0.1)', border: '1px solid rgba(0, 208, 132, 0.2)' }}>
+                    <p className="text-base text-white font-semibold mb-1">
+                      Essai gratuit actif
+                    </p>
+                    <p className="text-sm text-gray-300">
+                      {daysLeft} jour{daysLeft > 1 ? 's' : ''} restant{daysLeft > 1 ? 's' : ''} • Expire le {trialEnd.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    </p>
+                  </div>
+                );
+              })()}
+              <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-gray-300 mb-1">
+                      <strong>Attention :</strong> L'annulation de l'essai est immédiate.
+                    </p>
+                    <p className="text-sm text-gray-400">
+                      Vous perdrez l'accès aux fonctionnalités Premium.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={handleCancelTrial}
+                disabled={cancelingTrial}
+                className="px-6 py-3 rounded-lg text-white font-medium transition-all hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                style={{ backgroundColor: '#dc2626' }}
+              >
+                <XCircle className="w-5 h-5" />
+                {cancelingTrial ? 'Annulation...' : 'Annuler mon essai gratuit'}
+              </button>
+              <Link href="/pricing" className="block">
+                <button
+                  className="w-full px-6 py-3 rounded-lg text-white font-medium transition-all hover:scale-[1.02] flex items-center justify-center gap-2"
+                  style={{
+                    background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                    boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
+                  }}
+                >
+                  S'abonner maintenant
+                </button>
+              </Link>
+            </div>
+          </Card>
+        </motion.div>
+      )}
+
+      {/* Gestion de l'abonnement (Pro/Premium) */}
+      {(subscription.isPro || subscription.isPremium) && !subscription.isTrial && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="mb-6"
+        >
+          <Card>
+            <h2 className="text-lg font-semibold text-white mb-4">Gestion de l'abonnement</h2>
+            {!showCancelConfirm ? (
+              <div className="space-y-4">
+                <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm text-gray-300 mb-1">
+                        <strong>Attention :</strong> L'annulation est immédiate.
+                      </p>
+                      <p className="text-sm text-gray-400">
+                        Vous perdrez l'accès aux fonctionnalités {subscription.isPremium ? 'Premium' : 'Pro'}.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowCancelConfirm(true)}
+                  disabled={canceling}
+                  className="px-6 py-3 rounded-lg text-white font-medium transition-all hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  style={{ backgroundColor: '#dc2626' }}
+                >
+                  <XCircle className="w-5 h-5" />
+                  Annuler mon abonnement
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="p-4 rounded-lg bg-red-900/20 border border-red-500/30">
+                  <p className="text-base text-white font-semibold mb-2">
+                    Êtes-vous sûr de vouloir annuler ?
+                  </p>
+                  <p className="text-sm text-gray-300">
+                    Cette action est irréversible. Vous perdrez immédiatement l'accès à toutes les fonctionnalités {subscription.isPremium ? 'Premium' : 'Pro'}.
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={async () => {
+                      if (!user) return;
+                      
+                      setCanceling(true);
+                      try {
+                        const res = await fetch('/api/cancel-subscription', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ userId: user.id }),
+                        });
+
+                        const data = await res.json();
+
+                        if (!res.ok) {
+                          alert(`Erreur: ${data.error || 'Une erreur est survenue'}`);
+                          setCanceling(false);
+                          return;
+                        }
+
+                        alert('Votre abonnement a été annulé avec succès. Vous allez être redirigé...');
+                        window.location.reload();
+                      } catch (error) {
+                        console.error('Erreur:', error);
+                        alert('Une erreur est survenue lors de l\'annulation.');
+                        setCanceling(false);
+                      }
+                    }}
+                    disabled={canceling}
+                    className="flex-1 px-6 py-3 rounded-lg text-white font-medium transition-all hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{ backgroundColor: '#dc2626' }}
+                  >
+                    {canceling ? 'Annulation...' : 'Confirmer'}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowCancelConfirm(false);
+                      setCanceling(false);
+                    }}
+                    disabled={canceling}
+                    className="px-6 py-3 rounded-lg text-gray-300 font-medium transition-all hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{ backgroundColor: '#23272f', border: '1px solid #2d3441' }}
+                  >
+                    Annuler
+                  </button>
+                </div>
+              </div>
+            )}
+          </Card>
+        </motion.div>
+      )}
+
+      {/* Données & confidentialité */}
+      <Card className="mb-6">
+        <div className="flex items-start gap-3">
+          <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(46, 108, 246, 0.1)' }}>
+            <Shield className="w-6 h-6" style={{ color: '#2E6CF6' }} />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-base font-semibold text-white mb-1">Données & confidentialité</h3>
+            <p className="text-sm text-gray-400">
+              Vos données sont sécurisées et utilisées uniquement pour améliorer votre expérience.
+            </p>
+          </div>
+        </div>
+      </Card>
+
+      {/* Section suppression du compte */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <h2 className="text-xl font-semibold text-white mb-4">Zone de danger</h2>
+        <Card>
             {!showDeleteConfirm ? (
               <div className="space-y-4">
                 <div className="p-4 rounded-lg" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
@@ -210,7 +473,6 @@ export default function ComptePage() {
             )}
           </Card>
         </motion.div>
-      </div>
     </div>
   );
 
