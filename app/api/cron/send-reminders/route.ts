@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
-import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
+import { fromZonedTime, toZonedTime } from 'date-fns-tz';
 
 export const runtime = 'nodejs';
 
@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Vérifier que nous sommes le 2 du mois (Europe/Paris)
-    const parisTime = utcToZonedTime(new Date(), 'Europe/Paris');
+    const parisTime = toZonedTime(new Date(), 'Europe/Paris');
     const dayOfMonth = parisTime.getDate();
 
     if (dayOfMonth !== 2) {
