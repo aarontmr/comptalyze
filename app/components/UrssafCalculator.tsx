@@ -47,6 +47,8 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
   const [ca, setCa] = useState<string>('');
   const [activity, setActivity] = useState<ActivityType | ''>('');
   const [showAnnual, setShowAnnual] = useState(false);
+  const [hasACRE, setHasACRE] = useState(false);
+  const [acreStartYear, setAcreStartYear] = useState<number>(new Date().getFullYear());
   const [records, setRecords] = useState<CARecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -135,10 +137,48 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
     return growthRate.toFixed(1);
   };
 
+  // Calculer l'année ACRE (1ère, 2ème, 3ème année ou plus)
+  const getACREYear = (): number => {
+    if (!hasACRE) return 0;
+    const currentYear = selectedYear;
+    const yearDiff = currentYear - acreStartYear;
+    
+    // L'ACRE s'applique pendant 3 ans maximum
+    if (yearDiff < 0) return 0; // Pas encore commencé
+    if (yearDiff === 0) return 1; // 1ère année
+    if (yearDiff === 1) return 2; // 2ème année
+    if (yearDiff === 2) return 3; // 3ème année
+    return 0; // Plus de 3 ans, ACRE terminé
+  };
+
+  // Calculer le taux réduit selon l'ACRE
+  const getACREReducedRate = (baseRate: number): number => {
+    const acreYear = getACREYear();
+    
+    if (acreYear === 0 || !hasACRE) return baseRate;
+    
+    // Réductions ACRE :
+    // 1ère année : -50% (taux divisé par 2)
+    // 2ème année : -25% (taux * 0.75)
+    // 3ème année : -12.5% (taux * 0.875)
+    switch (acreYear) {
+      case 1:
+        return baseRate * 0.5; // Réduction de 50%
+      case 2:
+        return baseRate * 0.75; // Réduction de 25%
+      case 3:
+        return baseRate * 0.875; // Réduction de 12.5%
+      default:
+        return baseRate;
+    }
+  };
+
   // Calculs
   const caValue = parseFloat(ca) || 0;
   const selectedActivity = activity ? activities[activity] : null;
-  const charges = selectedActivity ? caValue * selectedActivity.rate : 0;
+  const baseRate = selectedActivity ? selectedActivity.rate : 0;
+  const effectiveRate = hasACRE && selectedActivity ? getACREReducedRate(baseRate) : baseRate;
+  const charges = caValue * effectiveRate;
   const net = caValue - charges;
   const annualNet = net * 12;
   const annualCharges = charges * 12;
@@ -148,8 +188,22 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
     if (!caValue || !selectedActivity) {
       return '';
     }
-    const ratePercent = (selectedActivity.rate * 100).toFixed(1);
-    return `Pour une activité de ${selectedActivity.label.toLowerCase()}, le taux de cotisation est de ${ratePercent} %. Cela signifie que sur un chiffre d'affaires de ${caValue.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €, vous paierez ${charges.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} € de cotisations et conserverez ${net.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} € nets.`;
+    const baseRatePercent = (baseRate * 100).toFixed(1);
+    const effectiveRatePercent = (effectiveRate * 100).toFixed(1);
+    const acreYear = getACREYear();
+    
+    let explanation = `Pour une activité de ${selectedActivity.label.toLowerCase()}, `;
+    
+    if (hasACRE && acreYear > 0) {
+      const reduction = acreYear === 1 ? '50%' : acreYear === 2 ? '25%' : '12,5%';
+      explanation += `le taux de cotisation normal est de ${baseRatePercent}%, mais avec l'ACRE (${acreYear}ère année d'activité, réduction de ${reduction}), le taux effectif est de ${effectiveRatePercent}%. `;
+    } else {
+      explanation += `le taux de cotisation est de ${baseRatePercent}%. `;
+    }
+    
+    explanation += `Sur un chiffre d'affaires de ${caValue.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €, vous paierez ${charges.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} € de cotisations et conserverez ${net.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} € nets.`;
+    
+    return explanation;
   };
 
   // Sauvegarder dans Supabase
@@ -213,6 +267,25 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
         showToastMessage('Aucun enregistrement n\'a été créé. Vérifiez les logs pour plus de détails.');
         return;
       }
+
+      // Vérifier les seuils après l'enregistrement (en arrière-plan, sans bloquer)
+      (async () => {
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session?.access_token) return;
+
+          // Appeler l'API de vérification des seuils
+          await fetch('/api/cron/check-thresholds', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${session.access_token}`,
+            },
+          });
+        } catch (error) {
+          // Erreur silencieuse
+          console.error('Erreur vérification seuils:', error);
+        }
+      })();
 
       showToastMessage('Enregistrement sauvegardé avec succès !');
 
@@ -489,22 +562,74 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
               </div>
             </div>
 
-            {/* Checkbox projection annuelle */}
-            <div className="flex items-center">
-              <input
-                id="annual"
-                type="checkbox"
-                checked={showAnnual}
-                onChange={(e) => setShowAnnual(e.target.checked)}
-                className="w-4 h-4 rounded"
-                style={{
-                  accentColor: '#2E6CF6',
-                }}
-              />
-              <label htmlFor="annual" className="ml-2 text-sm text-gray-300">
-                Afficher projection annuelle
-              </label>
-          </div>
+            {/* Checkboxes */}
+            <div className="space-y-3">
+              <div className="flex items-center">
+                <input
+                  id="annual"
+                  type="checkbox"
+                  checked={showAnnual}
+                  onChange={(e) => setShowAnnual(e.target.checked)}
+                  className="w-4 h-4 rounded"
+                  style={{
+                    accentColor: '#2E6CF6',
+                  }}
+                />
+                <label htmlFor="annual" className="ml-2 text-sm text-gray-300">
+                  Afficher projection annuelle
+                </label>
+              </div>
+              
+              <div className="flex items-center">
+                <input
+                  id="acre"
+                  type="checkbox"
+                  checked={hasACRE}
+                  onChange={(e) => setHasACRE(e.target.checked)}
+                  className="w-4 h-4 rounded"
+                  style={{
+                    accentColor: '#2E6CF6',
+                  }}
+                />
+                <label htmlFor="acre" className="ml-2 text-sm text-gray-300">
+                  Je bénéficie de l&apos;ACRE (Aide aux Créateurs et Repreneurs d&apos;Entreprise)
+                </label>
+              </div>
+              
+              {hasACRE && (
+                <div className="ml-6 pl-4 border-l-2" style={{ borderColor: '#2E6CF6' }}>
+                  <label htmlFor="acreStartYear" className="block text-xs text-gray-400 mb-2">
+                    Année de début d&apos;activité (pour calculer l&apos;année ACRE)
+                  </label>
+                  <select
+                    id="acreStartYear"
+                    value={acreStartYear}
+                    onChange={(e) => setAcreStartYear(parseInt(e.target.value))}
+                    className="w-full px-3 py-2 rounded-lg text-white text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                    style={{
+                      backgroundColor: '#23272f',
+                      border: '1px solid #2d3441',
+                    }}
+                  >
+                    {Array.from({ length: 10 }, (_, i) => currentYear - i).map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
+                  {getACREYear() > 0 && (
+                    <p className="mt-2 text-xs text-green-400">
+                      ✓ {getACREYear()}ère année ACRE en {selectedYear} (réduction de {getACREYear() === 1 ? '50%' : getACREYear() === 2 ? '25%' : '12,5%'})
+                    </p>
+                  )}
+                  {getACREYear() === 0 && hasACRE && (
+                    <p className="mt-2 text-xs text-yellow-400">
+                      ⚠️ L&apos;ACRE s&apos;applique pendant 3 ans maximum. Vérifiez votre année de début d&apos;activité.
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
         </div>
       </div>
 
@@ -515,11 +640,25 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
       >
         {caValue > 0 && selectedActivity ? (
           <div className="space-y-4">
+            {hasACRE && getACREYear() > 0 && (
+              <div className="p-3 rounded-lg mb-2" style={{ backgroundColor: 'rgba(0, 208, 132, 0.1)', border: '1px solid rgba(0, 208, 132, 0.3)' }}>
+                <p className="text-xs text-gray-300">
+                  <strong className="text-green-400">ACRE actif</strong> : Taux normal {baseRate ? (baseRate * 100).toFixed(1) : '0'}% → 
+                  Taux effectif <strong className="text-green-400">{(effectiveRate * 100).toFixed(1)}%</strong> 
+                  ({getACREYear() === 1 ? 'réduction de 50%' : getACREYear() === 2 ? 'réduction de 25%' : 'réduction de 12,5%'})
+                </p>
+              </div>
+            )}
             <div>
               <p className="text-sm text-gray-400 mb-1">Cotisations URSSAF</p>
               <p className="text-xl font-semibold" style={{ color: '#00D084' }}>
                 {formatEuro(charges)} €
               </p>
+              {hasACRE && getACREYear() > 0 && (
+                <p className="text-xs text-gray-500 mt-1">
+                  Économie grâce à l&apos;ACRE : {formatEuro((baseRate * caValue) - charges)} €
+                </p>
+              )}
             </div>
             <div>
               <p className="text-sm text-gray-400 mb-1">Revenu net</p>

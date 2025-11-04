@@ -8,6 +8,7 @@ export default function Footer() {
           © {new Date().getFullYear()} Comptalyze — Micro‑entreprise Noraa
         </div>
         <nav className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
+          <Link href="/a-propos" className="text-zinc-300 hover:text-white transition-colors">À propos</Link>
           <Link href="/legal/mentions-legales" className="text-zinc-300 hover:text-white transition-colors">Mentions légales</Link>
           <Link href="/legal/politique-de-confidentialite" className="text-zinc-300 hover:text-white transition-colors">Politique de confidentialité</Link>
           <Link href="/legal/cgv" className="text-zinc-300 hover:text-white transition-colors">CGV</Link>

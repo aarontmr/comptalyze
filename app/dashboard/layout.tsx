@@ -17,6 +17,7 @@ import {
   X,
   LogOut,
   Home,
+  Sparkles,
 } from 'lucide-react';
 import logo from '@/public/logo.png';
 import FloatingAIAssistant from '@/app/components/FloatingAIAssistant';
@@ -119,6 +120,60 @@ export default function DashboardLayout({
     router.push('/');
   };
 
+  const handleUpgrade = async (plan: "pro" | "premium") => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan, userId: user.id }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        const errorMessage = data.error || "Une erreur est survenue lors de la création de la session de paiement";
+        alert(`Erreur: ${errorMessage}`);
+        console.error("Erreur API checkout:", data);
+        return;
+      }
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert("Erreur: Aucune URL de redirection reçue du serveur.");
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'appel API:", error);
+      alert("Une erreur est survenue lors de la connexion au serveur.");
+    }
+  };
+
+  // Déterminer le plan supérieur et le texte
+  const getUpgradeInfo = () => {
+    if (!subscription.isPro && !subscription.isPremium) {
+      return {
+        plan: "pro" as const,
+        label: "Passer à Pro",
+        price: "5,90 €/mois",
+      };
+    }
+    if (subscription.isPro && !subscription.isPremium) {
+      return {
+        plan: "premium" as const,
+        label: "Passer à Premium",
+        price: "9,90 €/mois",
+      };
+    }
+    return null; // Déjà Premium, pas besoin d'upgrade
+  };
+
+  const upgradeInfo = getUpgradeInfo();
+
   return (
     <div
       className="min-h-screen flex"
@@ -128,6 +183,7 @@ export default function DashboardLayout({
       <aside
         className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0"
         style={{ backgroundColor: '#111216', borderRight: '1px solid rgba(45, 52, 65, 0.5)' }}
+        data-tutorial="navigation"
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
@@ -184,6 +240,26 @@ export default function DashboardLayout({
                 </Link>
               );
             })}
+
+            {/* Bouton Upgrade */}
+            {upgradeInfo && (
+              <div className="mt-4 px-4">
+                <button
+                  onClick={() => handleUpgrade(upgradeInfo.plan)}
+                  className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-sm font-semibold text-white transition-all duration-200 hover:scale-[1.02]"
+                  style={{
+                    background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                    boxShadow: "0 4px 15px rgba(46,108,246,0.3)",
+                  }}
+                >
+                  <Sparkles className="w-5 h-5" />
+                  <div className="flex-1 text-left">
+                    <div className="font-semibold">{upgradeInfo.label}</div>
+                    <div className="text-xs opacity-90">{upgradeInfo.price}</div>
+                  </div>
+                </button>
+              </div>
+            )}
           </nav>
 
           {/* User info & Sign out */}
@@ -286,6 +362,29 @@ export default function DashboardLayout({
                 </Link>
               );
             })}
+
+            {/* Mobile - Bouton Upgrade */}
+            {upgradeInfo && (
+              <div className="mt-4 px-4">
+                <button
+                  onClick={() => {
+                    handleUpgrade(upgradeInfo.plan);
+                    setSidebarOpen(false);
+                  }}
+                  className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-sm font-semibold text-white transition-all duration-200 hover:scale-[1.02]"
+                  style={{
+                    background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                    boxShadow: "0 4px 15px rgba(46,108,246,0.3)",
+                  }}
+                >
+                  <Sparkles className="w-5 h-5" />
+                  <div className="flex-1 text-left">
+                    <div className="font-semibold">{upgradeInfo.label}</div>
+                    <div className="text-xs opacity-90">{upgradeInfo.price}</div>
+                  </div>
+                </button>
+              </div>
+            )}
           </nav>
 
           {/* Mobile user info & Sign out */}

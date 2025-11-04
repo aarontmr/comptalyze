@@ -1,0 +1,512 @@
+"use client";
+
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { supabase } from "@/lib/supabaseClient";
+import { getUserSubscription } from "@/lib/subscriptionUtils";
+import { User } from "@supabase/supabase-js";
+import { X, ChevronRight, ChevronLeft, CheckCircle, Calculator, FileText, BarChart3, LayoutDashboard, TrendingUp, DollarSign, PieChart } from "lucide-react";
+
+interface TutorialStep {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+  targetSelector?: string; // Pour pointer vers un élément spécifique
+  position?: "top" | "bottom" | "left" | "right" | "center";
+  requiresPro?: boolean;
+  requiresPremium?: boolean;
+}
+
+interface OnboardingTutorialProps {
+  user: User | null;
+  onComplete: () => void;
+}
+
+interface ElementPosition {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+}
+
+export default function OnboardingTutorial({ user, onComplete }: OnboardingTutorialProps) {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+  const [targetElement, setTargetElement] = useState<HTMLElement | null>(null);
+  const [elementPosition, setElementPosition] = useState<ElementPosition | null>(null);
+  const [tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number } | null>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Vérifier si l'utilisateur a déjà complété le tutoriel
+    const checkTutorialStatus = async () => {
+      if (!user) return;
+
+      const metadata = user.user_metadata || {};
+      const hasCompletedTutorial = metadata.onboarding_completed === true;
+
+      if (!hasCompletedTutorial) {
+        // Attendre un peu pour que le DOM soit chargé
+        setTimeout(() => {
+          setIsVisible(true);
+        }, 500);
+      }
+    };
+
+    checkTutorialStatus();
+  }, [user]);
+
+  // Récupérer le plan de l'utilisateur pour filtrer les étapes
+  const subscription = getUserSubscription(user);
+
+  const allSteps: TutorialStep[] = [
+    {
+      id: "welcome",
+      title: "Bienvenue sur Comptalyze ! 👋",
+      description:
+        "Ce tutoriel rapide va vous guider à travers les fonctionnalités principales de votre dashboard. Vous pourrez le refermer à tout moment.",
+      icon: CheckCircle,
+      position: "center",
+    },
+    {
+      id: "overview",
+      title: "Aperçu du dashboard",
+      description:
+        "Cette page vous donne une vue d'ensemble de votre activité : chiffre d'affaires total, revenu net, et cotisations URSSAF. Toutes vos données sont automatiquement calculées et mises à jour.",
+      icon: LayoutDashboard,
+      targetSelector: "[data-tutorial='overview']",
+      position: "bottom",
+    },
+    {
+      id: "stats-cards",
+      title: "Vos statistiques en un coup d'œil",
+      description:
+        "Ces cartes affichent vos indicateurs clés : CA total, revenu net après cotisations, et montant total des cotisations URSSAF. Plus vous ajoutez d'enregistrements, plus ces statistiques sont précises.",
+      icon: TrendingUp,
+      targetSelector: "[data-tutorial='stats-cards']",
+      position: "bottom",
+    },
+    {
+      id: "calculator",
+      title: "Simulateur URSSAF",
+      description:
+        "Utilisez le simulateur pour calculer vos cotisations en temps réel. Entrez votre chiffre d'affaires, choisissez votre activité, et obtenez instantanément vos cotisations et votre revenu net.",
+      icon: Calculator,
+      targetSelector: "[data-tutorial='calculator']",
+      position: "right",
+    },
+    {
+      id: "invoices",
+      title: "Gestion des factures (Pro/Premium)",
+      description:
+        "Si vous avez un abonnement Pro ou Premium, vous pouvez créer, gérer et envoyer des factures directement depuis Comptalyze. Exportez-les en PDF et envoyez-les par email.",
+      icon: FileText,
+      targetSelector: "[data-tutorial='invoices']",
+      position: "right",
+      requiresPro: true,
+    },
+    {
+      id: "statistics",
+      title: "Statistiques avancées (Premium)",
+      description:
+        "Les utilisateurs Premium ont accès à des graphiques détaillés et des analyses avancées pour suivre l'évolution de leur activité dans le temps.",
+      icon: BarChart3,
+      targetSelector: "[data-tutorial='statistics']",
+      position: "right",
+      requiresPremium: true,
+    },
+    {
+      id: "navigation",
+      title: "Navigation",
+      description:
+        "Utilisez le menu latéral pour naviguer entre les différentes sections. Le menu s'adapte automatiquement selon votre plan d'abonnement.",
+      icon: LayoutDashboard,
+      targetSelector: "[data-tutorial='navigation']",
+      position: "right",
+    },
+    {
+      id: "complete",
+      title: "C'est parti ! 🚀",
+      description:
+        "Vous êtes maintenant prêt à utiliser Comptalyze. N'hésitez pas à explorer toutes les fonctionnalités. Si vous avez besoin d'aide, consultez la page À propos ou contactez-nous.",
+      icon: CheckCircle,
+      position: "center",
+    },
+  ];
+
+  // Filtrer les étapes selon le plan de l'utilisateur
+  const steps = allSteps.filter((step) => {
+    if (step.requiresPremium && !subscription.isPremium) return false;
+    if (step.requiresPro && !subscription.isPro && !subscription.isPremium) return false;
+    return true;
+  });
+
+  // Mettre à jour la position de l'élément ciblé et de la tooltip
+  useEffect(() => {
+    if (!isVisible) return;
+
+    const step = steps[currentStep];
+    if (!step.targetSelector) {
+      setTargetElement(null);
+      setElementPosition(null);
+      setTooltipPosition(null);
+      return;
+    }
+
+    const updatePositions = () => {
+      const element = document.querySelector(step.targetSelector) as HTMLElement;
+      if (!element) {
+        setTargetElement(null);
+        setElementPosition(null);
+        setTooltipPosition(null);
+        return;
+      }
+
+      // Ajouter un z-index élevé à l'élément pour qu'il reste visible
+      const originalZIndex = element.style.zIndex;
+      element.style.zIndex = "50";
+      element.style.position = "relative";
+
+      setTargetElement(element);
+
+      // Obtenir la position de l'élément
+      const rect = element.getBoundingClientRect();
+      const scrollY = window.scrollY;
+      const scrollX = window.scrollX;
+
+      const position: ElementPosition = {
+        top: rect.top + scrollY,
+        left: rect.left + scrollX,
+        width: rect.width,
+        height: rect.height,
+      };
+
+      setElementPosition(position);
+
+      // Calculer la position de la tooltip
+      const tooltipWidth = 400; // Largeur approximative de la tooltip
+      const tooltipHeight = 250; // Hauteur approximative
+      const gap = 20; // Espace entre l'élément et la tooltip
+
+      let top = 0;
+      let left = 0;
+
+      switch (step.position) {
+        case "top":
+          top = position.top - tooltipHeight - gap;
+          left = position.left + position.width / 2;
+          break;
+        case "bottom":
+          top = position.top + position.height + gap;
+          left = position.left + position.width / 2;
+          break;
+        case "left":
+          top = position.top + position.height / 2;
+          left = position.left - tooltipWidth - gap;
+          break;
+        case "right":
+          top = position.top + position.height / 2;
+          left = position.left + position.width + gap;
+          break;
+        default:
+          top = position.top + position.height / 2;
+          left = position.left + position.width + gap;
+      }
+
+      // Ajuster pour éviter de sortir de l'écran
+      const padding = 20;
+      if (left < padding) left = padding;
+      if (left + tooltipWidth > window.innerWidth - padding) {
+        left = window.innerWidth - tooltipWidth - padding;
+      }
+      if (top < padding) top = padding;
+      if (top + tooltipHeight > window.innerHeight + scrollY - padding) {
+        top = window.innerHeight + scrollY - tooltipHeight - padding;
+      }
+
+      setTooltipPosition({ top, left });
+
+      // Scroller vers l'élément si nécessaire
+      element.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+    };
+
+    // Attendre un peu pour que le DOM soit prêt
+    const timeout = setTimeout(updatePositions, 100);
+
+    // Mettre à jour lors du scroll ou du resize
+    window.addEventListener("scroll", updatePositions);
+    window.addEventListener("resize", updatePositions);
+
+    return () => {
+      clearTimeout(timeout);
+      window.removeEventListener("scroll", updatePositions);
+      window.removeEventListener("resize", updatePositions);
+      // Restaurer le z-index original de l'élément
+      if (targetElement) {
+        targetElement.style.zIndex = "";
+        targetElement.style.position = "";
+      }
+    };
+  }, [currentStep, isVisible, steps, targetElement]);
+
+  const handleNext = async () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    } else {
+      await completeTutorial();
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const handleSkip = async () => {
+    await completeTutorial();
+  };
+
+  const completeTutorial = async () => {
+    if (!user) return;
+
+    try {
+      // Mettre à jour les métadonnées utilisateur
+      const { data: userData } = await supabase.auth.getUser();
+      if (userData?.user) {
+        await supabase.auth.updateUser({
+          data: {
+            ...userData.user.user_metadata,
+            onboarding_completed: true,
+            onboarding_completed_at: new Date().toISOString(),
+          },
+        });
+      }
+
+      setIsVisible(false);
+      onComplete();
+    } catch (error) {
+      console.error("Erreur lors de la sauvegarde du tutoriel:", error);
+      // Continuer quand même
+      setIsVisible(false);
+      onComplete();
+    }
+  };
+
+  if (!isVisible || !user) {
+    return null;
+  }
+
+  const step = steps[currentStep];
+  const Icon = step.icon;
+  const isLastStep = currentStep === steps.length - 1;
+  const isFirstStep = currentStep === 0;
+  const isCenter = step.position === "center" || !step.targetSelector;
+
+  return (
+    <AnimatePresence>
+      {isVisible && (
+        <>
+          {/* Overlay sombre avec trou pour l'élément ciblé */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40"
+            style={{
+              background: elementPosition
+                ? `radial-gradient(circle at ${elementPosition.left + elementPosition.width / 2}px ${elementPosition.top + elementPosition.height / 2}px, transparent 0%, transparent ${
+                    Math.max(elementPosition.width, elementPosition.height) / 2 + 20
+                  }px, rgba(0, 0, 0, 0.85) ${
+                    Math.max(elementPosition.width, elementPosition.height) / 2 + 40
+                  }px, rgba(0, 0, 0, 0.85) 100%)`
+                : "rgba(0, 0, 0, 0.85)",
+              backdropFilter: "blur(4px)",
+            }}
+            onClick={!isLastStep ? handleSkip : undefined}
+          />
+
+          {/* Highlight autour de l'élément ciblé */}
+          {elementPosition && targetElement && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="fixed pointer-events-none"
+              style={{
+                zIndex: 45,
+                top: elementPosition.top - 4,
+                left: elementPosition.left - 4,
+                width: elementPosition.width + 8,
+                height: elementPosition.height + 8,
+                border: "3px solid",
+                borderImage: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%) 1",
+                borderRadius: "12px",
+                boxShadow: "0 0 0 4px rgba(0, 208, 132, 0.2), 0 0 20px rgba(46, 108, 246, 0.4)",
+              }}
+            />
+          )}
+
+          {/* Tooltip du tutoriel */}
+          <motion.div
+            ref={tooltipRef}
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="fixed z-50 max-w-md"
+            style={
+              isCenter
+                ? {
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                  }
+                : tooltipPosition
+                ? {
+                    top: `${tooltipPosition.top}px`,
+                    left: `${tooltipPosition.left}px`,
+                  }
+                : {
+                    top: "2rem",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                  }
+            }
+          >
+            <div
+              className="bg-[#16181d] border border-gray-800 rounded-2xl p-6 shadow-2xl"
+              style={{
+                boxShadow: "0 20px 60px rgba(0, 0, 0, 0.5)",
+              }}
+            >
+              {/* Header */}
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="p-2 rounded-lg"
+                    style={{
+                      background: "linear-gradient(135deg, rgba(0,208,132,0.2) 0%, rgba(46,108,246,0.2) 100%)",
+                    }}
+                  >
+                    <Icon className="w-5 h-5" style={{ color: "#00D084" }} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-white">{step.title}</h3>
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      Étape {currentStep + 1} sur {steps.length}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={handleSkip}
+                  className="text-gray-400 hover:text-white transition-colors p-1"
+                  aria-label="Fermer le tutoriel"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Description */}
+              <p className="text-gray-300 mb-6 leading-relaxed">{step.description}</p>
+
+              {/* Progress bar */}
+              <div className="mb-6">
+                <div className="w-full bg-gray-800 rounded-full h-1.5 overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
+                    transition={{ duration: 0.3 }}
+                    className="h-full rounded-full"
+                    style={{
+                      background: "linear-gradient(90deg, #00D084 0%, #2E6CF6 100%)",
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center justify-between gap-3">
+                <button
+                  onClick={handleSkip}
+                  className="text-sm text-gray-400 hover:text-gray-200 transition-colors"
+                >
+                  {isLastStep ? "Fermer" : "Passer"}
+                </button>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handlePrevious}
+                    disabled={isFirstStep}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{
+                      border: "1px solid #2b2f36",
+                      backgroundColor: isFirstStep ? "transparent" : "#1b1f25",
+                    }}
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    Précédent
+                  </button>
+                  <button
+                    onClick={handleNext}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white transition-all hover:scale-[1.02]"
+                    style={{
+                      background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                      boxShadow: "0 4px 15px rgba(46,108,246,0.3)",
+                    }}
+                  >
+                    {isLastStep ? "Commencer" : "Suivant"}
+                    {!isLastStep && <ChevronRight className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Flèche pointant vers l'élément (si targetSelector) */}
+            {step.targetSelector && elementPosition && tooltipPosition && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="absolute pointer-events-none"
+                style={{
+                  top:
+                    step.position === "bottom"
+                      ? "-10px"
+                      : step.position === "top"
+                      ? "100%"
+                      : step.position === "left"
+                      ? `${elementPosition.height / 2 - 10}px`
+                      : `${elementPosition.height / 2 - 10}px`,
+                  left:
+                    step.position === "right"
+                      ? "-10px"
+                      : step.position === "left"
+                      ? "100%"
+                      : step.position === "top" || step.position === "bottom"
+                      ? `${tooltipPosition.left - elementPosition.left - elementPosition.width / 2 + 20}px`
+                      : "50%",
+                  transform:
+                    step.position === "bottom"
+                      ? "translateX(-50%) rotate(180deg)"
+                      : step.position === "top"
+                      ? "translateX(-50%)"
+                      : step.position === "left"
+                      ? "translateY(-50%) rotate(90deg)"
+                      : "translateY(-50%) rotate(-90deg)",
+                }}
+              >
+                <div
+                  className="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[12px] border-transparent"
+                  style={{
+                    borderTopColor: "#16181d",
+                  }}
+                />
+              </motion.div>
+            )}
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}

@@ -6,6 +6,7 @@ import { getUserSubscription } from '@/lib/subscriptionUtils';
 import { User } from '@supabase/supabase-js';
 import Card from '@/app/components/Card';
 import Breadcrumbs from '@/app/components/Breadcrumbs';
+import OnboardingTutorial from '@/app/components/OnboardingTutorial';
 import Link from 'next/link';
 import { Calculator, FileText, BarChart3, TrendingUp, DollarSign, PieChart } from 'lucide-react';
 
@@ -22,6 +23,7 @@ interface Invoice {
 export default function DashboardOverview() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [tutorialCompleted, setTutorialCompleted] = useState(false);
   const [stats, setStats] = useState({
     totalCA: 0,
     totalNet: 0,
@@ -102,10 +104,11 @@ export default function DashboardOverview() {
 
   return (
     <div>
+      <OnboardingTutorial user={user} onComplete={() => setTutorialCompleted(true)} />
       <Breadcrumbs items={[{ label: 'Aperçu' }]} />
-      <h1 className="text-3xl font-semibold text-white mb-8">Aperçu</h1>
+      <h1 className="text-3xl font-semibold text-white mb-8" data-tutorial="overview">Aperçu</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8" data-tutorial="stats-cards">
         {/* Chiffre d'affaires total */}
         <Card>
           <div className="flex items-center justify-between mb-4">
@@ -175,7 +178,7 @@ export default function DashboardOverview() {
 
       {/* Actions rapides */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Link href="/dashboard/simulateur">
+        <Link href="/dashboard/simulateur" data-tutorial="calculator">
           <Card className="cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg">
             <div className="flex items-center gap-4">
               <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(0, 208, 132, 0.1)' }}>
@@ -192,7 +195,7 @@ export default function DashboardOverview() {
         </Link>
 
         {(subscription.isPro || subscription.isPremium) && (
-          <Link href="/dashboard/factures">
+          <Link href="/dashboard/factures" data-tutorial="invoices">
             <Card className="cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg">
               <div className="flex items-center gap-4">
                 <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(46, 108, 246, 0.1)' }}>
@@ -210,7 +213,7 @@ export default function DashboardOverview() {
         )}
 
         {subscription.isPremium && (
-          <Link href="/dashboard/statistiques">
+          <Link href="/dashboard/statistiques" data-tutorial="statistics">
             <Card className="cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg">
               <div className="flex items-center gap-4">
                 <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(0, 208, 132, 0.1)' }}>

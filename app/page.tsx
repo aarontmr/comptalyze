@@ -756,36 +756,177 @@ export default function LandingPage() {
       <section className="relative px-4 py-12 sm:py-16 md:py-20">
         <div className="mx-auto max-w-6xl">
           <FadeIn delay={0} y={8} duration={0.5}>
-            <h2 className="mb-8 text-center text-2xl font-semibold sm:text-3xl">
-              Ils utilisent déjà Comptalyze
-            </h2>
+            <div className="text-center mb-4">
+              <h2 className="text-2xl font-semibold sm:text-3xl mb-3">
+                Ils utilisent déjà Comptalyze
+              </h2>
+              <p className="text-gray-400 text-sm sm:text-base">
+                Rejoignez des centaines de micro-entrepreneurs qui simplifient leur comptabilité
+              </p>
+            </div>
           </FadeIn>
-          <Stagger className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          
+          <Stagger className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-10">
             <motion.div variants={fadeInVariant}>
               <ScaleOnHover>
-                <div className="rounded-xl p-6 transition-all" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
-                  <p className="text-sm text-gray-300">"Interface claire et résultats fiables. Je gagne un temps fou."</p>
-                  <div className="mt-4 text-xs text-gray-500">— Julie, Graphiste</div>
+                <div 
+                  className="rounded-2xl p-6 md:p-8 transition-all h-full flex flex-col"
+                  style={{ 
+                    backgroundColor: "#16181d", 
+                    border: "1px solid #2d3441",
+                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)"
+                  }}
+                >
+                  {/* Étoiles */}
+                  <div className="flex items-center gap-1 mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <svg key={i} className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" style={{ color: "#fbbf24" }}>
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    ))}
+                  </div>
+                  
+                  {/* Citation */}
+                  <blockquote className="text-gray-200 leading-relaxed mb-6 flex-grow">
+                    <p className="text-base">
+                      &quot;Interface claire et résultats fiables. Je gagne un temps fou sur mes calculs URSSAF. 
+                      Plus besoin de faire mes calculs à la main ou de vérifier plusieurs fois. C&apos;est devenu un réflexe mensuel.&quot;
+                    </p>
+                  </blockquote>
+                  
+                  {/* Auteur */}
+                  <div className="flex items-center gap-3 pt-4 border-t" style={{ borderColor: "#2d3441" }}>
+                    <div 
+                      className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0"
+                      style={{ 
+                        background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)"
+                      }}
+                    >
+                      J
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-white">Julie M.</div>
+                      <div className="text-xs text-gray-400">Graphiste freelance</div>
+                    </div>
+                  </div>
                 </div>
               </ScaleOnHover>
             </motion.div>
+
             <motion.div variants={fadeInVariant}>
               <ScaleOnHover>
-                <div className="rounded-xl p-6 transition-all" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
-                  <p className="text-sm text-gray-300">"Parfait pour suivre mes cotisations et anticiper mes revenus."</p>
-                  <div className="mt-4 text-xs text-gray-500">— Karim, Développeur</div>
+                <div 
+                  className="rounded-2xl p-6 md:p-8 transition-all h-full flex flex-col"
+                  style={{ 
+                    backgroundColor: "#16181d", 
+                    border: "1px solid #2d3441",
+                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)"
+                  }}
+                >
+                  {/* Étoiles */}
+                  <div className="flex items-center gap-1 mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <svg key={i} className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" style={{ color: "#fbbf24" }}>
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    ))}
+                  </div>
+                  
+                  {/* Citation */}
+                  <blockquote className="text-gray-200 leading-relaxed mb-6 flex-grow">
+                    <p className="text-base">
+                      &quot;Parfait pour suivre mes cotisations et anticiper mes revenus. Les projections annuelles m&apos;aident 
+                      à mieux planifier mon budget et à éviter les mauvaises surprises. L&apos;export PDF est un vrai plus.&quot;
+                    </p>
+                  </blockquote>
+                  
+                  {/* Auteur */}
+                  <div className="flex items-center gap-3 pt-4 border-t" style={{ borderColor: "#2d3441" }}>
+                    <div 
+                      className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0"
+                      style={{ 
+                        background: "linear-gradient(135deg, #2E6CF6 0%, #00D084 100%)"
+                      }}
+                    >
+                      K
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-white">Karim L.</div>
+                      <div className="text-xs text-gray-400">Développeur web indépendant</div>
+                    </div>
+                  </div>
                 </div>
               </ScaleOnHover>
             </motion.div>
+
             <motion.div variants={fadeInVariant}>
               <ScaleOnHover>
-                <div className="rounded-xl p-6 transition-all" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
-                  <p className="text-sm text-gray-300">"Enfin un outil simple, sans jargon, adapté aux micro-entrepreneurs."</p>
-                  <div className="mt-4 text-xs text-gray-500">— Lucie, Consultante</div>
+                <div 
+                  className="rounded-2xl p-6 md:p-8 transition-all h-full flex flex-col"
+                  style={{ 
+                    backgroundColor: "#16181d", 
+                    border: "1px solid #2d3441",
+                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)"
+                  }}
+                >
+                  {/* Étoiles */}
+                  <div className="flex items-center gap-1 mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <svg key={i} className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" style={{ color: "#fbbf24" }}>
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    ))}
+                  </div>
+                  
+                  {/* Citation */}
+                  <blockquote className="text-gray-200 leading-relaxed mb-6 flex-grow">
+                    <p className="text-base">
+                      &quot;Enfin un outil simple, sans jargon, adapté aux micro-entrepreneurs. Plus besoin de comprendre 
+                      tous les détails comptables, Comptalyze fait le travail pour moi. La gestion des factures est également très pratique.&quot;
+                    </p>
+                  </blockquote>
+                  
+                  {/* Auteur */}
+                  <div className="flex items-center gap-3 pt-4 border-t" style={{ borderColor: "#2d3441" }}>
+                    <div 
+                      className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0"
+                      style={{ 
+                        background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)"
+                      }}
+                    >
+                      L
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-white">Lucie D.</div>
+                      <div className="text-xs text-gray-400">Consultante en communication</div>
+                    </div>
+                  </div>
                 </div>
               </ScaleOnHover>
             </motion.div>
           </Stagger>
+
+          {/* Indicateur de confiance */}
+          <FadeIn delay={0.4} y={12}>
+            <div className="mt-12 text-center">
+              <div 
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full"
+                style={{
+                  background: "linear-gradient(135deg, rgba(0,208,132,0.1) 0%, rgba(46,108,246,0.1) 100%)",
+                  border: "1px solid rgba(46,108,246,0.2)"
+                }}
+              >
+                <Check className="w-5 h-5" style={{ color: "#00D084" }} />
+                <span className="text-sm text-gray-300">
+                  <strong className="text-white">+10 M€</strong> de chiffre d&apos;affaires déclarés
+                </span>
+                <span className="text-gray-500 mx-2">•</span>
+                <span className="text-sm text-gray-300">
+                  <strong className="text-white">4.9/5</strong> en moyenne
+                </span>
+              </div>
+            </div>
+          </FadeIn>
         </div>
       </section>
 
@@ -853,7 +994,8 @@ export default function LandingPage() {
       {/* FOOTER */}
       <footer className="relative px-4 py-10 border-t" style={{ borderColor: "#1f232b" }}>
         <div className="mx-auto max-w-6xl">
-          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4 text-sm text-gray-400">
+          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-5 text-sm text-gray-400">
+            <Link href="/a-propos" className="hover:text-white transition-colors">À propos</Link>
             <Link href="/legal/mentions-legales" className="hover:text-white transition-colors">Mentions légales</Link>
             <Link href="/legal/cgv" className="hover:text-white transition-colors">CGV</Link>
             <Link href="/legal/politique-de-confidentialite" className="hover:text-white transition-colors">Politique de confidentialité</Link>

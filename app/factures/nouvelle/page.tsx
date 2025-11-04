@@ -195,6 +195,28 @@ export default function NewInvoicePage() {
         return;
       }
 
+      // Envoyer automatiquement l'email avec la facture
+      try {
+        const token = session.access_token;
+        const emailResponse = await fetch(`/api/invoices/${data.id}/email`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        
+        if (emailResponse.ok) {
+          // Email envoyé avec succès
+          alert('Facture créée et envoyée par email avec succès !');
+        } else {
+          // Facture créée mais email non envoyé
+          const emailData = await emailResponse.json();
+          console.warn('Facture créée mais email non envoyé:', emailData.error);
+          alert('Facture créée avec succès. L\'email n\'a pas pu être envoyé automatiquement, vous pouvez l\'envoyer depuis la page de détail de la facture.');
+        }
+      } catch (emailError) {
+        console.error('Erreur lors de l\'envoi automatique de l\'email:', emailError);
+        alert('Facture créée avec succès. L\'email n\'a pas pu être envoyé automatiquement, vous pouvez l\'envoyer depuis la page de détail de la facture.');
+      }
+
       // Rediriger vers le dashboard des factures
       router.push('/dashboard/factures');
     } catch (error: any) {
