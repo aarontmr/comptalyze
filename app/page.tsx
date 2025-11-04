@@ -281,7 +281,7 @@ export default function LandingPage() {
       </div>
 
       {/* HERO */}
-      <section className="relative px-4 pt-12 pb-8 sm:pt-16 sm:pb-10 md:pt-20 md:pb-12 overflow-hidden">
+      <section className="relative px-4 pt-16 pb-8 sm:pt-20 sm:pb-10 md:pt-24 md:pb-12 overflow-hidden">
         <GradientBlob />
         <div className="mx-auto max-w-5xl text-center relative z-10">
           <FadeIn delay={0.1} y={12}>
