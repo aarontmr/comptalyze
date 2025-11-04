@@ -60,9 +60,9 @@ export default function LandingPage() {
               <Image
                 src={logo}
                 alt="Comptalyze"
-                width={140}
-                height={35}
-                className="h-8 w-auto"
+                width={180}
+                height={45}
+                className="h-10 sm:h-12 w-auto"
                 priority
               />
             </Link>

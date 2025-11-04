@@ -216,14 +216,14 @@ export default function DashboardLayout({
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center justify-center h-16 px-6 border-b border-gray-800">
+          <div className="flex items-center justify-center h-20 px-6 border-b border-gray-800">
             <Link href="/dashboard" className="flex items-center">
               <Image
                 src={logo}
                 alt="Comptalyze"
-                width={140}
-                height={35}
-                className="h-8 w-auto"
+                width={180}
+                height={45}
+                className="h-11 w-auto"
                 priority
               />
             </Link>
@@ -335,9 +335,9 @@ export default function DashboardLayout({
               <Image
                 src={logo}
                 alt="Comptalyze"
-                width={140}
-                height={35}
-                className="h-8 w-auto"
+                width={160}
+                height={40}
+                className="h-9 w-auto"
                 priority
               />
             </Link>
