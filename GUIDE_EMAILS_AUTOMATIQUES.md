@@ -161,3 +161,4 @@ NEXT_PUBLIC_BASE_URL=https://comptalyze.com
 - [ ] Ajouter des préférences utilisateur pour activer/désactiver les alertes de seuils
 - [ ] Améliorer les templates d'emails avec un design plus professionnel
 
+

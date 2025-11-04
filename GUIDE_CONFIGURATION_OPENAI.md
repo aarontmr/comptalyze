@@ -87,3 +87,4 @@ Paramètres configurés :
 - `temperature: 0.7` (équilibre créativité/précision)
 
 
+

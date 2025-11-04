@@ -11,7 +11,7 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import BadgePlan from '@/components/ui/BadgePlan';
 import EmailReminderToggle from '@/app/components/EmailReminderToggle';
 import Link from 'next/link';
-import { User as UserIcon, Mail, CreditCard, Bell, AlertTriangle, XCircle, LogOut, Shield } from 'lucide-react';
+import { User as UserIcon, Mail, CreditCard, Bell, AlertTriangle, XCircle, LogOut, Shield, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function ComptePage() {
@@ -19,6 +19,9 @@ export default function ComptePage() {
   const [loading, setLoading] = useState(true);
   const [canceling, setCanceling] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState('');
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -74,11 +77,140 @@ export default function ComptePage() {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    if (!user) return;
+    
+    setDeleting(true);
+    try {
+      const res = await fetch('/api/delete-account', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id, confirmationText: deleteConfirmation }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(`Erreur: ${data.error || 'Une erreur est survenue'}`);
+        setDeleting(false);
+        return;
+      }
+
+      // Déconnexion et redirection
+      await supabase.auth.signOut();
+      alert('Votre compte a été supprimé définitivement.');
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Erreur:', error);
+      alert('Une erreur est survenue lors de la suppression du compte.');
+      setDeleting(false);
+    }
+  };
+
   // Desktop version
   const DesktopView = () => (
     <div>
       <h1 className="text-3xl font-semibold text-white mb-8">Mon compte</h1>
-      {/* Desktop content stays the same */}
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Section suppression du compte */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="lg:col-span-2"
+        >
+          <h2 className="text-xl font-semibold text-white mb-4">Zone de danger</h2>
+          <Card>
+            {!showDeleteConfirm ? (
+              <div className="space-y-4">
+                <div className="p-4 rounded-lg" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
+                  <div className="flex items-start gap-3">
+                    <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm text-red-300 font-semibold mb-1">
+                        Suppression définitive du compte
+                      </p>
+                      <p className="text-sm text-gray-400">
+                        Cette action est irréversible. Toutes vos données (calculs, factures, abonnements) seront définitivement supprimées.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowDeleteConfirm(true)}
+                  disabled={deleting}
+                  className="px-6 py-3 rounded-lg text-white font-medium transition-all hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  style={{ backgroundColor: '#dc2626' }}
+                >
+                  <Trash2 className="w-5 h-5" />
+                  Supprimer mon compte
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="p-4 rounded-lg bg-red-900/30 border border-red-500/50">
+                  <p className="text-base text-white font-semibold mb-3">
+                    ⚠️ Êtes-vous absolument sûr ?
+                  </p>
+                  <p className="text-sm text-gray-300 mb-3">
+                    Cette action supprimera définitivement :
+                  </p>
+                  <ul className="text-sm text-gray-300 space-y-2 mb-4 ml-6 list-disc">
+                    <li>Votre compte utilisateur</li>
+                    <li>Tous vos calculs et historiques</li>
+                    <li>Toutes vos factures</li>
+                    <li>Votre abonnement (si actif)</li>
+                    <li>Toutes vos données personnelles</li>
+                  </ul>
+                  <p className="text-sm text-red-300 font-semibold">
+                    Cette action est IRRÉVERSIBLE et ne peut pas être annulée.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-300 mb-2">
+                    Pour confirmer, tapez <strong className="text-red-400">SUPPRIMER</strong> ci-dessous :
+                  </label>
+                  <input
+                    type="text"
+                    value={deleteConfirmation}
+                    onChange={(e) => setDeleteConfirmation(e.target.value)}
+                    placeholder="SUPPRIMER"
+                    className="w-full px-4 py-3 rounded-lg text-white placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    style={{ 
+                      backgroundColor: '#0e0f12',
+                      border: '1px solid #2d3441'
+                    }}
+                  />
+                </div>
+
+                <div className="flex gap-4">
+                  <button
+                    onClick={handleDeleteAccount}
+                    disabled={deleting || deleteConfirmation !== 'SUPPRIMER'}
+                    className="flex-1 px-6 py-3 rounded-lg text-white font-medium transition-all hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{ backgroundColor: '#dc2626' }}
+                  >
+                    {deleting ? 'Suppression en cours...' : 'Supprimer définitivement'}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowDeleteConfirm(false);
+                      setDeleteConfirmation('');
+                    }}
+                    disabled={deleting}
+                    className="px-6 py-3 rounded-lg text-gray-300 font-medium transition-all hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{ backgroundColor: '#23272f', border: '1px solid #2d3441' }}
+                  >
+                    Annuler
+                  </button>
+                </div>
+              </div>
+            )}
+          </Card>
+        </motion.div>
+      </div>
     </div>
   );
 
@@ -362,6 +494,103 @@ export default function ComptePage() {
                   </p>
                 </div>
               </div>
+            </Card>
+          </motion.div>
+
+          {/* Suppression du compte */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <SectionTitle title="Zone de danger" />
+            <Card>
+              {!showDeleteConfirm ? (
+                <div className="space-y-4">
+                  <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
+                    <div className="flex items-start gap-2">
+                      <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-xs text-red-300 font-semibold mb-1">
+                          Suppression définitive du compte
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          Cette action est irréversible. Toutes vos données seront définitivement supprimées.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowDeleteConfirm(true)}
+                    disabled={deleting}
+                    className="w-full px-4 py-3 rounded-lg text-white font-medium transition-all hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    style={{ backgroundColor: '#dc2626' }}
+                  >
+                    <Trash2 className="w-5 h-5" />
+                    Supprimer mon compte
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="p-4 rounded-lg bg-red-900/30 border border-red-500/50">
+                    <p className="text-sm text-white font-semibold mb-2">
+                      ⚠️ Êtes-vous absolument sûr ?
+                    </p>
+                    <p className="text-xs text-gray-300 mb-3">
+                      Cette action supprimera définitivement :
+                    </p>
+                    <ul className="text-xs text-gray-300 space-y-1 mb-3 ml-4 list-disc">
+                      <li>Votre compte utilisateur</li>
+                      <li>Tous vos calculs et historiques</li>
+                      <li>Toutes vos factures</li>
+                      <li>Votre abonnement (si actif)</li>
+                      <li>Toutes vos données personnelles</li>
+                    </ul>
+                    <p className="text-xs text-red-300 font-semibold">
+                      Cette action est IRRÉVERSIBLE et ne peut pas être annulée.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs text-gray-300 mb-2">
+                      Pour confirmer, tapez <strong className="text-red-400">SUPPRIMER</strong> ci-dessous :
+                    </label>
+                    <input
+                      type="text"
+                      value={deleteConfirmation}
+                      onChange={(e) => setDeleteConfirmation(e.target.value)}
+                      placeholder="SUPPRIMER"
+                      className="w-full px-4 py-2 rounded-lg text-white placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500"
+                      style={{ 
+                        backgroundColor: '#0e0f12',
+                        border: '1px solid #2d3441'
+                      }}
+                    />
+                  </div>
+
+                  <div className="flex gap-3">
+                    <button
+                      onClick={handleDeleteAccount}
+                      disabled={deleting || deleteConfirmation !== 'SUPPRIMER'}
+                      className="flex-1 px-4 py-3 rounded-lg text-white font-medium transition-all hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      style={{ backgroundColor: '#dc2626' }}
+                    >
+                      {deleting ? 'Suppression...' : 'Supprimer définitivement'}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowDeleteConfirm(false);
+                        setDeleteConfirmation('');
+                      }}
+                      disabled={deleting}
+                      className="px-4 py-3 rounded-lg text-gray-300 font-medium transition-all hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                      style={{ backgroundColor: '#23272f', border: '1px solid #2d3441' }}
+                    >
+                      Annuler
+                    </button>
+                  </div>
+                </div>
+              )}
             </Card>
           </motion.div>
         </div>

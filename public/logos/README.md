@@ -11,3 +11,4 @@ Placez ici les logos des partenaires/clients suivants :
 
 Les logos doivent être en format PNG avec un fond transparent ou blanc, de préférence en haute résolution pour une meilleure qualité d'affichage.
 
+

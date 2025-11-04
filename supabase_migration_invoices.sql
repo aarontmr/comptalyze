@@ -50,3 +50,4 @@ CREATE POLICY "Users can delete their own invoices"
   USING (auth.uid() = user_id);
 
 
+

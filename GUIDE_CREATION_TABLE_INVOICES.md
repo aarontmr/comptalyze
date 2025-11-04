@@ -117,3 +117,4 @@ Si vous voyez des erreurs lors de l'exécution du script :
 Si une table existe déjà, le script utilisera `CREATE TABLE IF NOT EXISTS`, donc il ne devrait pas générer d'erreur.
 
 
+

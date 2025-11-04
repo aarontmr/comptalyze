@@ -145,3 +145,4 @@ Une fois toutes les variables ajoutées et l'application redéployée :
 3. Vous devriez être redirigé vers Stripe Checkout
 
 
+

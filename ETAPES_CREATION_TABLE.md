@@ -56,3 +56,4 @@ La deuxième requête ne doit retourner aucun résultat (tableau vide).
 Après cela, vous pourrez enregistrer plusieurs chiffres d'affaires pour tous les mois sans problème !
 
 
+
