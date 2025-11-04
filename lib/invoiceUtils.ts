@@ -1,11 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * Génère un numéro de facture unique au format CPT-YYYY-XXXX
  * où XXXX est un numéro incrémental par utilisateur et année
  */
 export async function generateInvoiceNumber(
-  supabase: ReturnType<typeof createClient>,
+  supabase: SupabaseClient<any, any, any>,
   userId: string
 ): Promise<string> {
   const year = new Date().getFullYear();
