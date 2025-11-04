@@ -3,10 +3,12 @@
 import { useState, useEffect } from 'react';
 import { User } from '@supabase/supabase-js';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { getUserSubscription, hasFeatureAccess } from '@/lib/subscriptionUtils';
 import { supabase } from '@/lib/supabaseClient';
 import UrssafPrefill from './UrssafPrefill';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Info } from 'lucide-react';
+import { computeMonth, mapActivityType, type IRMode, type Activity } from '@/lib/calculs';
 
 interface CARecord {
   id: string;
@@ -16,6 +18,8 @@ interface CARecord {
   amount_eur: number;
   computed_net_eur: number;
   computed_contrib_eur: number;
+  ir_mode?: string | null;
+  ir_amount_eur?: number | null;
   created_at: string;
 }
 
@@ -49,6 +53,8 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
   const [showAnnual, setShowAnnual] = useState(false);
   const [hasACRE, setHasACRE] = useState(false);
   const [acreStartYear, setAcreStartYear] = useState<number>(new Date().getFullYear());
+  const [irMode, setIrMode] = useState<IRMode>('none');
+  const [baremeProvisionRate, setBaremeProvisionRate] = useState<string>('6');
   const [records, setRecords] = useState<CARecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -178,10 +184,28 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
   const selectedActivity = activity ? activities[activity] : null;
   const baseRate = selectedActivity ? selectedActivity.rate : 0;
   const effectiveRate = hasACRE && selectedActivity ? getACREReducedRate(baseRate) : baseRate;
-  const charges = caValue * effectiveRate;
-  const net = caValue - charges;
-  const annualNet = net * 12;
+  
+  // Calculs avec IR via computeMonth
+  let calcResult = null;
+  if (caValue > 0 && selectedActivity && activity) {
+    const activityForCalc = mapActivityType(activity);
+    const baremeRate = parseFloat(baremeProvisionRate) / 100 || 0.06;
+    calcResult = computeMonth({
+      ca: caValue,
+      activity: activityForCalc,
+      cotisRate: effectiveRate,
+      irMode: irMode,
+      baremeProvisionRate: baremeRate,
+    });
+  }
+  
+  const charges = calcResult?.cotis || 0;
+  const ir = calcResult?.ir || 0;
+  const net = calcResult?.netAfterCotis || (caValue - charges);
+  const netAfterAll = calcResult?.netAfterAll || net;
+  const annualNet = netAfterAll * 12;
   const annualCharges = charges * 12;
+  const annualIR = ir * 12;
 
   // Texte explicatif
   const getExplanation = (): string => {
@@ -201,7 +225,17 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
       explanation += `le taux de cotisation est de ${baseRatePercent}%. `;
     }
     
-    explanation += `Sur un chiffre d'affaires de ${caValue.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €, vous paierez ${charges.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} € de cotisations et conserverez ${net.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} € nets.`;
+    explanation += `Sur un chiffre d'affaires de ${caValue.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €, vous paierez ${charges.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} € de cotisations`;
+    
+    if (irMode !== 'none' && ir > 0) {
+      if (irMode === 'vl') {
+        explanation += ` et ${ir.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} € d'impôt sur le revenu (versement libératoire)`;
+      } else {
+        explanation += ` et ${ir.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} € d'impôt sur le revenu (provision barème)`;
+      }
+    }
+    
+    explanation += `. Vous conserverez ${netAfterAll.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} € nets après déduction de toutes les charges.`;
     
     return explanation;
   };
@@ -227,8 +261,10 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
           month: selectedMonth,
           activity_type: selectedActivity.label,
           amount_eur: caValue,
-          computed_net_eur: net,
+          computed_net_eur: netAfterAll,
           computed_contrib_eur: charges,
+          ir_mode: irMode !== 'none' ? irMode : null,
+          ir_amount_eur: irMode !== 'none' ? ir : null,
         })
         .select();
 
@@ -295,6 +331,8 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
       // Réinitialiser les champs
       setCa('');
       setActivity('');
+      setIrMode('none');
+      setBaremeProvisionRate('6');
     } catch (error) {
       console.error('Erreur:', error);
       showToastMessage('Erreur lors de l\'enregistrement.');
@@ -467,7 +505,7 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
       {/* Section de saisie */}
       <div
         className="mb-6 p-6 rounded-xl"
-        style={{ backgroundColor: '#1a1d24', border: '1px solid #2d3441' }}
+        style={{ backgroundColor: '#16181d', border: '1px solid #374151' }}
       >
           <div className="space-y-4">
             {/* Input CA */}
@@ -562,6 +600,90 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
               </div>
             </div>
 
+            {/* Sélecteur de régime IR */}
+            <div>
+              <label htmlFor="irMode" className="block text-sm font-medium text-gray-300 mb-2">
+                Régime d&apos;impôt sur le revenu
+              </label>
+              <select
+                id="irMode"
+                value={irMode}
+                onChange={(e) => setIrMode(e.target.value as IRMode)}
+                className="w-full px-4 py-2.5 rounded-lg text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                style={{
+                  backgroundColor: '#23272f',
+                  border: '1px solid #2d3441',
+                }}
+              >
+                <option value="none">Aucun (juste cotisations)</option>
+                <option value="vl">Versement libératoire</option>
+                <option value="bareme">Barème classique (provision)</option>
+              </select>
+            </div>
+
+            {/* Input taux de provision (si barème sélectionné) */}
+            {irMode === 'bareme' && (
+              <div>
+                <label htmlFor="baremeProvisionRate" className="block text-sm font-medium text-gray-300 mb-2">
+                  <span className="flex items-center gap-2">
+                    Taux de provision IR (%)
+                    <div className="group relative">
+                      <Info className="w-4 h-4 text-gray-400 cursor-help" />
+                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-80 p-4 rounded-lg text-xs text-gray-300 bg-[#23272f] border border-gray-700 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-lg">
+                        <p className="font-semibold text-gray-200 mb-2">Comment estimer votre taux d&apos;impôt ?</p>
+                        <p className="mb-2">
+                          Le barème progressif de l&apos;IR dépend de votre situation (revenus du foyer, situation familiale, tranches d&apos;imposition).
+                        </p>
+                        <p className="mb-2">
+                          <strong>Pour calculer votre taux moyen :</strong>
+                        </p>
+                        <ul className="list-disc list-inside space-y-1 ml-2 mb-2">
+                          <li>IR payé ÷ Revenu net imposable = Taux moyen</li>
+                          <li>Consultez votre dernière déclaration d&apos;impôt</li>
+                          <li>Ou utilisez le simulateur sur impots.gouv.fr</li>
+                        </ul>
+                        <p className="text-yellow-400">
+                          ⚠️ Valeur par défaut : 6% (estimation moyenne). À ajuster selon votre situation.
+                        </p>
+                      </div>
+                    </div>
+                  </span>
+                </label>
+                <input
+                  id="baremeProvisionRate"
+                  type="number"
+                  min="0"
+                  max="20"
+                  step="0.1"
+                  value={baremeProvisionRate}
+                  onChange={(e) => setBaremeProvisionRate(e.target.value)}
+                  placeholder="6"
+                  className="w-full px-4 py-2.5 rounded-lg text-white placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                  style={{
+                    backgroundColor: '#23272f',
+                    border: '1px solid #2d3441',
+                  }}
+                />
+                <p className="mt-2 text-xs text-gray-500">
+                  💡 <strong>Exemple :</strong> Si vous avez payé 1200€ d&apos;IR sur 20 000€ de revenu net imposable, votre taux moyen est de 6% (1200 ÷ 20000 = 0.06).
+                </p>
+              </div>
+            )}
+
+            {/* Info note pour versement libératoire */}
+            {irMode === 'vl' && (
+              <div className="p-4 rounded-lg" style={{ backgroundColor: 'rgba(46, 108, 246, 0.1)', border: '1px solid rgba(46, 108, 246, 0.3)' }}>
+                <p className="text-sm text-gray-300">
+                  <strong className="text-blue-400">Le versement libératoire</strong> est payé en même temps que vos cotisations URSSAF :
+                </p>
+                <ul className="mt-2 text-xs text-gray-400 space-y-1 ml-4 list-disc">
+                  <li>1% ventes</li>
+                  <li>1,7% prestations BIC</li>
+                  <li>2,2% BNC</li>
+                </ul>
+              </div>
+            )}
+
             {/* Checkboxes */}
             <div className="space-y-3">
               <div className="flex items-center">
@@ -636,10 +758,15 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
       {/* Section résultats */}
       <div
         className="mb-6 p-6 rounded-xl"
-        style={{ backgroundColor: '#1a1d24', border: '1px solid #2d3441' }}
+        style={{ backgroundColor: '#16181d', border: '1px solid #374151' }}
       >
         {caValue > 0 && selectedActivity ? (
-          <div className="space-y-4">
+          <motion.div 
+            className="space-y-4"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
             {hasACRE && getACREYear() > 0 && (
               <div className="p-3 rounded-lg mb-2" style={{ backgroundColor: 'rgba(0, 208, 132, 0.1)', border: '1px solid rgba(0, 208, 132, 0.3)' }}>
                 <p className="text-xs text-gray-300">
@@ -649,30 +776,119 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
                 </p>
               </div>
             )}
-            <div>
-              <p className="text-sm text-gray-400 mb-1">Cotisations URSSAF</p>
-              <p className="text-xl font-semibold" style={{ color: '#00D084' }}>
-                {formatEuro(charges)} €
-              </p>
-              {hasACRE && getACREYear() > 0 && (
-                <p className="text-xs text-gray-500 mt-1">
-                  Économie grâce à l&apos;ACRE : {formatEuro((baseRate * caValue) - charges)} €
+            
+            <div className="space-y-3">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.1 }}
+              >
+                <p className="text-sm text-gray-400 mb-1">Cotisations sociales</p>
+                <p className="text-xl font-semibold" style={{ color: '#00D084' }}>
+                  {formatEuro(charges)} €
                 </p>
+                {hasACRE && getACREYear() > 0 && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Économie grâce à l&apos;ACRE : {formatEuro((baseRate * caValue) - charges)} €
+                  </p>
+                )}
+              </motion.div>
+
+              {irMode !== 'none' && ir > 0 && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.15 }}
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <p className="text-sm text-gray-400">
+                      IR {irMode === 'vl' ? '(versement libératoire)' : '(provision barème)'}
+                    </p>
+                    <div className="group relative">
+                      <Info className="w-3.5 h-3.5 text-gray-500 cursor-help" />
+                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-80 p-4 rounded-lg text-xs text-gray-300 bg-[#23272f] border border-gray-700 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-lg">
+                        {irMode === 'vl' ? (
+                          <>
+                            <p className="font-semibold text-gray-200 mb-2">Versement libératoire</p>
+                            <p className="mb-2">Taux fixes selon activité :</p>
+                            <ul className="list-disc list-inside space-y-1 ml-2">
+                              <li>1% ventes</li>
+                              <li>1,7% prestations BIC</li>
+                              <li>2,2% BNC</li>
+                            </ul>
+                            <p className="mt-2 text-blue-400">Payé en même temps que vos cotisations URSSAF.</p>
+                          </>
+                        ) : (
+                          <>
+                            <p className="font-semibold text-gray-200 mb-2">Provision barème classique</p>
+                            <p className="mb-2">
+                              <strong>Calcul :</strong> (CA - Abattement forfaitaire) × Taux de provision
+                            </p>
+                            <p className="mb-2">
+                              <strong>Abattements :</strong> 71% ventes • 50% services • 34% BNC
+                            </p>
+                            <p className="text-yellow-400 mb-2">
+                              ⚠️ Estimation indicative. Le montant réel dépend de votre foyer fiscal (revenus du conjoint, nombre d&apos;enfants, tranches d&apos;imposition).
+                            </p>
+                            <p className="text-xs text-gray-400">
+                              Consultez votre déclaration d&apos;impôt ou impots.gouv.fr pour un calcul précis.
+                            </p>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-xl font-semibold" style={{ color: '#00D084' }}>
+                    {formatEuro(ir)} €
+                  </p>
+                  {irMode === 'bareme' && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Basé sur un taux de provision de {baremeProvisionRate}% • {formatEuro(caValue * (activity === 'vente' ? 0.71 : activity === 'services' ? 0.5 : 0.34))} € d&apos;abattement
+                    </p>
+                  )}
+                </motion.div>
+              )}
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                <p className="text-sm text-gray-400 mb-1">Net après cotisations</p>
+                <p className="text-xl font-semibold" style={{ color: '#00D084' }}>
+                  {formatEuro(net)} €
+                </p>
+              </motion.div>
+
+              {irMode !== 'none' && ir > 0 && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.25 }}
+                >
+                  <p className="text-sm text-gray-400 mb-1">Net après cotisations + IR</p>
+                  <p className="text-xl font-semibold" style={{ color: '#00D084' }}>
+                    {formatEuro(netAfterAll)} €
+                  </p>
+                </motion.div>
               )}
             </div>
-            <div>
-              <p className="text-sm text-gray-400 mb-1">Revenu net</p>
-              <p className="text-xl font-semibold" style={{ color: '#00D084' }}>
-                {formatEuro(net)} €
-              </p>
-            </div>
+
             {showAnnual && (
-              <div className="pt-4 border-t" style={{ borderColor: '#2d3441' }}>
+              <motion.div 
+                className="pt-4 border-t" 
+                style={{ borderColor: '#2d3441' }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+              >
                 <p className="text-sm text-gray-400 mb-2">Projection annuelle</p>
                 <p className="text-lg font-medium text-white">
-                  {formatEuro(annualNet)} € nets / {formatEuro(annualCharges)} € de cotisations
+                  {formatEuro(annualNet)} € nets
+                  {irMode !== 'none' && ir > 0 && ` / ${formatEuro(annualCharges)} € cotisations + ${formatEuro(annualIR)} € IR`}
+                  {irMode === 'none' && ` / ${formatEuro(annualCharges)} € de cotisations`}
                 </p>
-              </div>
+              </motion.div>
             )}
             <div className="pt-4 border-t" style={{ borderColor: '#2d3441' }}>
               <p className="text-sm text-gray-400 mb-2">Explication</p>
@@ -747,7 +963,7 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
                 {exporting ? 'Génération du PDF...' : 'Exporter en PDF par e-mail'}
               </button>
             )}
-          </div>
+          </motion.div>
         ) : (
           <p className="text-gray-400 text-center">
             Veuillez entrer un chiffre d&apos;affaires et choisir votre activité.
@@ -765,7 +981,7 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
       {/* Section historique */}
       <div
         className="p-6 rounded-xl mt-6"
-        style={{ backgroundColor: '#1a1d24', border: '1px solid #2d3441' }}
+        style={{ backgroundColor: '#16181d', border: '1px solid #374151' }}
       >
         <div className="flex items-center justify-between mb-4">
           <div>

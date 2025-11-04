@@ -40,12 +40,12 @@ export async function POST(req: NextRequest) {
 
     if (isCronCall) {
       // Mode cron : vérifier tous les utilisateurs
-      const { data: { users }, error: usersError } = await supabaseAdmin.auth.admin.listUsers();
+      const { data, error: usersError } = await supabaseAdmin.auth.admin.listUsers();
 
-      if (usersError || !users) {
+      if (usersError || !data || !data.users) {
         return NextResponse.json({ error: 'Erreur lors de la récupération des utilisateurs' }, { status: 500 });
       }
-      usersToCheck = users.users.map((u) => ({ id: u.id, email: u.email }));
+      usersToCheck = data.users.map((u) => ({ id: u.id, email: u.email }));
     } else if (token) {
       // Mode utilisateur : vérifier seulement cet utilisateur
       const { data: { user }, error: userError } = await supabaseAdmin.auth.getUser(token);
