@@ -9,7 +9,8 @@ import Card from '@/components/ui/Card';
 import DesktopCard from '@/app/components/Card';
 import Skeleton from '@/components/ui/Skeleton';
 import SectionTitle from '@/components/ui/SectionTitle';
-import { DollarSign, TrendingUp, PieChart, ArrowRight, Sparkles } from 'lucide-react';
+import Breadcrumbs from '@/app/components/Breadcrumbs';
+import { DollarSign, TrendingUp, PieChart, ArrowRight, Sparkles, Calculator, FileText, BarChart3 } from 'lucide-react';
 import Link from 'next/link';
 import PremiumAdvice from '@/app/components/PremiumAdvice';
 import { motion } from 'framer-motion';
@@ -133,54 +134,134 @@ export default function DashboardOverview() {
 
   // Desktop version (hidden on mobile) - uses existing Card from app/components
   const DesktopView = () => (
-      <div>
-        <h1 className="text-3xl font-semibold text-white mb-8">Aperçu</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <DesktopCard>
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(0, 208, 132, 0.1)' }}>
-                <DollarSign className="w-6 h-6" style={{ color: '#00D084' }} />
-              </div>
+    <div>
+      <Breadcrumbs items={[{ label: 'Aperçu' }]} />
+      <h1 className="text-3xl font-semibold text-white mb-8">Aperçu</h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        {/* Chiffre d'affaires total */}
+        <DesktopCard>
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(0, 208, 132, 0.1)' }}>
+              <DollarSign className="w-6 h-6" style={{ color: '#00D084' }} />
             </div>
-            <h3 className="text-sm font-medium text-gray-400 mb-1">CA Total</h3>
-            <p className="text-2xl font-semibold text-white">
-              {formatEuro(stats.totalCA)} €
-            </p>
-            <p className="text-xs text-gray-500 mt-2">
-              {stats.recordCount} enregistrement{stats.recordCount !== 1 ? 's' : ''}
-            </p>
-          </DesktopCard>
+          </div>
+          <h3 className="text-sm font-medium text-gray-400 mb-1">CA Total</h3>
+          <p className="text-2xl font-semibold text-white">
+            {formatEuro(stats.totalCA)} €
+          </p>
+          <p className="text-xs text-gray-500 mt-2">
+            {stats.recordCount} enregistrement{stats.recordCount !== 1 ? 's' : ''}
+          </p>
+        </DesktopCard>
+
+        {/* Revenu net */}
+        <DesktopCard>
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(46, 108, 246, 0.1)' }}>
+              <TrendingUp className="w-6 h-6" style={{ color: '#2E6CF6' }} />
+            </div>
+          </div>
+          <h3 className="text-sm font-medium text-gray-400 mb-1">Revenu Net</h3>
+          <p className="text-2xl font-semibold text-white">
+            {formatEuro(stats.totalNet)} €
+          </p>
+          <p className="text-xs text-gray-500 mt-2">
+            Après cotisations
+          </p>
+        </DesktopCard>
+
+        {/* Cotisations totales */}
+        <DesktopCard>
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)' }}>
+              <PieChart className="w-6 h-6" style={{ color: '#ef4444' }} />
+            </div>
+          </div>
+          <h3 className="text-sm font-medium text-gray-400 mb-1">Cotisations</h3>
+          <p className="text-2xl font-semibold text-white">
+            {formatEuro(stats.totalContrib)} €
+          </p>
+          <p className="text-xs text-gray-500 mt-2">
+            Total URSSAF
+          </p>
+        </DesktopCard>
+
+        {/* Factures (si Pro/Premium) */}
+        {(subscription.isPro || subscription.isPremium) && (
           <DesktopCard>
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(46, 108, 246, 0.1)' }}>
-                <TrendingUp className="w-6 h-6" style={{ color: '#2E6CF6' }} />
+                <FileText className="w-6 h-6" style={{ color: '#2E6CF6' }} />
               </div>
             </div>
-            <h3 className="text-sm font-medium text-gray-400 mb-1">Revenu Net</h3>
+            <h3 className="text-sm font-medium text-gray-400 mb-1">Factures</h3>
             <p className="text-2xl font-semibold text-white">
-              {formatEuro(stats.totalNet)} €
+              {formatEuro(stats.totalInvoices)} €
             </p>
             <p className="text-xs text-gray-500 mt-2">
-              Après cotisations
+              {stats.invoiceCount} facture{stats.invoiceCount !== 1 ? 's' : ''}
             </p>
           </DesktopCard>
-          <DesktopCard>
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)' }}>
-                <PieChart className="w-6 h-6" style={{ color: '#ef4444' }} />
-              </div>
-            </div>
-            <h3 className="text-sm font-medium text-gray-400 mb-1">Cotisations</h3>
-            <p className="text-2xl font-semibold text-white">
-              {formatEuro(stats.totalContrib)} €
-            </p>
-            <p className="text-xs text-gray-500 mt-2">
-              Total URSSAF
-            </p>
-          </DesktopCard>
-        </div>
+        )}
       </div>
-    );
+
+      {/* Actions rapides */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Link href="/dashboard/simulateur">
+          <DesktopCard className="cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(0, 208, 132, 0.1)' }}>
+                <Calculator className="w-6 h-6" style={{ color: '#00D084' }} />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-1">Calcul URSSAF</h3>
+                <p className="text-sm text-gray-400">
+                  Simuler vos cotisations
+                </p>
+              </div>
+            </div>
+          </DesktopCard>
+        </Link>
+
+        {(subscription.isPro || subscription.isPremium) && (
+          <Link href="/dashboard/factures">
+            <DesktopCard className="cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg">
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(46, 108, 246, 0.1)' }}>
+                  <FileText className="w-6 h-6" style={{ color: '#2E6CF6' }} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-1">Factures</h3>
+                  <p className="text-sm text-gray-400">
+                    Gérer vos factures
+                  </p>
+                </div>
+              </div>
+            </DesktopCard>
+          </Link>
+        )}
+
+        {subscription.isPremium && (
+          <Link href="/dashboard/statistiques">
+            <DesktopCard className="cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg">
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(0, 208, 132, 0.1)' }}>
+                  <BarChart3 className="w-6 h-6" style={{ color: '#00D084' }} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-1">Statistiques</h3>
+                  <p className="text-sm text-gray-400">
+                    Visualiser vos données
+                  </p>
+                </div>
+              </div>
+            </DesktopCard>
+          </Link>
+        )}
+      </div>
+    </div>
+  );
 
   // Mobile version
   const MobileView = () => (
