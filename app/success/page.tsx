@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Check, ArrowRight, Sparkles } from "lucide-react";
+import logo from "@/public/logo.png";
 
 export default function SuccessPage() {
   const searchParams = useSearchParams();
@@ -62,6 +64,20 @@ export default function SuccessPage() {
           </div>
         ) : (
           <div className="space-y-8">
+            {/* Logo en haut */}
+            <div className="mb-8">
+              <Link href="/" className="inline-block">
+                <Image
+                  src={logo}
+                  alt="Comptalyze"
+                  width={180}
+                  height={45}
+                  className="h-10 w-auto mx-auto"
+                  priority
+                />
+              </Link>
+            </div>
+
             {/* Icône de succès avec animation */}
             <div className="relative inline-block">
               <div 

@@ -8,7 +8,9 @@ import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "@/app/components/CheckoutForm";
 import { ArrowLeft, Check } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useCallback } from "react";
+import logo from "@/public/logo.png";
 
 // Initialisation de Stripe avec vérification
 const initStripe = () => {
@@ -249,14 +251,27 @@ export default function CheckoutPage() {
       style={{ backgroundColor: "#0e0f12", fontFamily: "Poppins, sans-serif" }}
     >
       <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
-        {/* Header avec retour */}
-        <Link
-          href="/pricing"
-          className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors mb-8"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Retour aux tarifs
-        </Link>
+        {/* Header avec retour et logo */}
+        <div className="flex items-center justify-between mb-8">
+          <Link
+            href="/pricing"
+            className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Retour aux tarifs
+          </Link>
+          
+          <Link href="/" className="inline-block">
+            <Image
+              src={logo}
+              alt="Comptalyze"
+              width={140}
+              height={35}
+              className="h-8 w-auto"
+              priority
+            />
+          </Link>
+        </div>
 
         {/* Titre principal */}
         <div className="text-center mb-12">

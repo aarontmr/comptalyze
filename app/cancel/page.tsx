@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
+import logo from "@/public/logo.png";
 
 export default function CancelPage() {
   return (
@@ -10,14 +12,27 @@ export default function CancelPage() {
       style={{ backgroundColor: "#0e0f12", fontFamily: "Poppins, sans-serif" }}
     >
       <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
-        {/* Header avec retour */}
-        <Link
-          href="/pricing"
-          className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors mb-8"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Retour aux tarifs
-        </Link>
+        {/* Header avec logo et retour */}
+        <div className="flex items-center justify-between mb-8">
+          <Link
+            href="/pricing"
+            className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Retour aux tarifs
+          </Link>
+          
+          <Link href="/" className="inline-block">
+            <Image
+              src={logo}
+              alt="Comptalyze"
+              width={140}
+              height={35}
+              className="h-8 w-auto"
+              priority
+            />
+          </Link>
+        </div>
 
         {/* Contenu principal */}
         <div className="flex items-center justify-center min-h-[60vh]">
