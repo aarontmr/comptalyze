@@ -441,14 +441,9 @@ export default function CheckoutPage() {
             )}
 
             {!loading && !error && user && stripePromise && (
-              <>
-                <div className="text-xs text-gray-500 mb-4">
-                  🔄 Chargement du formulaire Stripe...
-                </div>
-                <EmbeddedCheckoutProvider stripe={stripePromise} options={options}>
-                  <CheckoutForm plan={plan} />
-                </EmbeddedCheckoutProvider>
-              </>
+              <EmbeddedCheckoutProvider stripe={stripePromise} options={options}>
+                <CheckoutForm plan={plan} />
+              </EmbeddedCheckoutProvider>
             )}
           </div>
         </div>
