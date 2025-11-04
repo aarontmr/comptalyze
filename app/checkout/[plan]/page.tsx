@@ -88,34 +88,9 @@ export default function CheckoutPage() {
     }
   }, [plan, user, autoRenew]);
 
-  // Configuration de l'apparence Stripe
+  // Configuration pour EmbeddedCheckout (appearance n'est pas supporté ici)
   const options = { 
     fetchClientSecret,
-    appearance: {
-      theme: 'night' as const,
-      variables: {
-        colorPrimary: '#2E6CF6',
-        colorBackground: '#0e0f12',
-        colorText: '#ffffff',
-        colorDanger: '#ef4444',
-        fontFamily: 'Poppins, sans-serif',
-        borderRadius: '12px',
-      },
-      rules: {
-        '.Input': {
-          backgroundColor: '#14161b',
-          border: '1px solid #2d3441',
-          color: '#ffffff',
-        },
-        '.Input:focus': {
-          border: '1px solid #2E6CF6',
-          boxShadow: '0 0 0 2px rgba(46, 108, 246, 0.2)',
-        },
-        '.Label': {
-          color: '#9ca3af',
-        },
-      },
-    },
   };
   
   console.log("⚙️ Options Stripe configurées:", options);

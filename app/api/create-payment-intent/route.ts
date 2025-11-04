@@ -96,6 +96,12 @@ export async function POST(req: Request) {
         plan: plan,
         autoRenew: autoRenew.toString(),
       },
+      // Personnalisation de l'apparence (pour EmbeddedCheckout, on utilise ces paramètres)
+      custom_text: {
+        submit: {
+          message: "Paiement sécurisé par Stripe",
+        },
+      },
       ...(Object.keys(subscriptionData).length > 0 && { subscription_data: subscriptionData }),
     });
 
