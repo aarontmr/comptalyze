@@ -36,7 +36,7 @@ export default function LandingPage() {
     };
   }, []);
 
-  const handleCheckout = async (plan: "pro" | "premium") => {
+  const handleCheckout = (plan: "pro" | "premium") => {
     // Vérifier que l'utilisateur est connecté
     if (!user) {
       alert("Vous devez être connecté pour souscrire à un abonnement. Redirection vers la page de connexion...");
@@ -44,35 +44,8 @@ export default function LandingPage() {
       return;
     }
 
-    try {
-      setLoading(plan);
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan, userId: user.id }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        const errorMessage = data.error || "Une erreur est survenue lors de la création de la session de paiement";
-        alert(`Erreur: ${errorMessage}`);
-        console.error("Erreur API checkout:", data);
-        return;
-      }
-
-      if (data.url) {
-        window.location.href = data.url; // Redirect to Stripe Checkout
-      } else {
-        alert("Erreur: Aucune URL de redirection reçue du serveur.");
-        console.error("Réponse API sans URL:", data);
-      }
-    } catch (error) {
-      console.error("Erreur lors de l'appel API:", error);
-      alert("Une erreur est survenue lors de la connexion au serveur. Vérifiez votre connexion internet.");
-    } finally {
-      setLoading(null);
-    }
+    // Rediriger vers la page de checkout intégrée
+    window.location.href = `/checkout/${plan}`;
   };
 
   return (

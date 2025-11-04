@@ -162,3 +162,4 @@ NEXT_PUBLIC_BASE_URL=https://comptalyze.com
 - [ ] Améliorer les templates d'emails avec un design plus professionnel
 
 
+

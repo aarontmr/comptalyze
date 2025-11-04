@@ -11,6 +11,7 @@ export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
   const [trialLoading, setTrialLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
 
   // Récupérer l'utilisateur connecté
   useEffect(() => {
@@ -60,7 +61,7 @@ export default function PricingPage() {
     }
   };
 
-  const handleCheckout = async (plan: "pro" | "premium") => {
+  const handleCheckout = (plan: "pro" | "premium") => {
     // Vérifier que l'utilisateur est connecté
     if (!user) {
       alert("Vous devez être connecté pour souscrire à un abonnement. Redirection vers la page de connexion...");
@@ -68,35 +69,24 @@ export default function PricingPage() {
       return;
     }
 
-    try {
-      setLoading(plan);
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan, userId: user.id }),
-      });
+    // Rediriger vers la page de checkout intégrée avec le cycle de facturation
+    const planWithCycle = billingCycle === "yearly" ? `${plan}_yearly` : plan;
+    window.location.href = `/checkout/${planWithCycle}`;
+  };
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        // Si la réponse n'est pas OK, afficher le message d'erreur
-        const errorMessage = data.error || "Une erreur est survenue lors de la création de la session de paiement";
-        alert(`Erreur: ${errorMessage}`);
-        console.error("Erreur API checkout:", data);
-        return;
-      }
-
-      if (data.url) {
-        window.location.href = data.url; // Redirect to Stripe Checkout
-      } else {
-        alert("Erreur: Aucune URL de redirection reçue du serveur.");
-        console.error("Réponse API sans URL:", data);
-      }
-    } catch (error) {
-      console.error("Erreur lors de l'appel API:", error);
-      alert("Une erreur est survenue lors de la connexion au serveur. Vérifiez votre connexion internet.");
-    } finally {
-      setLoading(null);
+  // Prix et économies
+  const pricing = {
+    pro: {
+      monthly: 5.90,
+      yearly: 56.90, // ~9.48€/mois (économie de 19%)
+      yearlyMonthly: 4.74,
+      savings: 13.90
+    },
+    premium: {
+      monthly: 9.90,
+      yearly: 94.90, // ~7.91€/mois (économie de 20%)
+      yearlyMonthly: 7.91,
+      savings: 24.90
     }
   };
 
@@ -109,6 +99,42 @@ export default function PricingPage() {
         <div className="mx-auto max-w-5xl text-center">
           <h1 className="text-3xl font-semibold sm:text-4xl">Des plans simples et transparents</h1>
           <p className="mt-3 text-gray-300">Commencez gratuitement, passez au Pro quand vous en avez besoin.</p>
+          
+          {/* Toggle Mensuel/Annuel */}
+          <div className="mt-8 inline-flex items-center gap-3 rounded-xl p-1.5" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
+            <button
+              onClick={() => setBillingCycle("monthly")}
+              className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                billingCycle === "monthly" 
+                  ? "text-white shadow-md" 
+                  : "text-gray-400 hover:text-gray-300"
+              }`}
+              style={billingCycle === "monthly" ? {
+                background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+              } : {}}
+            >
+              Mensuel
+            </button>
+            <button
+              onClick={() => setBillingCycle("yearly")}
+              className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 relative ${
+                billingCycle === "yearly" 
+                  ? "text-white shadow-md" 
+                  : "text-gray-400 hover:text-gray-300"
+              }`}
+              style={billingCycle === "yearly" ? {
+                background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+              } : {}}
+            >
+              Annuel
+              <span className="ml-2 text-xs px-2 py-0.5 rounded-full" style={{ 
+                backgroundColor: billingCycle === "yearly" ? "rgba(255,255,255,0.2)" : "#00D084",
+                color: billingCycle === "yearly" ? "white" : "#0e0f12"
+              }}>
+                -20%
+              </span>
+            </button>
+          </div>
         </div>
 
         <div className="mx-auto mt-10 grid max-w-6xl gap-6 px-0 sm:grid-cols-2 lg:grid-cols-3">
@@ -160,8 +186,25 @@ export default function PricingPage() {
             </div>
             <div className="mb-2 text-sm font-medium" style={{ color: "#60a5fa" }}>Pro</div>
             <div className="mb-4">
-              <span className="text-4xl font-bold">5,90 €</span>
-              <span className="text-gray-400">/mois</span>
+              {billingCycle === "monthly" ? (
+                <>
+                  <span className="text-4xl font-bold">5,90 €</span>
+                  <span className="text-gray-400">/mois</span>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-baseline gap-2 mb-1">
+                    <span className="text-4xl font-bold">56,90 €</span>
+                    <span className="text-gray-400">/an</span>
+                  </div>
+                  <div className="text-sm text-gray-400">
+                    Soit <span className="text-white font-medium">4,74 €/mois</span>
+                    <span className="ml-2 text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: "#00D084", color: "#0e0f12" }}>
+                      Économisez 13,90 €
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2 text-gray-200">
@@ -215,8 +258,25 @@ export default function PricingPage() {
               Premium
             </div>
             <div className="mb-4">
-              <span className="text-4xl font-bold">9,90 €</span>
-              <span className="text-gray-400">/mois</span>
+              {billingCycle === "monthly" ? (
+                <>
+                  <span className="text-4xl font-bold">9,90 €</span>
+                  <span className="text-gray-400">/mois</span>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-baseline gap-2 mb-1">
+                    <span className="text-4xl font-bold">94,90 €</span>
+                    <span className="text-gray-400">/an</span>
+                  </div>
+                  <div className="text-sm text-gray-400">
+                    Soit <span className="text-white font-medium">7,91 €/mois</span>
+                    <span className="ml-2 text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: "#00D084", color: "#0e0f12" }}>
+                      Économisez 24,90 €
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2 text-gray-200">
