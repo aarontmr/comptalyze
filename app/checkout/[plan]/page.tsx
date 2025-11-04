@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { loadStripe } from "@stripe/stripe-js";
-import { EmbeddedCheckoutProvider } from "@stripe/react-stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "@/app/components/CheckoutForm";
 import { ArrowLeft, Check } from "lucide-react";
 import Link from "next/link";
@@ -33,6 +33,7 @@ export default function CheckoutPage() {
   const [error, setError] = useState("");
   const [user, setUser] = useState<any>(null);
   const [autoRenew, setAutoRenew] = useState(true); // Par défaut activé
+  const [clientSecret, setClientSecret] = useState<string>("");
 
   useEffect(() => {
     const checkUser = async () => {
@@ -49,51 +50,87 @@ export default function CheckoutPage() {
     checkUser();
   }, [router]);
 
-  const fetchClientSecret = useCallback(async () => {
-    if (!user) {
-      console.log("❌ Pas d'utilisateur connecté");
-      return "";
-    }
+  useEffect(() => {
+    if (!user) return;
 
-    console.log("🔄 Création de la session Stripe pour:", { plan, userId: user.id, autoRenew });
+    const createPaymentIntent = async () => {
+      console.log("🔄 Création du Payment Intent pour:", { plan, userId: user.id, autoRenew });
 
-    try {
-      const res = await fetch("/api/create-payment-intent", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan, userId: user.id, autoRenew }),
-      });
+      try {
+        const res = await fetch("/api/create-payment-intent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ plan, userId: user.id, autoRenew }),
+        });
 
-      const data = await res.json();
-      console.log("📥 Réponse API:", data);
+        const data = await res.json();
+        console.log("📥 Réponse API:", data);
 
-      if (!res.ok) {
-        console.error("❌ Erreur API:", data);
-        setError(data.error || "Une erreur est survenue");
-        return "";
+        if (!res.ok) {
+          console.error("❌ Erreur API:", data);
+          setError(data.error || "Une erreur est survenue");
+          return;
+        }
+
+        if (!data.clientSecret) {
+          console.error("❌ Pas de clientSecret dans la réponse");
+          setError("Impossible de créer la session de paiement");
+          return;
+        }
+
+        console.log("✅ ClientSecret reçu");
+        setClientSecret(data.clientSecret);
+      } catch (err) {
+        console.error("❌ Erreur lors de l'appel API:", err);
+        setError("Impossible de charger le formulaire de paiement");
       }
+    };
 
-      if (!data.clientSecret) {
-        console.error("❌ Pas de clientSecret dans la réponse");
-        setError("Impossible de créer la session de paiement");
-        return "";
-      }
-
-      console.log("✅ ClientSecret reçu");
-      return data.clientSecret;
-    } catch (err) {
-      console.error("❌ Erreur lors de l'appel API:", err);
-      setError("Impossible de charger le formulaire de paiement");
-      return "";
-    }
+    createPaymentIntent();
   }, [plan, user, autoRenew]);
 
-  // Configuration pour EmbeddedCheckout (appearance n'est pas supporté ici)
-  const options = { 
-    fetchClientSecret,
+  // Options d'apparence pour Stripe Elements
+  const appearance = {
+    theme: 'night' as const,
+    variables: {
+      colorPrimary: '#2E6CF6',
+      colorBackground: '#0e0f12',
+      colorText: '#ffffff',
+      colorDanger: '#ef4444',
+      fontFamily: 'Poppins, sans-serif',
+      borderRadius: '12px',
+      colorTextSecondary: '#9ca3af',
+      colorTextPlaceholder: '#6b7280',
+    },
+    rules: {
+      '.Tab': {
+        backgroundColor: '#14161b',
+        border: '1px solid #2d3441',
+        color: '#9ca3af',
+      },
+      '.Tab:hover': {
+        backgroundColor: '#1a1d24',
+        color: '#ffffff',
+      },
+      '.Tab--selected': {
+        backgroundColor: '#2E6CF6',
+        color: '#ffffff',
+        border: '1px solid #2E6CF6',
+      },
+      '.Input': {
+        backgroundColor: '#14161b',
+        border: '1px solid #2d3441',
+        color: '#ffffff',
+      },
+      '.Input:focus': {
+        border: '1px solid #2E6CF6',
+        boxShadow: '0 0 0 2px rgba(46, 108, 246, 0.2)',
+      },
+      '.Label': {
+        color: '#9ca3af',
+      },
+    },
   };
-  
-  console.log("⚙️ Options Stripe configurées:", options);
 
   const planDetails = {
     pro: {
@@ -415,10 +452,23 @@ export default function CheckoutPage() {
               </div>
             )}
 
-            {!loading && !error && user && stripePromise && (
-              <EmbeddedCheckoutProvider stripe={stripePromise} options={options}>
+            {!loading && !error && user && stripePromise && clientSecret && (
+              <Elements stripe={stripePromise} options={{ clientSecret, appearance }}>
                 <CheckoutForm plan={plan} />
-              </EmbeddedCheckoutProvider>
+              </Elements>
+            )}
+            
+            {!loading && !error && user && stripePromise && !clientSecret && (
+              <div className="flex items-center justify-center py-12">
+                <div className="relative w-16 h-16">
+                  <div
+                    className="absolute inset-0 rounded-full border-4 border-t-transparent animate-spin"
+                    style={{
+                      borderColor: "#2E6CF6 transparent transparent transparent",
+                    }}
+                  />
+                </div>
+              </div>
             )}
           </div>
         </div>

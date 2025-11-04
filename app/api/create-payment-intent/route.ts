@@ -76,46 +76,38 @@ export async function POST(req: Request) {
       subscriptionData.cancel_at_period_end = true;
     }
     
-    console.log("🚀 Création de la session Stripe avec:", {
-      mode: "subscription",
+    console.log("🚀 Création du PaymentIntent pour abonnement avec:", {
       priceId,
-      ui_mode: "embedded",
-      return_url: `${baseUrl}/success`,
+      autoRenew,
     });
 
-    const session = await stripe.checkout.sessions.create({
-      mode: "subscription",
-      payment_method_types: ["card"],
-      line_items: [{ price: priceId, quantity: 1 }],
-      ui_mode: "embedded",
-      return_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
-      automatic_tax: { enabled: true },
-      client_reference_id: userId,
+    // Créer un PaymentIntent pour l'abonnement
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: plan.includes("pro") ? (plan.includes("yearly") ? 5690 : 590) : (plan.includes("yearly") ? 9490 : 990),
+      currency: "eur",
+      automatic_payment_methods: {
+        enabled: true,
+      },
       metadata: {
         userId: userId,
         plan: plan,
+        priceId: priceId,
         autoRenew: autoRenew.toString(),
       },
-      // Personnalisation de l'apparence (pour EmbeddedCheckout, on utilise ces paramètres)
-      custom_text: {
-        submit: {
-          message: "Paiement sécurisé par Stripe",
-        },
-      },
-      ...(Object.keys(subscriptionData).length > 0 && { subscription_data: subscriptionData }),
+      description: `Abonnement Comptalyze ${plan}`,
     });
 
-    console.log("✅ Session Stripe créée:", session.id);
+    console.log("✅ PaymentIntent créé:", paymentIntent.id);
 
-    if (!session.client_secret) {
-      console.error("❌ Pas de client_secret dans la session Stripe");
-      return NextResponse.json({ error: "Erreur lors de la création de la session" }, { status: 500 });
+    if (!paymentIntent.client_secret) {
+      console.error("❌ Pas de client_secret dans le PaymentIntent");
+      return NextResponse.json({ error: "Erreur lors de la création du paiement" }, { status: 500 });
     }
 
     console.log("✅ ClientSecret généré avec succès");
     
     return NextResponse.json({
-      clientSecret: session.client_secret,
+      clientSecret: paymentIntent.client_secret,
     });
   } catch (error: any) {
     console.error("Erreur lors de la création du Payment Intent:", error);

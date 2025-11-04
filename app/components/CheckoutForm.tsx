@@ -1,48 +1,77 @@
 "use client";
 
-import { EmbeddedCheckout } from "@stripe/react-stripe-js";
-import { useEffect, useState } from "react";
+import { useState, FormEvent } from "react";
+import { useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js";
+import { Lock } from "lucide-react";
 
 interface CheckoutFormProps {
   plan: string;
 }
 
 export default function CheckoutForm({ plan }: CheckoutFormProps) {
-  const [isLoading, setIsLoading] = useState(true);
-  
-  useEffect(() => {
-    console.log("🎨 CheckoutForm monté pour le plan:", plan);
-    
-    // Simuler un délai pour masquer le loader une fois Stripe chargé
-    const timer = setTimeout(() => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [message, setMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    if (!stripe || !elements) {
+      return;
+    }
+
+    setIsLoading(true);
+    setMessage(null);
+
+    const { error } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        return_url: `${window.location.origin}/success`,
+      },
+    });
+
+    if (error) {
+      if (error.type === "card_error" || error.type === "validation_error") {
+        setMessage(error.message || "Une erreur est survenue");
+      } else {
+        setMessage("Une erreur inattendue est survenue.");
+      }
       setIsLoading(false);
-    }, 2000);
-    
-    return () => clearTimeout(timer);
-  }, [plan]);
+    }
+  };
 
   return (
-    <div className="space-y-6">
-      {isLoading && (
-        <div className="flex items-center justify-center py-8">
-          <div className="text-center">
-            <div className="relative w-12 h-12 mx-auto mb-4">
-              <div
-                className="absolute inset-0 rounded-full border-4 border-t-transparent animate-spin"
-                style={{
-                  borderColor: "#2E6CF6 transparent transparent transparent",
-                }}
-              />
-            </div>
-            <p className="text-sm text-gray-400">Chargement du formulaire de paiement...</p>
-          </div>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <PaymentElement options={{
+        layout: "tabs",
+      }} />
+
+      {message && (
+        <div
+          className="rounded-lg p-4"
+          style={{
+            backgroundColor: "rgba(239, 68, 68, 0.1)",
+            border: "1px solid rgba(239, 68, 68, 0.3)",
+          }}
+        >
+          <p className="text-sm text-red-400">{message}</p>
         </div>
       )}
-      
-      <div style={{ display: isLoading ? 'none' : 'block' }}>
-        <EmbeddedCheckout />
-      </div>
-      
+
+      <button
+        type="submit"
+        disabled={isLoading || !stripe || !elements}
+        className="w-full inline-flex items-center justify-center gap-2 rounded-lg px-6 py-4 text-base font-medium text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-[1.02] disabled:hover:scale-100"
+        style={{
+          background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+          boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
+        }}
+      >
+        <Lock className="w-4 h-4" />
+        {isLoading ? "Traitement en cours..." : "Confirmer le paiement"}
+      </button>
+
       <div className="flex items-center justify-center gap-4 pt-4 border-t border-gray-700">
         <svg className="h-6 opacity-50" viewBox="0 0 60 25" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M0 12.5C0 5.59644 5.59644 0 12.5 0C19.4036 0 25 5.59644 25 12.5C25 19.4036 19.4036 25 12.5 25C5.59644 25 0 19.4036 0 12.5Z" fill="#00D084"/>
@@ -50,7 +79,7 @@ export default function CheckoutForm({ plan }: CheckoutFormProps) {
         </svg>
         <div className="text-xs text-gray-500">Paiement sécurisé par Stripe</div>
       </div>
-    </div>
+    </form>
   );
 }
 
