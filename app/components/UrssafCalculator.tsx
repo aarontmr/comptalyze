@@ -5,8 +5,8 @@ import { User } from '@supabase/supabase-js';
 import Link from 'next/link';
 import { getUserSubscription, hasFeatureAccess } from '@/lib/subscriptionUtils';
 import { supabase } from '@/lib/supabaseClient';
-import RevenueChart from './RevenueChart';
 import UrssafPrefill from './UrssafPrefill';
+import { Trash2 } from 'lucide-react';
 
 interface CARecord {
   id: string;
@@ -51,6 +51,7 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [deleting, setDeleting] = useState<string | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
   const [showToast, setShowToast] = useState<string | null>(null);
@@ -226,6 +227,42 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
       showToastMessage('Erreur lors de l\'enregistrement.');
     } finally {
       setSaving(false);
+    }
+  };
+
+  // Fonction pour supprimer un enregistrement
+  const deleteRecord = async (recordId: string) => {
+    if (!user || !confirm('Êtes-vous sûr de vouloir supprimer cet enregistrement ?')) {
+      return;
+    }
+
+    try {
+      setDeleting(recordId);
+      
+      const { error } = await supabase
+        .from('ca_records')
+        .delete()
+        .eq('id', recordId)
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Erreur lors de la suppression:', error);
+        showToastMessage(`Erreur lors de la suppression: ${error.message}`);
+        return;
+      }
+
+      showToastMessage('Enregistrement supprimé avec succès !');
+      
+      // Recharger l'historique
+      await loadRecords();
+      
+      // Émettre un événement personnalisé pour mettre à jour les statistiques
+      window.dispatchEvent(new CustomEvent('ca_records_updated'));
+    } catch (error: any) {
+      console.error('Erreur:', error);
+      showToastMessage(`Erreur lors de la suppression: ${error?.message || 'Erreur inconnue'}`);
+    } finally {
+      setDeleting(null);
     }
   };
 
@@ -579,14 +616,7 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
         )}
       </div>
 
-      {/* Graphique d'évolution du CA (Premium only) */}
-      {isPremium && user && (
-        <div className="mt-6">
-          <RevenueChart userId={user.id} />
-        </div>
-      )}
-
-      {/* Pré-remplissage URSSAF (Premium only) - après le graphique */}
+      {/* Pré-remplissage URSSAF (Premium only) */}
       {isPremium && user && (
         <div className="mt-6">
           <UrssafPrefill userId={user.id} />
@@ -639,6 +669,7 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
                   <th className="text-right py-2 px-3 text-sm font-medium text-gray-400">Cotisations</th>
                   <th className="text-right py-2 px-3 text-sm font-medium text-gray-400">Net</th>
                   <th className="text-right py-2 px-3 text-sm font-medium text-gray-400">Croissance</th>
+                  <th className="text-center py-2 px-3 text-sm font-medium text-gray-400">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -683,6 +714,19 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
                           </span>
                         )}
                       </td>
+                      <td className="py-2 px-3 text-center">
+                        <button
+                          onClick={() => deleteRecord(record.id)}
+                          disabled={deleting === record.id}
+                          className="inline-flex items-center justify-center p-2 rounded-lg transition-all duration-200 hover:bg-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                          style={{
+                            color: deleting === record.id ? '#9ca3af' : '#ef4444',
+                          }}
+                          title="Supprimer cet enregistrement"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </td>
                     </tr>
                   );
                 })}
@@ -710,6 +754,7 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
                   <td className="py-3 px-3 text-sm font-semibold text-gray-500 text-right">
                     -
                   </td>
+                  <td className="py-3 px-3"></td>
                 </tr>
               </tfoot>
             </table>

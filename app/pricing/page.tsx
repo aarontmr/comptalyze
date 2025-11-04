@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { User } from "@supabase/supabase-js";
+import { Check } from "lucide-react";
 
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
@@ -77,13 +78,27 @@ export default function PricingPage() {
               <span className="text-4xl font-bold">0 €</span>
               <span className="text-gray-400">/mois</span>
             </div>
-            <ul className="space-y-2 text-sm text-gray-300">
-              <li>3 simulations / mois</li>
-              <li>Accès au simulateur</li>
+            <ul className="space-y-3 text-sm">
+              <li className="flex items-start gap-2 text-gray-300">
+                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
+                <span>3 simulations par mois</span>
+              </li>
+              <li className="flex items-start gap-2 text-gray-300">
+                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
+                <span>Accès au simulateur URSSAF</span>
+              </li>
+              <li className="flex items-start gap-2 text-gray-300">
+                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
+                <span>Calcul des cotisations</span>
+              </li>
+              <li className="flex items-start gap-2 text-gray-300">
+                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
+                <span>Projection annuelle</span>
+              </li>
             </ul>
             <Link
               href="/signup"
-              className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm"
+              className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm transition-transform duration-200 hover:scale-[1.02]"
               style={{ border: "1px solid #2b2f36", backgroundColor: "#0e0f12" }}
             >
               Commencer gratuitement
@@ -99,18 +114,43 @@ export default function PricingPage() {
               boxShadow: "0 0 40px rgba(46,108,246,0.18)",
             }}
           >
-            <div className="absolute right-4 top-4 rounded-md px-2 py-1 text-xs" style={{ backgroundColor: "#2E6CF6" }}>
+            <div className="absolute right-4 top-4 rounded-md px-2 py-1 text-xs font-medium" style={{ backgroundColor: "#2E6CF6" }}>
               Recommandé
             </div>
-            <div className="mb-2 text-sm text-blue-300">Pro</div>
+            <div className="mb-2 text-sm font-medium" style={{ color: "#60a5fa" }}>Pro</div>
             <div className="mb-4">
               <span className="text-4xl font-bold">5,90 €</span>
               <span className="text-gray-400">/mois</span>
             </div>
-            <ul className="space-y-2 text-sm text-gray-200">
-              <li>Simulations illimitées</li>
-              <li>Export PDF</li>
-              <li>Sauvegarde en ligne</li>
+            <ul className="space-y-3 text-sm">
+              <li className="flex items-start gap-2 text-gray-200">
+                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                <span>Tout le plan Gratuit</span>
+              </li>
+              <li className="flex items-start gap-2 text-gray-200">
+                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                <span>Simulations illimitées</span>
+              </li>
+              <li className="flex items-start gap-2 text-gray-200">
+                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                <span>Export PDF par e-mail</span>
+              </li>
+              <li className="flex items-start gap-2 text-gray-200">
+                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                <span>Sauvegarde en ligne illimitée</span>
+              </li>
+              <li className="flex items-start gap-2 text-gray-200">
+                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                <span>Gestion des factures</span>
+              </li>
+              <li className="flex items-start gap-2 text-gray-200">
+                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                <span>Génération PDF de factures</span>
+              </li>
+              <li className="flex items-start gap-2 text-gray-200">
+                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                <span>Envoi de factures par e-mail</span>
+              </li>
             </ul>
             <button
               onClick={() => handleCheckout("pro")}
@@ -126,17 +166,50 @@ export default function PricingPage() {
           </div>
 
           {/* Premium */}
-          <div className="rounded-2xl p-6" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
-            <div className="mb-2 text-sm text-gray-400">Premium</div>
+          <div className="rounded-2xl p-6 relative" style={{ backgroundColor: "#14161b", border: "1px solid rgba(0,208,132,0.3)" }}>
+            <div className="absolute right-4 top-4 rounded-md px-2 py-1 text-xs font-medium" style={{ background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)" }}>
+              Premium
+            </div>
+            <div className="mb-2 text-sm font-medium text-transparent bg-clip-text" style={{ backgroundImage: "linear-gradient(90deg, #00D084, #2E6CF6)" }}>
+              Premium
+            </div>
             <div className="mb-4">
               <span className="text-4xl font-bold">9,90 €</span>
               <span className="text-gray-400">/mois</span>
             </div>
-            <ul className="space-y-2 text-sm text-gray-300">
-              <li>Tout le plan Pro</li>
-              <li>Rappels URSSAF automatiques</li>
-              <li>Chatbot IA personnalisé</li>
-              <li>Support prioritaire</li>
+            <ul className="space-y-3 text-sm">
+              <li className="flex items-start gap-2 text-gray-200">
+                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                <span>Tout le plan Pro</span>
+              </li>
+              <li className="flex items-start gap-2 text-gray-200">
+                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                <span>Rappels URSSAF automatiques par e-mail</span>
+              </li>
+              <li className="flex items-start gap-2 text-gray-200">
+                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                <span>Assistant IA personnalisé (chatbot flottant)</span>
+              </li>
+              <li className="flex items-start gap-2 text-gray-200">
+                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                <span>Conseils IA basés sur vos données</span>
+              </li>
+              <li className="flex items-start gap-2 text-gray-200">
+                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                <span>Graphiques d'évolution du chiffre d'affaires</span>
+              </li>
+              <li className="flex items-start gap-2 text-gray-200">
+                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                <span>Pré-remplissage automatique URSSAF</span>
+              </li>
+              <li className="flex items-start gap-2 text-gray-200">
+                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                <span>Support prioritaire</span>
+              </li>
+              <li className="flex items-start gap-2 text-gray-200">
+                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                <span>Historique complet et analyses</span>
+              </li>
             </ul>
             <button
               onClick={() => handleCheckout("premium")}

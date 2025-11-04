@@ -16,6 +16,7 @@ import {
   Menu,
   X,
   LogOut,
+  Home,
 } from 'lucide-react';
 import logo from '@/public/logo.png';
 import FloatingAIAssistant from '@/app/components/FloatingAIAssistant';
@@ -143,6 +144,17 @@ export default function DashboardLayout({
             </Link>
           </div>
 
+          {/* Lien vers l'accueil */}
+          <div className="px-4 py-2 border-b border-gray-800">
+            <Link
+              href="/"
+              className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition-all duration-200"
+            >
+              <Home className="w-5 h-5" />
+              <span>Accueil</span>
+            </Link>
+          </div>
+
           {/* Navigation */}
           <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
             {filteredNavItems.map((item) => {
@@ -230,6 +242,18 @@ export default function DashboardLayout({
             >
               <X className="w-6 h-6" />
             </button>
+          </div>
+
+          {/* Mobile - Lien vers l'accueil */}
+          <div className="px-4 py-2 border-b border-gray-800">
+            <Link
+              href="/"
+              onClick={() => setSidebarOpen(false)}
+              className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition-all duration-200"
+            >
+              <Home className="w-5 h-5" />
+              <span>Accueil</span>
+            </Link>
           </div>
 
           {/* Mobile navigation */}
