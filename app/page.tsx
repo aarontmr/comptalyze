@@ -253,43 +253,83 @@ export default function LandingPage() {
       </div>
 
       {/* HERO */}
-      <section className="relative px-4 pt-16 pb-8 sm:pt-20 sm:pb-10 md:pt-24 md:pb-12 overflow-hidden">
+      <section className="relative px-4 pt-20 pb-12 sm:pt-24 sm:pb-16 md:pt-32 md:pb-20 overflow-hidden">
         <GradientBlob />
-        <div className="mx-auto max-w-5xl text-center relative z-10">
+        
+        <div className="mx-auto max-w-6xl text-center relative z-10">
+          {/* Badge premium en haut */}
+          <FadeIn delay={0.05} y={8}>
+            <div className="inline-flex items-center gap-2 rounded-full px-4 py-2 mb-6 sm:mb-8" 
+              style={{
+                backgroundColor: "rgba(46,108,246,0.1)",
+                border: "1px solid rgba(46,108,246,0.2)",
+              }}
+            >
+              <Sparkles className="w-4 h-4" style={{ color: "#00D084" }} />
+              <span className="text-xs sm:text-sm font-medium text-gray-300">
+                La solution comptable des micro-entrepreneurs
+              </span>
+            </div>
+          </FadeIn>
+
+          {/* Titre principal */}
           <FadeIn delay={0.1} y={12}>
-            <h1 className="text-3xl font-semibold sm:text-4xl md:text-5xl leading-tight">
-              Simplifiez votre comptabilité de micro-entrepreneur.
+            <h1 className="text-4xl font-bold sm:text-5xl md:text-6xl lg:text-7xl leading-tight px-2">
+              <span className="block mb-2">Simplifiez votre</span>
+              <span 
+                className="block bg-clip-text text-transparent"
+                style={{
+                  backgroundImage: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                }}
+              >
+                comptabilité
+              </span>
+              <span className="block mt-2 text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
+                de micro-entrepreneur
+              </span>
             </h1>
           </FadeIn>
+
+          {/* Sous-titre */}
           <FadeIn delay={0.2} y={12}>
-            <p className="mt-4 text-base text-gray-300 sm:text-lg md:text-xl">
-              Comptalyze calcule automatiquement vos cotisations URSSAF et vos projections de revenus, en quelques secondes.
+            <p className="mt-6 sm:mt-8 text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed px-4">
+              Calculez automatiquement vos <span className="text-white font-semibold">cotisations URSSAF</span> et vos{" "}
+              <span className="text-white font-semibold">projections de revenus</span> en quelques secondes.
             </p>
           </FadeIn>
+
+          {/* Call to Actions */}
           <FadeIn delay={0.3} y={12}>
-            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <div className="mt-8 sm:mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4 px-4">
               <ScaleOnHover>
                 <Link
                   href="/signup"
-                  className="inline-flex items-center justify-center rounded-lg px-6 py-3 text-sm font-medium text-white transition-all duration-200 glow"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-8 py-4 text-base sm:text-lg font-semibold text-white transition-all duration-200 glow shadow-xl"
                   style={{
                     background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                    boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
+                    boxShadow: "0 12px 40px rgba(46,108,246,0.4)",
                   }}
                 >
-                  Essayer gratuitement
+                  <UserPlus className="w-5 h-5" />
+                  Commencer gratuitement
                 </Link>
               </ScaleOnHover>
               <ScaleOnHover>
                 <Link
                   href="/pricing"
-                  className="inline-flex items-center justify-center rounded-lg px-6 py-3 text-sm font-medium transition-colors"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-8 py-4 text-base sm:text-lg font-medium transition-all hover:bg-opacity-80"
                   style={{ border: "1px solid #2b2f36", backgroundColor: "#14161b" }}
                 >
+                  <Percent className="w-5 h-5" />
                   Voir les tarifs
                 </Link>
               </ScaleOnHover>
             </div>
+            
+            {/* Micro text sous les boutons */}
+            <p className="mt-4 text-xs sm:text-sm text-gray-500 px-4">
+              Sans carte bancaire • 3 simulations gratuites • Annulable à tout moment
+            </p>
           </FadeIn>
 
           {/* Social Proof */}
