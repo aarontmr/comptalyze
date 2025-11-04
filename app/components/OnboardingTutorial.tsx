@@ -154,8 +154,11 @@ export default function OnboardingTutorial({ user, onComplete }: OnboardingTutor
       return;
     }
 
+    // Stocker le selector dans une constante pour garantir le type
+    const targetSelector = step.targetSelector;
+
     const updatePositions = () => {
-      const element = document.querySelector(step.targetSelector) as HTMLElement;
+      const element = document.querySelector(targetSelector) as HTMLElement;
       if (!element) {
         setTargetElement(null);
         setElementPosition(null);
