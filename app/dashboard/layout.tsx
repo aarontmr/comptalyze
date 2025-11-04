@@ -18,6 +18,10 @@ import {
   LogOut,
   Home,
   Sparkles,
+  Receipt,
+  Download,
+  Calendar as CalendarIcon,
+  Percent,
 } from 'lucide-react';
 import logo from '@/public/logo.png';
 import FloatingAIAssistant from '@/app/components/FloatingAIAssistant';
@@ -95,10 +99,34 @@ export default function DashboardLayout({
     { label: 'Aperçu', href: '/dashboard', icon: LayoutDashboard },
     { label: 'Calcul URSSAF', href: '/dashboard/simulateur', icon: Calculator },
     {
+      label: 'Simulateur TVA',
+      href: '/dashboard/tva',
+      icon: Percent,
+      requiresPro: true,
+    },
+    {
+      label: 'Charges',
+      href: '/dashboard/charges',
+      icon: Receipt,
+      requiresPro: true,
+    },
+    {
       label: 'Factures',
       href: '/dashboard/factures',
       icon: FileText,
       requiresPro: true,
+    },
+    {
+      label: 'Export comptable',
+      href: '/dashboard/export',
+      icon: Download,
+      requiresPro: true,
+    },
+    {
+      label: 'Calendrier fiscal',
+      href: '/dashboard/calendrier-fiscal',
+      icon: CalendarIcon,
+      requiresPremium: true,
     },
     {
       label: 'Statistiques',

@@ -215,7 +215,15 @@ export default function PricingPage() {
               </li>
               <li className="flex items-start gap-2 text-gray-200">
                 <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                <span>Export PDF par e-mail</span>
+                <span>Simulateur de TVA</span>
+              </li>
+              <li className="flex items-start gap-2 text-gray-200">
+                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                <span>Gestion des charges déductibles</span>
+              </li>
+              <li className="flex items-start gap-2 text-gray-200">
+                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                <span>Export comptable (Excel/CSV/PDF)</span>
               </li>
               <li className="flex items-start gap-2 text-gray-200">
                 <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
@@ -223,7 +231,7 @@ export default function PricingPage() {
               </li>
               <li className="flex items-start gap-2 text-gray-200">
                 <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                <span>Gestion des factures</span>
+                <span>Gestion des factures complète</span>
               </li>
               <li className="flex items-start gap-2 text-gray-200">
                 <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
@@ -306,11 +314,15 @@ export default function PricingPage() {
               </li>
               <li className="flex items-start gap-2 text-gray-200">
                 <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                <span>Rappels URSSAF automatiques par e-mail</span>
+                <span>Calendrier fiscal URSSAF intelligent</span>
               </li>
               <li className="flex items-start gap-2 text-gray-200">
                 <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                <span>Assistant IA personnalisé (chatbot flottant)</span>
+                <span>Rappels automatiques par e-mail</span>
+              </li>
+              <li className="flex items-start gap-2 text-gray-200">
+                <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                <span>Assistant IA personnalisé</span>
               </li>
               <li className="flex items-start gap-2 text-gray-200">
                 <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
@@ -318,7 +330,7 @@ export default function PricingPage() {
               </li>
               <li className="flex items-start gap-2 text-gray-200">
                 <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                <span>Graphiques d'évolution du chiffre d'affaires</span>
+                <span>Graphiques d'évolution avancés</span>
               </li>
               <li className="flex items-start gap-2 text-gray-200">
                 <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
@@ -326,11 +338,11 @@ export default function PricingPage() {
               </li>
               <li className="flex items-start gap-2 text-gray-200">
                 <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                <span>Support prioritaire</span>
+                <span>Analyses et insights détaillés</span>
               </li>
               <li className="flex items-start gap-2 text-gray-200">
                 <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                <span>Historique complet et analyses</span>
+                <span>Support prioritaire</span>
               </li>
             </ul>
             {(() => {
