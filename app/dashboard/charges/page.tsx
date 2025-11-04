@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { Plus, Trash2, Receipt, TrendingDown } from "lucide-react";
+import { Plus, Trash2, Receipt, TrendingDown, AlertCircle } from "lucide-react";
 import { User } from "@supabase/supabase-js";
 
 interface Charge {
