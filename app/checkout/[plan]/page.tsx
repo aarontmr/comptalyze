@@ -134,7 +134,16 @@ export default function CheckoutPage() {
     },
   };
 
-  const planDetails = {
+  const planDetails: Record<string, {
+    name: string;
+    price: string;
+    billingPeriod: string;
+    color?: string;
+    gradient?: string;
+    pricePerMonth?: string;
+    savings?: string;
+    features: string[];
+  }> = {
     pro: {
       name: "Pro",
       price: "5,90 €",
@@ -301,13 +310,13 @@ export default function CheckoutPage() {
               <div
                 className="text-lg font-semibold mb-1"
                 style={
-                  plan.includes("premium")
+                  plan.includes("premium") && currentPlan.gradient
                     ? {
                         background: currentPlan.gradient,
                         WebkitBackgroundClip: "text",
                         WebkitTextFillColor: "transparent",
                       }
-                    : { color: currentPlan.color }
+                    : { color: currentPlan.color || "#2E6CF6" }
                 }
               >
                 Plan {currentPlan.name}
