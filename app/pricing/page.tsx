@@ -236,17 +236,40 @@ export default function PricingPage() {
                 <span>Envoi de factures par e-mail</span>
               </li>
             </ul>
-            <button
-              onClick={() => handleCheckout("pro")}
-              disabled={loading !== null}
-              className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed transition-transform duration-200 hover:scale-[1.02] disabled:hover:scale-100"
-              style={{
-                background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
-              }}
-            >
-              {loading === "pro" ? "Redirection..." : "Passer à Pro"}
-            </button>
+            {(() => {
+              const subscription = getUserSubscription(user);
+              
+              // Si l'utilisateur est déjà Pro, rediriger vers le compte
+              if (subscription.isPro && !subscription.isPremium) {
+                return (
+                  <a
+                    href="/dashboard/compte"
+                    className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white transition-transform duration-200 hover:scale-[1.02]"
+                    style={{
+                      background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                      boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
+                    }}
+                  >
+                    Gérer mon abonnement
+                  </a>
+                );
+              }
+              
+              // Sinon, permettre de souscrire
+              return (
+                <button
+                  onClick={() => handleCheckout("pro")}
+                  disabled={loading !== null}
+                  className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed transition-transform duration-200 hover:scale-[1.02] disabled:hover:scale-100"
+                  style={{
+                    background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                    boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
+                  }}
+                >
+                  {loading === "pro" ? "Redirection..." : "Passer à Pro"}
+                </button>
+              );
+            })()}
           </div>
 
           {/* Premium */}
@@ -341,6 +364,23 @@ export default function PricingPage() {
               }
               
               if (hasUsedTrial || subscription.isPremium) {
+                // Si l'utilisateur est déjà Premium, afficher un lien vers le compte
+                if (subscription.isPremium) {
+                  return (
+                    <a
+                      href="/dashboard/compte"
+                      className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white transition-transform duration-200 hover:scale-[1.02]"
+                      style={{
+                        background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                        boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
+                      }}
+                    >
+                      Gérer mon abonnement
+                    </a>
+                  );
+                }
+                
+                // Sinon, permettre de souscrire
                 return (
                   <button
                     onClick={() => handleCheckout("premium")}
@@ -351,7 +391,7 @@ export default function PricingPage() {
                       boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
                     }}
                   >
-                    {loading === "premium" ? "Redirection..." : subscription.isPremium ? "Gérer mon abonnement" : "Passer à Premium"}
+                    {loading === "premium" ? "Redirection..." : "Passer à Premium"}
                   </button>
                 );
               }

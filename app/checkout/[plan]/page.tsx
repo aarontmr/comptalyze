@@ -128,6 +128,27 @@ export default function CheckoutPage() {
     },
   };
 
+  // Vérifier que le plan est défini
+  if (!plan || typeof plan !== 'string') {
+    return (
+      <main
+        className="min-h-screen w-full flex items-center justify-center text-white"
+        style={{ backgroundColor: "#0e0f12", fontFamily: "Poppins, sans-serif" }}
+      >
+        <div className="text-center">
+          <h1 className="text-2xl font-semibold mb-4">Plan non spécifié</h1>
+          <Link
+            href="/pricing"
+            className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Retour aux tarifs
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
   const currentPlan = planDetails[plan as keyof typeof planDetails];
 
   if (!currentPlan) {
@@ -138,6 +159,7 @@ export default function CheckoutPage() {
       >
         <div className="text-center">
           <h1 className="text-2xl font-semibold mb-4">Plan invalide</h1>
+          <p className="text-gray-400 mb-4">Le plan "{plan}" n'existe pas.</p>
           <Link
             href="/pricing"
             className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
