@@ -125,6 +125,21 @@ export default function DashboardOverview() {
     return value.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
+  // Calculer le taux de croissance du CA
+  const calculateGrowthRate = () => {
+    if (stats.lastMonthCA === 0) {
+      if (stats.currentMonthCA > 0) return { value: Infinity, formatted: 'Nouveau' };
+      return { value: 0, formatted: '0%' };
+    }
+    const growthRate = ((stats.currentMonthCA - stats.lastMonthCA) / stats.lastMonthCA) * 100;
+    return {
+      value: growthRate,
+      formatted: `${growthRate >= 0 ? '+' : ''}${growthRate.toFixed(1)}%`
+    };
+  };
+
+  const growthRate = calculateGrowthRate();
+
   const MONTHS = [
     'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
     'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
@@ -186,6 +201,24 @@ export default function DashboardOverview() {
             Total URSSAF
           </p>
         </DesktopCard>
+
+        {/* Taux de croissance du CA */}
+        {stats.lastMonthCA > 0 && (
+          <DesktopCard>
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)' }}>
+                <TrendingUp className="w-6 h-6" style={{ color: growthRate.value >= 0 ? '#10b981' : '#ef4444' }} />
+              </div>
+            </div>
+            <h3 className="text-sm font-medium text-gray-400 mb-1">Croissance CA</h3>
+            <p className="text-2xl font-semibold text-white" style={{ color: growthRate.value >= 0 ? '#10b981' : '#ef4444' }}>
+              {growthRate.formatted}
+            </p>
+            <p className="text-xs text-gray-500 mt-2">
+              vs mois précédent
+            </p>
+          </DesktopCard>
+        )}
 
         {/* Factures (si Pro/Premium) */}
         {(subscription.isPro || subscription.isPremium) && (
@@ -331,8 +364,8 @@ export default function DashboardOverview() {
                 </Card>
               </motion.div>
 
-              {/* Tendance vs mois dernier (Pro/Premium) */}
-              {(subscription.isPro || subscription.isPremium) && stats.lastMonthCA > 0 && (
+              {/* Taux de croissance du CA */}
+              {stats.lastMonthCA > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -340,18 +373,17 @@ export default function DashboardOverview() {
                 >
                   <Card>
                     <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-400 mb-1">Tendance vs mois dernier</h3>
-                        <p className="text-lg font-semibold text-white">
-                          {stats.currentMonthCA > stats.lastMonthCA ? '+' : ''}
-                          {formatEuro(stats.currentMonthCA - stats.lastMonthCA)} €
+                      <div className="flex-1">
+                        <h3 className="text-sm font-medium text-gray-400 mb-1">Croissance CA</h3>
+                        <p className="text-xl font-semibold" style={{ color: growthRate.value >= 0 ? '#10b981' : '#ef4444' }}>
+                          {growthRate.formatted}
                         </p>
                         <p className="text-xs text-gray-500 mt-1">
-                          {((stats.currentMonthCA - stats.lastMonthCA) / stats.lastMonthCA * 100).toFixed(1)}%
+                          vs mois précédent
                         </p>
                       </div>
-                      <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(46, 108, 246, 0.1)' }}>
-                        <TrendingUp className="w-5 h-5" style={{ color: stats.currentMonthCA >= stats.lastMonthCA ? '#10b981' : '#ef4444' }} />
+                      <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)' }}>
+                        <TrendingUp className="w-5 h-5" style={{ color: growthRate.value >= 0 ? '#10b981' : '#ef4444' }} />
                       </div>
                     </div>
                   </Card>
