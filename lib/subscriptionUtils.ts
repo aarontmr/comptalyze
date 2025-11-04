@@ -57,7 +57,15 @@ export function getUserSubscription(user: User | null | undefined): UserSubscrip
 
   // Déterminer le plan
   let plan: SubscriptionPlan = 'free';
-  if (subscriptionPlan === 'premium' || (isPremium && (isTrial || metadata.stripe_subscription_id))) {
+  let finalIsPremium = isPremium;
+  
+  // Un utilisateur est Premium si :
+  // - is_premium est true ET (a un essai actif OU a un abonnement Stripe OU statut est 'active')
+  if (isPremium) {
+    finalIsPremium = isTrial || !!metadata.stripe_subscription_id || status === 'active';
+  }
+  
+  if (subscriptionPlan === 'premium' || finalIsPremium) {
     plan = 'premium';
   } else if (subscriptionPlan === 'pro' || isPro) {
     plan = 'pro';
@@ -66,7 +74,7 @@ export function getUserSubscription(user: User | null | undefined): UserSubscrip
   return {
     plan,
     isPro,
-    isPremium: isPremium && (isTrial || metadata.stripe_subscription_id),
+    isPremium: finalIsPremium,
     status,
     isTrial,
     trialEndsAt,
