@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import type { User } from '@supabase/supabase-js';
+import type { User, SupabaseClient } from '@supabase/supabase-js';
 
 export type Plan = 'free' | 'pro' | 'premium';
 
@@ -9,7 +9,7 @@ export type Plan = 'free' | 'pro' | 'premium';
  * pour déterminer le plan à partir du price_id
  */
 export async function getUserPlan(
-  supabase: ReturnType<typeof createClient>,
+  supabase: SupabaseClient<any, any, any>,
   userId: string
 ): Promise<Plan> {
   try {
