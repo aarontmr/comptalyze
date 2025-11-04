@@ -10,7 +10,7 @@ import DesktopCard from '@/app/components/Card';
 import Skeleton from '@/components/ui/Skeleton';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Breadcrumbs from '@/app/components/Breadcrumbs';
-import { DollarSign, TrendingUp, PieChart, ArrowRight, Sparkles, Calculator, FileText, BarChart3 } from 'lucide-react';
+import { DollarSign, TrendingUp, PieChart, ArrowRight, Sparkles, Calculator, FileText, BarChart3, Shield } from 'lucide-react';
 import Link from 'next/link';
 import PremiumAdvice from '@/app/components/PremiumAdvice';
 import { motion } from 'framer-motion';
@@ -293,6 +293,14 @@ export default function DashboardOverview() {
           </Link>
         )}
       </div>
+
+      {/* Trust badge URSSAF */}
+      <div className="mt-8 pt-6 border-t" style={{ borderColor: '#1f232b' }}>
+        <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
+          <Shield className="w-4 h-4" style={{ color: '#00D084' }} />
+          <span>Basé sur les données officielles de l'URSSAF</span>
+        </div>
+      </div>
     </div>
   );
 
@@ -467,6 +475,14 @@ export default function DashboardOverview() {
             </Card>
           </motion.div>
         )}
+
+        {/* Trust badge URSSAF */}
+        <div className="pt-6 border-t" style={{ borderColor: '#1f232b' }}>
+          <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
+            <Shield className="w-4 h-4" style={{ color: '#00D084' }} />
+            <span>Basé sur les données officielles de l'URSSAF</span>
+          </div>
+        </div>
       </div>
     </MobileShell>
   );

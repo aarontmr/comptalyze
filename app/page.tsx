@@ -6,11 +6,11 @@ import logo from "@/public/logo.png";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { LayoutDashboard, LogIn, UserPlus, Shield, TrendingUp, Percent, BarChart3, FileText, Calculator, Lock, Info, Check } from "lucide-react";
+import { LayoutDashboard, LogIn, UserPlus, Shield, TrendingUp, Percent, BarChart3, FileText, Calculator, Lock, Info, Check, Menu, X } from "lucide-react";
 import { FadeIn, Stagger, ScaleOnHover, fadeInVariant } from "@/app/components/anim/Motion";
 import Counter from "@/app/components/anim/Counter";
 import GradientBlob from "@/app/components/anim/GradientBlob";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import ExtraInfoCards from "@/app/components/landing/ExtraInfoCards";
 import LandingPreviewsSection from "@/app/components/landing/LandingPreviewsSection";
 
@@ -18,6 +18,7 @@ export default function LandingPage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState<string | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -93,7 +94,9 @@ export default function LandingPage() {
                 priority
               />
             </Link>
-            <div className="flex items-center gap-3">
+            
+            {/* Desktop Menu */}
+            <div className="hidden md:flex items-center gap-3">
               {user ? (
                 <Link
                   href="/dashboard"
@@ -144,8 +147,125 @@ export default function LandingPage() {
                 </>
               )}
             </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg transition-all hover:bg-gray-800"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6 text-white" />
+              ) : (
+                <Menu className="w-6 h-6 text-white" />
+              )}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Mega Menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <>
+              {/* Overlay */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="fixed inset-0 bg-black/50 z-40 md:hidden"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{ top: '64px' }}
+              />
+              {/* Menu */}
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className="md:hidden border-t relative z-50" style={{ borderColor: "#1f232b", backgroundColor: "#0e0f12" }}
+              >
+            <div className="px-4 py-4 space-y-2">
+              {user ? (
+                <>
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all hover:scale-[1.02]"
+                    style={{
+                      background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                      boxShadow: "0 4px 15px rgba(46,108,246,0.3)",
+                    }}
+                  >
+                    <LayoutDashboard className="w-5 h-5" />
+                    Dashboard
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-colors"
+                    style={{
+                      border: "1px solid #2b2f36",
+                      backgroundColor: "#14161b",
+                    }}
+                  >
+                    <LayoutDashboard className="w-5 h-5" />
+                    Dashboard
+                  </Link>
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-colors"
+                    style={{
+                      border: "1px solid #2b2f36",
+                      backgroundColor: "#14161b",
+                    }}
+                  >
+                    <LogIn className="w-5 h-5" />
+                    Se connecter
+                  </Link>
+                  <Link
+                    href="/signup"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-white transition-all"
+                    style={{
+                      background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                      boxShadow: "0 4px 15px rgba(46,108,246,0.3)",
+                    }}
+                  >
+                    <UserPlus className="w-5 h-5" />
+                    S'inscrire
+                  </Link>
+                </>
+              )}
+              
+              {/* Additional links */}
+              <div className="pt-2 border-t" style={{ borderColor: "#1f232b" }}>
+                <Link
+                  href="/pricing"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-gray-300 transition-colors hover:text-white"
+                >
+                  <Percent className="w-5 h-5" />
+                  Tarifs
+                </Link>
+                <Link
+                  href="/a-propos"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-gray-300 transition-colors hover:text-white"
+                >
+                  <Info className="w-5 h-5" />
+                  À propos
+                </Link>
+              </div>
+            </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
       </header>
 
       {/* Accent gradient background */}
@@ -987,6 +1107,20 @@ export default function LandingPage() {
                 </Link>
               </motion.div>
             </ScaleOnHover>
+          </div>
+        </section>
+      </FadeIn>
+
+      {/* Trust Badge - Données URSSAF */}
+      <FadeIn delay={0} y={10} duration={0.5}>
+        <section className="relative px-4 py-8 border-t" style={{ borderColor: "#1f232b" }}>
+          <div className="mx-auto max-w-6xl">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-sm text-gray-400">
+              <div className="flex items-center gap-2">
+                <Shield className="w-4 h-4" style={{ color: "#00D084" }} />
+                <span>Basé sur les données officielles de l'URSSAF</span>
+              </div>
+            </div>
           </div>
         </section>
       </FadeIn>

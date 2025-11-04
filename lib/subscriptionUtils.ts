@@ -7,6 +7,8 @@ export interface UserSubscription {
   isPro: boolean;
   isPremium: boolean;
   status: string | null;
+  isTrial: boolean;
+  trialEndsAt: string | null;
 }
 
 /**
@@ -19,6 +21,8 @@ export function getUserSubscription(user: User | null | undefined): UserSubscrip
       isPro: false,
       isPremium: false,
       status: null,
+      isTrial: false,
+      trialEndsAt: null,
     };
   }
 
@@ -27,10 +31,33 @@ export function getUserSubscription(user: User | null | undefined): UserSubscrip
   const isPro = metadata.is_pro === true;
   const isPremium = metadata.is_premium === true;
   const status = metadata.subscription_status || null;
+  const trialEndsAt = metadata.premium_trial_ends_at || null;
+  const trialActive = metadata.premium_trial_active === true;
+  
+  // Vérifier si l'essai est toujours valide
+  let isTrial = false;
+  if (trialActive && trialEndsAt) {
+    const now = new Date();
+    const trialEnd = new Date(trialEndsAt);
+    isTrial = now < trialEnd;
+    
+    // Si l'essai est expiré, ne pas considérer comme Premium
+    if (!isTrial && !metadata.stripe_subscription_id) {
+      // L'essai est expiré, ne pas retourner Premium
+      return {
+        plan: 'free',
+        isPro: false,
+        isPremium: false,
+        status: null,
+        isTrial: false,
+        trialEndsAt: null,
+      };
+    }
+  }
 
   // Déterminer le plan
   let plan: SubscriptionPlan = 'free';
-  if (subscriptionPlan === 'premium' || isPremium) {
+  if (subscriptionPlan === 'premium' || (isPremium && (isTrial || metadata.stripe_subscription_id))) {
     plan = 'premium';
   } else if (subscriptionPlan === 'pro' || isPro) {
     plan = 'pro';
@@ -39,8 +66,10 @@ export function getUserSubscription(user: User | null | undefined): UserSubscrip
   return {
     plan,
     isPro,
-    isPremium,
+    isPremium: isPremium && (isTrial || metadata.stripe_subscription_id),
     status,
+    isTrial,
+    trialEndsAt,
   };
 }
 

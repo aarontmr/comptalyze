@@ -3,11 +3,13 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { getUserSubscription } from "@/lib/subscriptionUtils";
 import { User } from "@supabase/supabase-js";
 import { Check } from "lucide-react";
 
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
+  const [trialLoading, setTrialLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
 
   // Récupérer l'utilisateur connecté
@@ -17,7 +19,46 @@ export default function PricingPage() {
       setUser(session?.user || null);
     };
     getCurrentUser();
+    
+    // Écouter les changements d'auth
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
+
+  const handleStartTrial = async () => {
+    if (!user) {
+      alert("Vous devez être connecté pour commencer l'essai gratuit. Redirection vers la page de connexion...");
+      window.location.href = "/login";
+      return;
+    }
+
+    try {
+      setTrialLoading(true);
+      const res = await fetch("/api/start-trial", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(`Erreur: ${data.error || "Une erreur est survenue"}`);
+        return;
+      }
+
+      alert("🎉 Votre essai gratuit de 3 jours a commencé ! Profitez de toutes les fonctionnalités Premium.");
+      window.location.reload();
+    } catch (error) {
+      console.error("Erreur lors du démarrage de l'essai:", error);
+      alert("Une erreur est survenue lors du démarrage de l'essai.");
+    } finally {
+      setTrialLoading(false);
+    }
+  };
 
   const handleCheckout = async (plan: "pro" | "premium") => {
     // Vérifier que l'utilisateur est connecté
@@ -211,17 +252,80 @@ export default function PricingPage() {
                 <span>Historique complet et analyses</span>
               </li>
             </ul>
-            <button
-              onClick={() => handleCheckout("premium")}
-              disabled={loading !== null}
-              className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed transition-transform duration-200 hover:scale-[1.02] disabled:hover:scale-100"
-              style={{
-                background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
-              }}
-            >
-              {loading === "premium" ? "Redirection..." : "Passer à Premium"}
-            </button>
+            {(() => {
+              const subscription = getUserSubscription(user);
+              const hasTrial = subscription.isTrial;
+              const hasUsedTrial = user?.user_metadata?.premium_trial_started_at && !hasTrial;
+              
+              if (hasTrial) {
+                const trialEnd = subscription.trialEndsAt ? new Date(subscription.trialEndsAt) : null;
+                const daysLeft = trialEnd ? Math.ceil((trialEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : 0;
+                return (
+                  <div className="mt-6 space-y-2">
+                    <div className="text-center text-xs text-gray-400">
+                      Essai gratuit actif • {daysLeft} jour{daysLeft > 1 ? 's' : ''} restant{daysLeft > 1 ? 's' : ''}
+                    </div>
+                    <button
+                      onClick={() => handleCheckout("premium")}
+                      disabled={loading !== null}
+                      className="w-full inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed transition-transform duration-200 hover:scale-[1.02] disabled:hover:scale-100"
+                      style={{
+                        background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                        boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
+                      }}
+                    >
+                      {loading === "premium" ? "Redirection..." : "S'abonner maintenant"}
+                    </button>
+                  </div>
+                );
+              }
+              
+              if (hasUsedTrial || subscription.isPremium) {
+                return (
+                  <button
+                    onClick={() => handleCheckout("premium")}
+                    disabled={loading !== null}
+                    className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed transition-transform duration-200 hover:scale-[1.02] disabled:hover:scale-100"
+                    style={{
+                      background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                      boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
+                    }}
+                  >
+                    {loading === "premium" ? "Redirection..." : subscription.isPremium ? "Gérer mon abonnement" : "Passer à Premium"}
+                  </button>
+                );
+              }
+              
+              return (
+                <div className="mt-6 space-y-2">
+                  <button
+                    onClick={handleStartTrial}
+                    disabled={trialLoading || loading !== null}
+                    className="w-full inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed transition-transform duration-200 hover:scale-[1.02] disabled:hover:scale-100"
+                    style={{
+                      background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                      boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
+                    }}
+                  >
+                    {trialLoading ? "Chargement..." : "Essai gratuit 3 jours"}
+                  </button>
+                  <button
+                    onClick={() => handleCheckout("premium")}
+                    disabled={loading !== null || trialLoading}
+                    className="w-full inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-transform duration-200 hover:scale-[1.02] disabled:hover:scale-100"
+                    style={{
+                      border: "1px solid rgba(46,108,246,0.5)",
+                      backgroundColor: "transparent",
+                    }}
+                  >
+                    {loading === "premium" ? "Redirection..." : "S'abonner directement"}
+                  </button>
+                  <p className="text-center text-xs text-gray-500 mt-1">
+                    Sans carte bancaire • Annulable à tout moment
+                  </p>
+                </div>
+              );
+            })()}
           </div>
         </div>
 
