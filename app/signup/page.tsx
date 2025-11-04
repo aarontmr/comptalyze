@@ -38,9 +38,6 @@ export default function SignupPage() {
             router.push('/dashboard');
           }, 500);
         }
-        if (event === 'SIGNED_UP' && !session) {
-          setShowVerificationMessage(true);
-        }
       }
     );
 
