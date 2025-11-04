@@ -160,7 +160,7 @@ export default function FloatingAIAssistant({ user }: FloatingAIAssistantProps) 
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 p-4 rounded-full text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl"
+          className="fixed bottom-24 right-4 sm:bottom-6 sm:right-6 z-50 p-4 rounded-full text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl"
           style={{
             background: 'linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)',
             boxShadow: '0 8px 24px rgba(46, 108, 246, 0.4)',
@@ -174,8 +174,8 @@ export default function FloatingAIAssistant({ user }: FloatingAIAssistantProps) 
       {/* Fenêtre de chat */}
       {isOpen && (
         <div
-          className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col rounded-xl shadow-2xl transition-all duration-300 ${
-            isMinimized ? 'w-72 sm:w-80 h-16' : 'w-[calc(100vw-2rem)] sm:w-96 max-w-md h-[600px] max-h-[calc(100vh-8rem)]'
+          className={`fixed bottom-24 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col rounded-xl shadow-2xl transition-all duration-300 ${
+            isMinimized ? 'w-72 sm:w-80 h-16' : 'w-[calc(100vw-2rem)] sm:w-96 max-w-md h-[500px] sm:h-[600px] max-h-[calc(100vh-12rem)] sm:max-h-[calc(100vh-8rem)]'
           }`}
           style={{
             backgroundColor: '#16181d',
