@@ -74,15 +74,26 @@ export default function FacturesPage() {
 
   const handleDownloadPDF = async (invoiceId: string, invoiceNumber: string) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const token = session?.access_token;
-      if (!token) {
-        alert('Vous devez être connecté');
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session) {
+        alert('Vous devez être connecté pour télécharger la facture');
         return;
       }
+
+      const token = session.access_token;
+      if (!token) {
+        alert('Erreur d\'authentification. Veuillez vous reconnecter.');
+        return;
+      }
+
       const response = await fetch(`/api/invoices/${invoiceId}/pdf`, {
-        headers: { 'Authorization': `Bearer ${token}` },
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
+
       if (response.ok) {
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
@@ -94,11 +105,22 @@ export default function FacturesPage() {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
       } else {
-        const data = await response.json();
-        alert(data.error || 'Erreur lors du téléchargement');
+        const contentType = response.headers.get('content-type');
+        let errorMessage = 'Erreur lors du téléchargement';
+        
+        if (contentType && contentType.includes('application/json')) {
+          const data = await response.json();
+          errorMessage = data.error || errorMessage;
+        } else {
+          const text = await response.text();
+          console.error('Erreur réponse:', text);
+        }
+        
+        alert(errorMessage);
       }
-    } catch (error) {
-      alert('Erreur lors du téléchargement');
+    } catch (error: any) {
+      console.error('Erreur téléchargement PDF:', error);
+      alert(`Erreur lors du téléchargement: ${error?.message || 'Erreur inconnue'}`);
     }
   };
 

@@ -96,3 +96,4 @@ export default function StatsChart({ data, title, delay = 0 }: StatsChartProps) 
   );
 }
 
+

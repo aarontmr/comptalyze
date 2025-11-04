@@ -46,20 +46,17 @@ async function generateInvoicePDF(invoice: any): Promise<Buffer> {
     doc
       .fillColor('#00D084')
       .fontSize(24)
-      .font('Helvetica-Bold')
       .text('Comptalyze', 50, 30);
 
     doc
       .fillColor('#ffffff')
       .fontSize(12)
-      .font('Helvetica')
       .text('Noraa', 50, 60);
 
     // Titre
     doc
       .fillColor('#2E6CF6')
       .fontSize(20)
-      .font('Helvetica-Bold')
       .text('FACTURE', 50, 120);
 
     // Informations de facture
@@ -67,32 +64,26 @@ async function generateInvoicePDF(invoice: any): Promise<Buffer> {
     doc
       .fillColor('#666666')
       .fontSize(10)
-      .font('Helvetica')
       .text('Numéro:', 50, y);
     doc
       .fillColor('#000000')
-      .font('Helvetica-Bold')
       .text(invoice.invoice_number, 120, y);
 
     y += 15;
     doc
       .fillColor('#666666')
-      .font('Helvetica')
       .text('Date d\'émission:', 50, y);
     doc
       .fillColor('#000000')
-      .font('Helvetica-Bold')
       .text(new Date(invoice.issue_date).toLocaleDateString('fr-FR'), 120, y);
 
     if (invoice.due_date) {
       y += 15;
       doc
         .fillColor('#666666')
-        .font('Helvetica')
         .text('Date d\'échéance:', 50, y);
       doc
         .fillColor('#000000')
-        .font('Helvetica-Bold')
         .text(new Date(invoice.due_date).toLocaleDateString('fr-FR'), 120, y);
     }
 
@@ -101,25 +92,21 @@ async function generateInvoicePDF(invoice: any): Promise<Buffer> {
     doc
       .fillColor('#666666')
       .fontSize(10)
-      .font('Helvetica')
       .text('Facturé à:', 350, y);
     y += 15;
     doc
       .fillColor('#000000')
-      .font('Helvetica-Bold')
       .text(invoice.customer_name, 350, y);
     y += 15;
     if (invoice.customer_email) {
       doc
         .fillColor('#333333')
-        .font('Helvetica')
         .text(invoice.customer_email, 350, y);
       y += 15;
     }
     if (invoice.customer_address) {
       doc
         .fillColor('#333333')
-        .font('Helvetica')
         .text(invoice.customer_address, 350, y, { width: 200 });
     }
 
@@ -131,7 +118,6 @@ async function generateInvoicePDF(invoice: any): Promise<Buffer> {
     doc
       .fillColor('#0e0f12')
       .fontSize(10)
-      .font('Helvetica-Bold')
       .text('Description', 50, y);
     doc.text('Qté', 350, y);
     doc.text('Prix unitaire', 390, y);
@@ -152,7 +138,6 @@ async function generateInvoicePDF(invoice: any): Promise<Buffer> {
       doc
         .fillColor('#333333')
         .fontSize(9)
-        .font('Helvetica')
         .text(item.description, 50, y, { width: 280 });
       doc.text(item.quantity.toString(), 350, y);
       doc.text(
@@ -183,11 +168,9 @@ async function generateInvoicePDF(invoice: any): Promise<Buffer> {
     doc
       .fillColor('#333333')
       .fontSize(10)
-      .font('Helvetica')
       .text('Sous-total HT:', 350, y);
     doc
       .fillColor('#000000')
-      .font('Helvetica-Bold')
       .text(
         Number(invoice.subtotal_eur).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €',
         470,
@@ -199,11 +182,9 @@ async function generateInvoicePDF(invoice: any): Promise<Buffer> {
       y += 15;
       doc
         .fillColor('#333333')
-        .font('Helvetica')
         .text(`TVA (${invoice.vat_rate}%):`, 350, y);
       doc
         .fillColor('#000000')
-        .font('Helvetica-Bold')
         .text(
           (Number(invoice.subtotal_eur) * invoice.vat_rate / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €',
           470,
@@ -223,7 +204,6 @@ async function generateInvoicePDF(invoice: any): Promise<Buffer> {
     doc
       .fillColor('#0e0f12')
       .fontSize(12)
-      .font('Helvetica-Bold')
       .text('Total TTC:', 350, y);
     doc
       .fillColor('#00D084')
@@ -241,7 +221,6 @@ async function generateInvoicePDF(invoice: any): Promise<Buffer> {
       doc
         .fillColor('#666666')
         .fontSize(9)
-        .font('Helvetica')
         .text('Notes:', 50, y);
       y += 15;
       doc
@@ -254,7 +233,6 @@ async function generateInvoicePDF(invoice: any): Promise<Buffer> {
     doc
       .fillColor('#999999')
       .fontSize(8)
-      .font('Helvetica')
       .text('Comptalyze - Facture générée automatiquement', 50, footerY, { align: 'center', width: 500 });
 
     doc.end();
@@ -263,10 +241,10 @@ async function generateInvoicePDF(invoice: any): Promise<Buffer> {
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const invoiceId = params.id;
+    const { id: invoiceId } = await params;
 
     if (!resendApiKey) {
       return NextResponse.json({ error: 'Configuration Resend manquante' }, { status: 500 });

@@ -62,3 +62,4 @@ Si vous rencontrez encore des erreurs :
 - Vous pouvez maintenant enregistrer plusieurs CA pour le même mois/activité
 - Les messages d'erreur sont maintenant plus détaillés pour faciliter le débogage
 
+

@@ -12,6 +12,7 @@ import Counter from "@/app/components/anim/Counter";
 import GradientBlob from "@/app/components/anim/GradientBlob";
 import { motion } from "framer-motion";
 import ExtraInfoCards from "@/app/components/landing/ExtraInfoCards";
+import LandingPreviewsSection from "@/app/components/landing/LandingPreviewsSection";
 
 export default function LandingPage() {
   const router = useRouter();
@@ -467,6 +468,9 @@ export default function LandingPage() {
           </Stagger>
         </div>
       </section>
+
+      {/* APP PREVIEWS SECTION */}
+      <LandingPreviewsSection />
 
       {/* FEATURES */}
       <section className="relative px-4 py-12 sm:py-16 md:py-20">

@@ -160,20 +160,17 @@ async function generatePDF(records: any[], year: number): Promise<Buffer> {
     doc
       .fillColor('#00D084')
       .fontSize(24)
-      .font('Helvetica-Bold')
       .text('Comptalyze', 50, 30);
 
     doc
       .fillColor('#ffffff')
       .fontSize(16)
-      .font('Helvetica')
       .text(`Relevé ${year}`, 50, 60);
 
     // Titre du document
     doc
       .fillColor('#2E6CF6')
       .fontSize(18)
-      .font('Helvetica-Bold')
       .text(`Relevé Comptalyze – ${year}`, 50, 120);
 
     // Table des enregistrements
@@ -186,7 +183,6 @@ async function generatePDF(records: any[], year: number): Promise<Buffer> {
     doc
       .fillColor('#0e0f12')
       .fontSize(10)
-      .font('Helvetica-Bold')
       .text('Mois', 50, y);
     doc.text('Activité', 120, y);
     doc.text('CA (€)', 280, y, { align: 'right' });
@@ -232,7 +228,6 @@ async function generatePDF(records: any[], year: number): Promise<Buffer> {
       doc
         .fillColor('#333333')
         .fontSize(9)
-        .font('Helvetica')
         .text(monthName, 50, y);
       doc.text(record.activity_type, 120, y, { width: 150 });
       doc.text(ca.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), 280, y, { align: 'right' });
@@ -256,7 +251,6 @@ async function generatePDF(records: any[], year: number): Promise<Buffer> {
     doc
       .fillColor('#0e0f12')
       .fontSize(11)
-      .font('Helvetica-Bold')
       .text('TOTAL', 50, y);
     doc.text(totalCA.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €', 280, y, { align: 'right' });
     doc.text(totalContrib.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €', 360, y, { align: 'right' });
@@ -270,7 +264,6 @@ async function generatePDF(records: any[], year: number): Promise<Buffer> {
     doc
       .fillColor('#999999')
       .fontSize(8)
-      .font('Helvetica')
       .text(
         `Généré le ${new Date().toLocaleDateString('fr-FR')} • Comptalyze`,
         50,

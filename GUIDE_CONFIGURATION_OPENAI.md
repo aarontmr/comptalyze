@@ -86,3 +86,4 @@ Paramètres configurés :
 - `max_tokens: 300` (réponses concises)
 - `temperature: 0.7` (équilibre créativité/précision)
 
+

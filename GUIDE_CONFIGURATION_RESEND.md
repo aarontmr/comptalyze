@@ -101,3 +101,4 @@ cat .env.local | grep RESEND_API_KEY
 - Documentation Resend : https://resend.com/docs
 - Support Resend : https://resend.com/support
 
+

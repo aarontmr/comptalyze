@@ -214,3 +214,4 @@ Si vous voulez améliorer le design, vous pouvez modifier :
 
 Les modifications se font dans la fonction `generatePDF()` du fichier `app/api/export-pdf/route.ts`.
 
+

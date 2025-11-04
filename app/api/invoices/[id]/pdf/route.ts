@@ -1,8 +1,66 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import PDFDocument from 'pdfkit';
+import { join, dirname } from 'path';
+import { existsSync, readFileSync, copyFileSync, mkdirSync } from 'fs';
 
 export const runtime = 'nodejs';
+
+// Corriger le chemin PDFKit au niveau du module (avant tout import)
+// Créer le répertoire et copier les fichiers si nécessaire
+try {
+  const pdfkitPath = require.resolve('pdfkit');
+  const pdfkitDir = dirname(dirname(pdfkitPath));
+  const fontDataPath = join(pdfkitDir, 'js', 'data');
+  const rootPath = 'C:\\ROOT\\node_modules\\pdfkit\\js\\data';
+  
+  console.log('Font data path:', fontDataPath);
+  console.log('Font data exists:', existsSync(fontDataPath));
+  
+  if (existsSync(fontDataPath)) {
+    // Créer le répertoire C:\ROOT\node_modules\pdfkit\js\data si nécessaire
+    const rootDir = dirname(rootPath);
+    try {
+      if (!existsSync(rootDir)) {
+        console.log('Creating directory:', rootDir);
+        mkdirSync(rootDir, { recursive: true });
+      }
+      
+      // Créer le sous-répertoire data
+      if (!existsSync(rootPath)) {
+        console.log('Creating directory:', rootPath);
+        mkdirSync(rootPath, { recursive: true });
+      }
+      
+      // Copier tous les fichiers .afm vers C:\ROOT
+      const fontFiles = ['Helvetica.afm', 'Helvetica-Bold.afm', 'Helvetica-Oblique.afm', 'Helvetica-BoldOblique.afm'];
+      fontFiles.forEach(file => {
+        const sourceFile = join(fontDataPath, file);
+        const targetFile = join(rootPath, file);
+        if (existsSync(sourceFile)) {
+          try {
+            if (!existsSync(targetFile)) {
+              console.log('Copying font file:', sourceFile, '->', targetFile);
+              copyFileSync(sourceFile, targetFile);
+              console.log('Successfully copied:', file);
+            } else {
+              console.log('Font file already exists:', targetFile);
+            }
+          } catch (copyError: any) {
+            console.error('Error copying font file:', file, copyError.message);
+          }
+        } else {
+          console.warn('Source font file not found:', sourceFile);
+        }
+      });
+    } catch (dirError: any) {
+      console.error('Error creating directory or copying files:', dirError.message);
+    }
+  } else {
+    console.warn('Font data path does not exist:', fontDataPath);
+  }
+} catch (e: any) {
+  console.error('Configuration PDFKit error:', e.message);
+}
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -20,12 +78,40 @@ interface InvoiceItem {
 }
 
 async function generateInvoicePDF(invoice: any): Promise<Buffer> {
-  return new Promise((resolve, reject) => {
-    const doc = new PDFDocument({
-      size: 'A4',
-      margin: 50,
-    });
+  // Import dynamique de PDFKit
+  const PDFDocumentModule = await import('pdfkit');
+  const PDFDocument = PDFDocumentModule.default || PDFDocumentModule;
 
+  return new Promise((resolve, reject) => {
+    // Vérifier que PDFDocument est bien un constructeur
+    if (typeof PDFDocument !== 'function') {
+      reject(new Error(`PDFDocument is not a constructor. Type: ${typeof PDFDocument}`));
+      return;
+    }
+
+    // Configuration minimale - PDFKit chargera les polices standard sans fichiers externes
+    let doc: any;
+    try {
+      // Essayer d'initialiser sans déclencher le chargement des polices
+      doc = new PDFDocument({
+        size: 'A4',
+        margin: 50,
+      });
+    } catch (error: any) {
+      // Si l'erreur vient des fichiers de police, essayer une initialisation minimale
+      if (error.message && error.message.includes('.afm')) {
+        try {
+          doc = new PDFDocument();
+        } catch (e: any) {
+          reject(new Error(`Erreur lors de l'initialisation PDFKit: ${e?.message || 'Erreur inconnue'}`));
+          return;
+        }
+      } else {
+        reject(new Error(`Erreur lors de l'initialisation PDFKit: ${error?.message || 'Erreur inconnue'}`));
+        return;
+      }
+    }
+    
     const buffers: Buffer[] = [];
     doc.on('data', buffers.push.bind(buffers));
     doc.on('end', () => {
@@ -34,90 +120,124 @@ async function generateInvoicePDF(invoice: any): Promise<Buffer> {
     });
     doc.on('error', reject);
 
-    // En-tête avec gradient
+    // En-tête professionnel avec logo
+    const headerHeight = 120;
     doc
-      .rect(0, 0, doc.page.width, 100)
+      .rect(0, 0, doc.page.width, headerHeight)
       .fill('#0e0f12');
 
-    // Logo ou titre
-    doc
-      .fillColor('#00D084')
-      .fontSize(24)
-      .font('Helvetica-Bold')
-      .text('Comptalyze', 50, 30);
-
-    doc
-      .fillColor('#ffffff')
-      .fontSize(12)
-      .font('Helvetica')
-      .text('Noraa', 50, 60);
-
-    // Titre
-    doc
-      .fillColor('#2E6CF6')
-      .fontSize(20)
-      .font('Helvetica-Bold')
-      .text('FACTURE', 50, 120);
-
-    // Informations de facture
-    let y = 160;
-    doc
-      .fillColor('#666666')
-      .fontSize(10)
-      .font('Helvetica')
-      .text('Numéro:', 50, y);
-    doc
-      .fillColor('#000000')
-      .font('Helvetica-Bold')
-      .text(invoice.invoice_number, 120, y);
-
-    y += 15;
-    doc
-      .fillColor('#666666')
-      .font('Helvetica')
-      .text('Date d\'émission:', 50, y);
-    doc
-      .fillColor('#000000')
-      .font('Helvetica-Bold')
-      .text(new Date(invoice.issue_date).toLocaleDateString('fr-FR'), 120, y);
-
-    if (invoice.due_date) {
-      y += 15;
+    // Logo
+    const logoPath = join(process.cwd(), 'public', 'logo.png');
+    if (existsSync(logoPath)) {
+      try {
+        doc.image(logoPath, 50, 25, { 
+          width: 80,
+          height: 80,
+          fit: [80, 80],
+          align: 'left'
+        });
+      } catch (logoError) {
+        console.warn('Erreur lors du chargement du logo:', logoError);
+        // Fallback: utiliser le texte si le logo ne peut pas être chargé
+        doc
+          .fillColor('#00D084')
+          .fontSize(28)
+          .text('Comptalyze', 50, 45);
+      }
+    } else {
+      // Fallback: utiliser le texte si le logo n'existe pas
       doc
-        .fillColor('#666666')
-        .font('Helvetica')
-        .text('Date d\'échéance:', 50, y);
-      doc
-        .fillColor('#000000')
-        .font('Helvetica-Bold')
-        .text(new Date(invoice.due_date).toLocaleDateString('fr-FR'), 120, y);
+        .fillColor('#00D084')
+        .fontSize(28)
+        .text('Comptalyze', 50, 45);
     }
 
-    // Destinataire
-    y = 160;
+    // Titre FACTURE aligné à droite
+    doc
+      .fillColor('#2E6CF6')
+      .fontSize(32)
+      .text('FACTURE', doc.page.width - 200, 50, {
+        align: 'right',
+        width: 150
+      });
+
+    // Informations de facture (section gauche)
+    let y = 150;
     doc
       .fillColor('#666666')
-      .fontSize(10)
-      .font('Helvetica')
-      .text('Facturé à:', 350, y);
-    y += 15;
+      .fontSize(9)
+      .text('Numéro de facture', 50, y);
     doc
       .fillColor('#000000')
-      .font('Helvetica-Bold')
-      .text(invoice.customer_name, 350, y);
+      .fontSize(11)
+      .text(invoice.invoice_number, 50, y + 12);
+
+    y += 35;
+    doc
+      .fillColor('#666666')
+      .fontSize(9)
+      .text('Date d\'émission', 50, y);
+    doc
+      .fillColor('#000000')
+      .fontSize(11)
+      .text(new Date(invoice.issue_date).toLocaleDateString('fr-FR', { 
+        day: '2-digit', 
+        month: 'long', 
+        year: 'numeric' 
+      }), 50, y + 12);
+
+    if (invoice.due_date) {
+      y += 35;
+      doc
+        .fillColor('#666666')
+        .fontSize(9)
+        .text('Date d\'échéance', 50, y);
+      doc
+        .fillColor('#000000')
+        .fontSize(11)
+        .text(new Date(invoice.due_date).toLocaleDateString('fr-FR', { 
+          day: '2-digit', 
+          month: 'long', 
+          year: 'numeric' 
+        }), 50, y + 12);
+    }
+
+    // Destinataire (section droite)
+    y = 150;
+    doc
+      .fillColor('#666666')
+      .fontSize(9)
+      .text('Facturé à', doc.page.width - 200, y, {
+        align: 'right',
+        width: 150
+      });
+    y += 12;
+    doc
+      .fillColor('#000000')
+      .fontSize(11)
+      .text(invoice.customer_name, doc.page.width - 200, y, {
+        align: 'right',
+        width: 150
+      });
     y += 15;
     if (invoice.customer_email) {
       doc
         .fillColor('#333333')
-        .font('Helvetica')
-        .text(invoice.customer_email, 350, y);
-      y += 15;
+        .fontSize(10)
+        .text(invoice.customer_email, doc.page.width - 200, y, {
+          align: 'right',
+          width: 150
+        });
+      y += 12;
     }
     if (invoice.customer_address) {
       doc
         .fillColor('#333333')
-        .font('Helvetica')
-        .text(invoice.customer_address, 350, y, { width: 200 });
+        .fontSize(10)
+        .text(invoice.customer_address, doc.page.width - 200, y, {
+          align: 'right',
+          width: 150
+        });
     }
 
     // Tableau des lignes
@@ -125,45 +245,92 @@ async function generateInvoicePDF(invoice: any): Promise<Buffer> {
     const tableTop = y;
     const itemHeight = 25;
 
-    // En-têtes du tableau
+    // Positions fixes des colonnes avec espacement généreux pour éviter le chevauchement
+    // Format A4 = 595.28 points de largeur (environ 210mm)
+    const colDescription = 50;
+    const colDescriptionEnd = 320; // 270px pour description
+    
+    const colQty = 330; // 10px d'espace après description
+    const colQtyEnd = 380; // 50px pour quantité
+    
+    const colPrice = 390; // 10px d'espace après quantité
+    const colPriceEnd = 470; // 80px pour prix unitaire
+    
+    const colTotal = 480; // 10px d'espace après prix
+    const colTotalEnd = 545; // 65px pour total (jusqu'à la marge droite)
+
+    // En-têtes du tableau avec fond
+    doc
+      .rect(colDescription, y - 5, colTotalEnd - colDescription, 25)
+      .fill('#f5f5f5');
+    
     doc
       .fillColor('#0e0f12')
       .fontSize(10)
-      .font('Helvetica-Bold')
-      .text('Description', 50, y);
-    doc.text('Qté', 350, y);
-    doc.text('Prix unitaire', 390, y);
-    doc.text('Total', 470, y, { align: 'right' });
+      .text('Description', colDescription + 5, y, { width: colDescriptionEnd - colDescription - 10 });
+    doc
+      .fillColor('#0e0f12')
+      .text('Qté', colQty, y, { width: colQtyEnd - colQty, align: 'center' });
+    doc
+      .fillColor('#0e0f12')
+      .text('Prix unit.', colPrice, y, { width: colPriceEnd - colPrice, align: 'right' });
+    doc
+      .fillColor('#0e0f12')
+      .text('Total', colTotal, y, { width: colTotalEnd - colTotal, align: 'right' });
 
     y += 20;
     doc
-      .moveTo(50, y)
-      .lineTo(550, y)
-      .strokeColor('#cccccc')
+      .moveTo(colDescription, y)
+      .lineTo(colTotalEnd, y)
+      .strokeColor('#dddddd')
+      .lineWidth(1)
       .stroke();
 
     y += 10;
 
     // Lignes
     const items = invoice.items as InvoiceItem[];
-    items.forEach((item) => {
+    items.forEach((item, index) => {
+      // Ligne de fond alternée pour meilleure lisibilité
+      if (index % 2 === 0) {
+        doc
+          .rect(colDescription, y - 3, colTotalEnd - colDescription, itemHeight)
+          .fill('#fafafa');
+      }
+      
+      // Description
       doc
         .fillColor('#333333')
         .fontSize(9)
-        .font('Helvetica')
-        .text(item.description, 50, y, { width: 280 });
-      doc.text(item.quantity.toString(), 350, y);
-      doc.text(
-        Number(item.unit_price_eur).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €',
-        390,
-        y
-      );
-      doc.text(
-        (item.quantity * item.unit_price_eur).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €',
-        470,
-        y,
-        { align: 'right' }
-      );
+        .text(item.description, colDescription + 5, y, { width: colDescriptionEnd - colDescription - 10 });
+      
+      // Quantité
+      doc
+        .fillColor('#666666')
+        .fontSize(9)
+        .text(item.quantity.toString(), colQty, y, { width: colQtyEnd - colQty, align: 'center' });
+      
+      // Prix unitaire
+      doc
+        .fillColor('#333333')
+        .fontSize(9)
+        .text(
+          Number(item.unit_price_eur).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €',
+          colPrice,
+          y,
+          { width: colPriceEnd - colPrice, align: 'right' }
+        );
+      
+      // Total
+      doc
+        .fillColor('#000000')
+        .fontSize(9)
+        .text(
+          (item.quantity * item.unit_price_eur).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €',
+          colTotal,
+          y,
+          { width: colTotalEnd - colTotal, align: 'right' }
+        );
       y += itemHeight;
     });
 
@@ -171,89 +338,116 @@ async function generateInvoicePDF(invoice: any): Promise<Buffer> {
     y += 5;
     doc
       .moveTo(50, y)
-      .lineTo(550, y)
-      .strokeColor('#cccccc')
+      .lineTo(doc.page.width - 50, y)
+      .strokeColor('#dddddd')
+      .lineWidth(1)
       .stroke();
 
-    y += 15;
+    y += 20;
 
-    // Totaux
+    // Totaux - positions fixes simples pour garantir l'affichage
+    const pageWidth = doc.page.width;
+    
+    // Labels à gauche (position X fixe)
+    const labelX = 350;
+    
+    // Valeurs à droite (position X fixe avec marge)
+    const valueX = 470;
+    
+    // Sous-total HT
     doc
-      .fillColor('#333333')
+      .fillColor('#666666')
       .fontSize(10)
-      .font('Helvetica')
-      .text('Sous-total HT:', 350, y);
+      .text('Sous-total HT:', labelX, y);
     doc
       .fillColor('#000000')
-      .font('Helvetica-Bold')
+      .fontSize(10)
       .text(
         Number(invoice.subtotal_eur).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €',
-        470,
+        valueX,
         y,
-        { align: 'right' }
+        { align: 'right', width: pageWidth - valueX - 50 }
       );
 
     if (invoice.vat_rate > 0) {
-      y += 15;
+      y += 18;
       doc
-        .fillColor('#333333')
-        .font('Helvetica')
-        .text(`TVA (${invoice.vat_rate}%):`, 350, y);
+        .fillColor('#666666')
+        .fontSize(10)
+        .text(`TVA (${invoice.vat_rate}%):`, labelX, y);
       doc
         .fillColor('#000000')
-        .font('Helvetica-Bold')
+        .fontSize(10)
         .text(
           (Number(invoice.subtotal_eur) * invoice.vat_rate / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €',
-          470,
+          valueX,
           y,
-          { align: 'right' }
+          { align: 'right', width: pageWidth - valueX - 50 }
         );
     }
 
-    y += 20;
+    y += 25;
     doc
-      .moveTo(350, y)
-      .lineTo(550, y)
-      .strokeColor('#cccccc')
+      .moveTo(labelX - 50, y)
+      .lineTo(pageWidth - 50, y)
+      .strokeColor('#00D084')
+      .lineWidth(2)
       .stroke();
 
     y += 15;
+    // Total TTC
     doc
       .fillColor('#0e0f12')
-      .fontSize(12)
-      .font('Helvetica-Bold')
-      .text('Total TTC:', 350, y);
+      .fontSize(14)
+      .text('Total TTC:', labelX, y);
     doc
       .fillColor('#00D084')
-      .fontSize(14)
+      .fontSize(16)
       .text(
         Number(invoice.total_eur).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €',
-        470,
+        valueX,
         y,
-        { align: 'right' }
+        { align: 'right', width: pageWidth - valueX - 50 }
       );
 
     // Notes
     if (invoice.notes) {
-      y += 40;
+      y += 50;
+      doc
+        .moveTo(50, y)
+        .lineTo(doc.page.width - 50, y)
+        .strokeColor('#e0e0e0')
+        .lineWidth(0.5)
+        .stroke();
+      
+      y += 20;
       doc
         .fillColor('#666666')
         .fontSize(9)
-        .font('Helvetica')
         .text('Notes:', 50, y);
       y += 15;
       doc
         .fillColor('#333333')
-        .text(invoice.notes, 50, y, { width: 500 });
+        .fontSize(10)
+        .text(invoice.notes, 50, y, { width: doc.page.width - 100 });
     }
 
-    // Pied de page
-    const footerY = doc.page.height - 50;
+    // Pied de page professionnel
+    const footerY = doc.page.height - 40;
+    doc
+      .moveTo(50, footerY - 10)
+      .lineTo(doc.page.width - 50, footerY - 10)
+      .strokeColor('#e0e0e0')
+      .lineWidth(0.5)
+      .stroke();
+    
     doc
       .fillColor('#999999')
       .fontSize(8)
-      .font('Helvetica')
-      .text('Comptalyze - Facture générée automatiquement', 50, footerY, { align: 'center', width: 500 });
+      .text('Comptalyze - Facture générée automatiquement', 50, footerY, { 
+        align: 'center', 
+        width: doc.page.width - 100 
+      });
 
     doc.end();
   });
@@ -261,34 +455,70 @@ async function generateInvoicePDF(invoice: any): Promise<Buffer> {
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const invoiceId = params.id;
+    const { id: invoiceId } = await params;
+
+    if (!invoiceId) {
+      return NextResponse.json({ error: 'ID de facture manquant' }, { status: 400 });
+    }
 
     // Vérifier la session
     const authHeader = req.headers.get('authorization');
     if (!authHeader) {
-      return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
+      return NextResponse.json({ error: 'Non autorisé - Token manquant' }, { status: 401 });
     }
 
-    const token = authHeader.replace('Bearer ', '');
+    const token = authHeader.replace('Bearer ', '').trim();
+    if (!token) {
+      return NextResponse.json({ error: 'Non autorisé - Token vide' }, { status: 401 });
+    }
+
+    // Vérifier l'utilisateur avec le token
     const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
 
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
+    if (authError) {
+      console.error('Erreur authentification:', authError);
+      return NextResponse.json({ error: 'Non autorisé - Erreur d\'authentification' }, { status: 401 });
     }
 
-    // Récupérer la facture
-    const { data: invoice, error } = await supabaseAdmin
+    if (!user) {
+      return NextResponse.json({ error: 'Non autorisé - Utilisateur non trouvé' }, { status: 401 });
+    }
+
+    // Récupérer la facture avec l'admin client (bypass RLS)
+    const { data: invoice, error: invoiceError } = await supabaseAdmin
       .from('invoices')
       .select('*')
       .eq('id', invoiceId)
       .eq('user_id', user.id)
       .single();
 
-    if (error || !invoice) {
+    if (invoiceError) {
+      console.error('Erreur récupération facture:', invoiceError);
+      console.error('Invoice ID:', invoiceId);
+      console.error('User ID:', user.id);
+      
+      // Messages d'erreur plus spécifiques
+      if (invoiceError.code === 'PGRST116') {
+        return NextResponse.json({ 
+          error: 'Facture non trouvée - Cette facture n\'existe pas ou ne vous appartient pas' 
+        }, { status: 404 });
+      }
+      
+      return NextResponse.json({ 
+        error: `Erreur lors de la récupération de la facture: ${invoiceError.message}` 
+      }, { status: 500 });
+    }
+
+    if (!invoice) {
       return NextResponse.json({ error: 'Facture non trouvée' }, { status: 404 });
+    }
+
+    // Vérifier que la facture appartient bien à l'utilisateur (double sécurité)
+    if (invoice.user_id !== user.id) {
+      return NextResponse.json({ error: 'Non autorisé - Cette facture ne vous appartient pas' }, { status: 403 });
     }
 
     // Générer le PDF
@@ -302,7 +532,9 @@ export async function GET(
     });
   } catch (error: any) {
     console.error('Erreur lors de la génération du PDF:', error);
-    return NextResponse.json({ error: 'Erreur lors de la génération du PDF' }, { status: 500 });
+    return NextResponse.json({ 
+      error: `Erreur lors de la génération du PDF: ${error?.message || 'Erreur inconnue'}` 
+    }, { status: 500 });
   }
 }
 

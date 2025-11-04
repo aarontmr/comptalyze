@@ -144,3 +144,4 @@ Une fois toutes les variables ajoutées et l'application redéployée :
 2. L'erreur ne devrait plus apparaître
 3. Vous devriez être redirigé vers Stripe Checkout
 
+

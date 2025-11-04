@@ -72,3 +72,4 @@ Une fois que vous pouvez enregistrer sans erreur, tout est prêt ! Vous pouvez m
 - Exporter en PDF (si vous avez un plan Pro/Premium)
 - Recevoir des conseils IA (si vous avez un plan Premium)
 
+

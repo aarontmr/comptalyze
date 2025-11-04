@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { generateInvoiceNumber } from '@/lib/invoiceUtils';
+import { getUserPlan } from '@/lib/plan';
 
 interface InvoiceItem {
   description: string;
@@ -14,6 +15,8 @@ interface InvoiceItem {
 export default function NewInvoicePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [checkingPlan, setCheckingPlan] = useState(true);
+  const [hasAccess, setHasAccess] = useState(false);
   const [formData, setFormData] = useState({
     customer_name: '',
     customer_email: '',
@@ -26,6 +29,29 @@ export default function NewInvoicePage() {
   const [items, setItems] = useState<InvoiceItem[]>([
     { description: '', quantity: 1, unit_price_eur: 0 },
   ]);
+
+  // Vérifier l'accès au plan
+  useEffect(() => {
+    const checkAccess = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.user) {
+          router.push('/login');
+          return;
+        }
+
+        const userPlan = await getUserPlan(supabase, session.user.id);
+        const canAccess = userPlan === 'pro' || userPlan === 'premium';
+        setHasAccess(canAccess);
+      } catch (error) {
+        console.error('Erreur vérification plan:', error);
+      } finally {
+        setCheckingPlan(false);
+      }
+    };
+
+    checkAccess();
+  }, [router]);
 
   const addItem = () => {
     setItems([...items, { description: '', quantity: 1, unit_price_eur: 0 }]);
@@ -42,20 +68,50 @@ export default function NewInvoicePage() {
   };
 
   const calculateSubtotal = () => {
-    return items.reduce((sum, item) => sum + item.quantity * item.unit_price_eur, 0);
+    return items
+      .filter(item => item.description.trim() && item.quantity > 0 && item.unit_price_eur >= 0)
+      .reduce((sum, item) => {
+        const quantity = Number(item.quantity) || 0;
+        const price = Number(item.unit_price_eur) || 0;
+        return sum + (quantity * price);
+      }, 0);
   };
 
   const calculateTotal = () => {
     const subtotal = calculateSubtotal();
-    const vat = subtotal * (formData.vat_rate / 100);
+    const vat = subtotal * ((Number(formData.vat_rate) || 0) / 100);
     return subtotal + vat;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.customer_name || items.some(item => !item.description)) {
-      alert('Veuillez remplir tous les champs obligatoires');
+    // Validation des champs obligatoires
+    if (!formData.customer_name.trim()) {
+      alert('Veuillez saisir le nom du client');
+      return;
+    }
+
+    if (!formData.issue_date) {
+      alert('Veuillez saisir la date d\'émission');
+      return;
+    }
+
+    // Validation des items
+    const validItems = items.filter(item => item.description.trim() && item.quantity > 0 && item.unit_price_eur >= 0);
+    if (validItems.length === 0) {
+      alert('Veuillez ajouter au moins une ligne de facture avec description, quantité et prix');
+      return;
+    }
+
+    // Validation des valeurs numériques
+    if (items.some(item => isNaN(item.quantity) || isNaN(item.unit_price_eur))) {
+      alert('Veuillez vérifier que toutes les quantités et prix sont des nombres valides');
+      return;
+    }
+
+    if (isNaN(formData.vat_rate) || formData.vat_rate < 0 || formData.vat_rate > 100) {
+      alert('Le taux de TVA doit être entre 0 et 100%');
       return;
     }
 
@@ -64,47 +120,127 @@ export default function NewInvoicePage() {
 
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) {
+        alert('Vous devez être connecté pour créer une facture');
         router.push('/login');
         return;
       }
 
-      const invoiceNumber = await generateInvoiceNumber(supabase, session.user.id);
+      // Générer le numéro de facture
+      let invoiceNumber: string;
+      try {
+        invoiceNumber = await generateInvoiceNumber(supabase, session.user.id);
+      } catch (error) {
+        console.error('Erreur génération numéro:', error);
+        alert('Erreur lors de la génération du numéro de facture. Veuillez réessayer.');
+        return;
+      }
+
+      // Calculer les totaux
       const subtotal = calculateSubtotal();
       const total = calculateTotal();
 
+      // S'assurer que les valeurs sont valides
+      if (isNaN(subtotal) || isNaN(total) || subtotal < 0 || total < 0) {
+        alert('Erreur dans le calcul des totaux. Veuillez vérifier les montants.');
+        return;
+      }
+
+      // Préparer les items valides (sans les items vides)
+      const itemsToSave = validItems.map(item => ({
+        description: item.description.trim(),
+        quantity: Number(item.quantity),
+        unit_price_eur: Number(item.unit_price_eur),
+      }));
+
+      // Insérer la facture
       const { data, error } = await supabase
         .from('invoices')
         .insert({
           user_id: session.user.id,
-          customer_name: formData.customer_name,
-          customer_email: formData.customer_email || null,
-          customer_address: formData.customer_address || null,
+          customer_name: formData.customer_name.trim(),
+          customer_email: formData.customer_email.trim() || null,
+          customer_address: formData.customer_address.trim() || null,
           invoice_number: invoiceNumber,
           issue_date: formData.issue_date,
           due_date: formData.due_date || null,
-          items: items,
+          items: itemsToSave,
           subtotal_eur: subtotal,
-          vat_rate: formData.vat_rate,
+          vat_rate: Number(formData.vat_rate) || 0,
           total_eur: total,
-          notes: formData.notes || null,
+          notes: formData.notes.trim() || null,
         })
         .select()
         .single();
 
       if (error) {
-        console.error('Erreur:', error);
-        alert('Erreur lors de la création de la facture');
+        console.error('Erreur Supabase:', error);
+        
+        // Messages d'erreur plus spécifiques
+        if (error.message.includes("Could not find the table 'public.invoices'")) {
+          alert('La table invoices n\'existe pas encore dans la base de données. Veuillez exécuter la migration SQL dans Supabase. Consultez le guide GUIDE_CREATION_TABLE_INVOICES.md pour plus d\'informations.');
+        } else if (error.code === '23505') {
+          alert('Ce numéro de facture existe déjà. Veuillez réessayer.');
+        } else if (error.code === '23503') {
+          alert('Erreur de référence utilisateur. Veuillez vous reconnecter.');
+        } else if (error.message.includes('RLS')) {
+          alert('Erreur de permissions. Veuillez vérifier vos droits d\'accès.');
+        } else {
+          alert(`Erreur lors de la création de la facture: ${error.message || 'Erreur inconnue'}`);
+        }
         return;
       }
 
-      router.push(`/factures/${data.id}`);
-    } catch (error) {
-      console.error('Erreur:', error);
-      alert('Erreur lors de la création de la facture');
+      if (!data) {
+        alert('La facture a été créée mais aucune donnée n\'a été retournée.');
+        return;
+      }
+
+      // Rediriger vers le dashboard des factures
+      router.push('/dashboard/factures');
+    } catch (error: any) {
+      console.error('Erreur inattendue:', error);
+      alert(`Erreur lors de la création de la facture: ${error?.message || 'Erreur inconnue'}`);
     } finally {
       setLoading(false);
     }
   };
+
+  if (checkingPlan) {
+    return (
+      <div className="min-h-screen px-4 py-8 flex items-center justify-center" style={{ backgroundColor: '#0e0f12' }}>
+        <div className="text-white">Vérification de l'accès...</div>
+      </div>
+    );
+  }
+
+  if (!hasAccess) {
+    return (
+      <div className="min-h-screen px-4 py-8" style={{ backgroundColor: '#0e0f12' }}>
+        <div className="max-w-3xl mx-auto">
+          <h1 className="text-3xl font-semibold text-white mb-6">Nouvelle facture</h1>
+          <div className="p-6 rounded-xl" style={{ backgroundColor: '#1a1d24', border: '1px solid #2d3441' }}>
+            <p className="text-gray-300 mb-4">
+              Le module de factures est disponible avec le plan{' '}
+              <span className="font-semibold text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(90deg, #00D084, #2E6CF6)' }}>
+                Pro
+              </span>{' '}
+              ou{' '}
+              <span className="font-semibold text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(90deg, #00D084, #2E6CF6)' }}>
+                Premium
+              </span>.
+            </p>
+            <button
+              onClick={() => router.push('/pricing')}
+              className="px-6 py-3 rounded-lg text-white font-medium transition-colors hover:opacity-90"
+              style={{ background: 'linear-gradient(90deg, #00D084, #2E6CF6)' }}
+            >
+              Voir les plans
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen px-4 py-8" style={{ backgroundColor: '#0e0f12' }}>
