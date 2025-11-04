@@ -9,6 +9,7 @@ interface FadeInProps extends MotionProps {
   delay?: number;
   y?: number;
   duration?: number;
+  className?: string;
   variants?: {
     hidden: { opacity: number; y: number };
     show: { opacity: number; y: number };
