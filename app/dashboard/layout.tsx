@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import logo from '@/public/logo.png';
 import FloatingAIAssistant from '@/app/components/FloatingAIAssistant';
+import MobileShell from '@/components/ui/MobileShell';
 
 interface NavItem {
   label: string;
@@ -406,32 +407,19 @@ export default function DashboardLayout({
 
       {/* Main content */}
       <div className="flex-1 flex flex-col lg:pl-64">
-        {/* Mobile header */}
-        <header className="lg:hidden flex items-center justify-between h-16 px-4 border-b border-gray-800" style={{ backgroundColor: '#111216' }}>
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="text-gray-400 hover:text-white"
-          >
-            <Menu className="w-6 h-6" />
-          </button>
-          <Link href="/dashboard" className="flex items-center">
-            <Image
-              src={logo}
-              alt="Comptalyze"
-              width={120}
-              height={30}
-              className="h-6 w-auto"
-            />
-          </Link>
-          <div className="w-6" /> {/* Spacer for centering */}
-        </header>
+        {/* Desktop layout - keep existing */}
+        <div className="hidden lg:block">
+          <main className="flex-1 overflow-y-auto">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+              {children}
+            </div>
+          </main>
+        </div>
 
-        {/* Page content */}
-        <main className="flex-1 overflow-y-auto">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            {children}
-          </div>
-        </main>
+        {/* Mobile layout - use MobileShell */}
+        <div className="lg:hidden">
+          {children}
+        </div>
       </div>
 
       {/* Assistant IA flottant */}
