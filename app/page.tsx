@@ -774,36 +774,30 @@ export default function LandingPage() {
                   <span className="text-4xl font-bold">5,90 €</span>
                   <span className="text-gray-400">/mois</span>
                 </div>
-                <ul className="space-y-3 text-sm">
-                  <li className="flex items-start gap-2 text-gray-200">
-                    <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                    <span>Tout le plan Gratuit</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-gray-200">
-                    <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                    <span>Simulations illimitées</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-gray-200">
-                    <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                    <span>Export PDF par e-mail</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-gray-200">
-                    <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                    <span>Sauvegarde en ligne illimitée</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-gray-200">
-                    <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                    <span>Gestion des factures</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-gray-200">
-                    <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                    <span>Génération PDF de factures</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-gray-200">
-                    <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                    <span>Envoi de factures par e-mail</span>
-                  </li>
-                </ul>
+                <div className="space-y-4 min-h-[280px]">
+                  <ul className="space-y-2.5 text-sm">
+                    <li className="flex items-start gap-2 text-gray-200">
+                      <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                      <span><strong>Simulations illimitées</strong></span>
+                    </li>
+                    <li className="flex items-start gap-2 text-gray-200">
+                      <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                      <span>Simulateur de TVA</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-gray-200">
+                      <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                      <span>Charges déductibles</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-gray-200">
+                      <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                      <span>Export Excel/CSV/PDF</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-gray-200">
+                      <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                      <span>Factures complètes</span>
+                    </li>
+                  </ul>
+                </div>
                 <button
                   onClick={() => handleCheckout("pro")}
                   disabled={loading !== null}
@@ -833,40 +827,31 @@ export default function LandingPage() {
                   <span className="text-4xl font-bold">9,90 €</span>
                   <span className="text-gray-400">/mois</span>
                 </div>
-                <ul className="space-y-3 text-sm">
-                  <li className="flex items-start gap-2 text-gray-200">
-                    <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                    <span>Tout le plan Pro</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-gray-200">
-                    <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                    <span>Rappels URSSAF automatiques par e-mail</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-gray-200">
-                    <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                    <span>Assistant IA personnalisé (chatbot flottant)</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-gray-200">
-                    <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                    <span>Conseils IA basés sur vos données</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-gray-200">
-                    <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                    <span>Graphiques d'évolution du chiffre d'affaires</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-gray-200">
-                    <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                    <span>Pré-remplissage automatique URSSAF</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-gray-200">
-                    <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                    <span>Support prioritaire</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-gray-200">
-                    <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                    <span>Historique complet et analyses</span>
-                  </li>
-                </ul>
+                <div className="space-y-4 min-h-[280px]">
+                  <div className="text-xs text-gray-500 mb-3">TOUT PRO +</div>
+                  <ul className="space-y-2.5 text-sm">
+                    <li className="flex items-start gap-2 text-gray-200">
+                      <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                      <span><strong>Assistant IA</strong> personnalisé</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-gray-200">
+                      <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                      <span><strong>Calendrier fiscal</strong> intelligent</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-gray-200">
+                      <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                      <span>Rappels automatiques URSSAF</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-gray-200">
+                      <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                      <span>Pré-remplissage URSSAF</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-gray-200">
+                      <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                      <span>Analytics avancés</span>
+                    </li>
+                  </ul>
+                </div>
                 <button
                   onClick={() => handleCheckout("premium")}
                   disabled={loading !== null}
