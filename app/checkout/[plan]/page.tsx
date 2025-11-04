@@ -88,7 +88,105 @@ export default function CheckoutPage() {
     }
   }, [plan, user, autoRenew]);
 
-  const options = { fetchClientSecret };
+  const options = { 
+    fetchClientSecret,
+    appearance: {
+      theme: 'night' as const,
+      variables: {
+        colorPrimary: '#2E6CF6',
+        colorBackground: '#0e0f12',
+        colorText: '#ffffff',
+        colorDanger: '#ef4444',
+        fontFamily: 'Poppins, sans-serif',
+        borderRadius: '12px',
+        colorTextSecondary: '#9ca3af',
+        colorTextPlaceholder: '#6b7280',
+        spacingUnit: '4px',
+      },
+      rules: {
+        '.Tab': {
+          backgroundColor: '#14161b',
+          border: '1px solid #2d3441',
+          color: '#9ca3af',
+          borderRadius: '8px',
+          padding: '12px',
+          transition: 'all 0.2s ease',
+        },
+        '.Tab:hover': {
+          backgroundColor: '#1a1d24',
+          color: '#ffffff',
+        },
+        '.Tab--selected': {
+          backgroundColor: '#2E6CF6',
+          color: '#ffffff',
+          border: '1px solid #2E6CF6',
+          boxShadow: '0 0 0 2px rgba(46, 108, 246, 0.2)',
+        },
+        '.Input': {
+          backgroundColor: '#14161b',
+          border: '1px solid #2d3441',
+          color: '#ffffff',
+          padding: '12px',
+          borderRadius: '8px',
+          fontSize: '14px',
+        },
+        '.Input:hover': {
+          backgroundColor: '#1a1d24',
+          borderColor: '#3d4451',
+        },
+        '.Input:focus': {
+          backgroundColor: '#1a1d24',
+          border: '1px solid #2E6CF6',
+          boxShadow: '0 0 0 2px rgba(46, 108, 246, 0.2)',
+          outline: 'none',
+        },
+        '.Input::placeholder': {
+          color: '#6b7280',
+        },
+        '.Label': {
+          color: '#9ca3af',
+          fontSize: '13px',
+          fontWeight: '500',
+          marginBottom: '6px',
+        },
+        '.Error': {
+          color: '#ef4444',
+          fontSize: '12px',
+        },
+        '.Block': {
+          backgroundColor: '#0e0f12',
+          borderRadius: '12px',
+          padding: '16px',
+        },
+        '.CheckboxInput': {
+          accentColor: '#2E6CF6',
+        },
+        '.PickerItem': {
+          backgroundColor: '#14161b',
+          border: '1px solid #2d3441',
+          color: '#ffffff',
+          borderRadius: '8px',
+          padding: '12px',
+        },
+        '.PickerItem:hover': {
+          backgroundColor: '#1a1d24',
+          borderColor: '#2E6CF6',
+        },
+        '.PickerItem--selected': {
+          backgroundColor: '#2E6CF6',
+          borderColor: '#2E6CF6',
+          color: '#ffffff',
+        },
+        '.TermsText': {
+          color: '#9ca3af',
+          fontSize: '12px',
+        },
+        '.RedirectText': {
+          color: '#9ca3af',
+        },
+      },
+    },
+  };
 
   const planDetails = {
     pro: {
