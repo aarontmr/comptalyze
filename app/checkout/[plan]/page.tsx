@@ -10,7 +10,20 @@ import { ArrowLeft, Check } from "lucide-react";
 import Link from "next/link";
 import { useCallback } from "react";
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+// Initialisation de Stripe avec vérification
+const initStripe = () => {
+  const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+  console.log("🔑 Clé publique Stripe:", publishableKey ? "✅ Définie" : "❌ Non définie");
+  
+  if (!publishableKey) {
+    console.error("❌ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY n'est pas définie");
+    return null;
+  }
+  
+  return loadStripe(publishableKey);
+};
+
+const stripePromise = initStripe();
 
 export default function CheckoutPage() {
   const params = useParams();
@@ -25,9 +38,11 @@ export default function CheckoutPage() {
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) {
+        console.log("❌ Utilisateur non connecté, redirection vers /login");
         router.push("/login");
         return;
       }
+      console.log("✅ Utilisateur connecté:", session.user.email);
       setUser(session.user);
       setLoading(false);
     };
@@ -35,7 +50,12 @@ export default function CheckoutPage() {
   }, [router]);
 
   const fetchClientSecret = useCallback(async () => {
-    if (!user) return "";
+    if (!user) {
+      console.log("❌ Pas d'utilisateur connecté");
+      return "";
+    }
+
+    console.log("🔄 Création de la session Stripe pour:", { plan, userId: user.id, autoRenew });
 
     try {
       const res = await fetch("/api/create-payment-intent", {
@@ -45,15 +65,24 @@ export default function CheckoutPage() {
       });
 
       const data = await res.json();
+      console.log("📥 Réponse API:", data);
 
       if (!res.ok) {
+        console.error("❌ Erreur API:", data);
         setError(data.error || "Une erreur est survenue");
         return "";
       }
 
+      if (!data.clientSecret) {
+        console.error("❌ Pas de clientSecret dans la réponse");
+        setError("Impossible de créer la session de paiement");
+        return "";
+      }
+
+      console.log("✅ ClientSecret reçu");
       return data.clientSecret;
     } catch (err) {
-      console.error("Erreur:", err);
+      console.error("❌ Erreur lors de l'appel API:", err);
       setError("Impossible de charger le formulaire de paiement");
       return "";
     }
@@ -365,7 +394,23 @@ export default function CheckoutPage() {
               </div>
             )}
 
-            {!loading && !error && user && (
+            {!loading && !error && user && !stripePromise && (
+              <div
+                className="rounded-lg p-4 mb-6"
+                style={{
+                  backgroundColor: "rgba(239, 68, 68, 0.1)",
+                  border: "1px solid rgba(239, 68, 68, 0.3)",
+                }}
+              >
+                <p className="text-sm text-red-400 font-medium mb-2">Configuration Stripe manquante</p>
+                <p className="text-xs text-gray-400">
+                  La clé publique Stripe (NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) n'est pas configurée.
+                  Vérifiez votre fichier .env.local
+                </p>
+              </div>
+            )}
+
+            {!loading && !error && user && stripePromise && (
               <EmbeddedCheckoutProvider stripe={stripePromise} options={options}>
                 <CheckoutForm plan={plan} />
               </EmbeddedCheckoutProvider>
