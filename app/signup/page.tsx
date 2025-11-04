@@ -67,23 +67,8 @@ export default function SignupPage() {
 
       if (error) throw error;
 
-      // Si l'email doit être vérifié, envoyer un email personnalisé
+      // Si l'email doit être vérifié, Supabase envoie automatiquement l'email avec le template personnalisé
       if (data.user && !data.session) {
-        // Envoyer l'email personnalisé via notre API
-        try {
-          await fetch('/api/send-verification-email', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              email: data.user.email,
-              type: 'signup',
-            }),
-          });
-        } catch (emailError) {
-          console.error('Erreur lors de l\'envoi de l\'email personnalisé:', emailError);
-          // Ne pas bloquer l'inscription si l'email personnalisé échoue
-        }
-        
         setShowVerificationMessage(true);
         setSuccessMessage('Un email de vérification a été envoyé à votre adresse.');
       } else if (data.session) {
