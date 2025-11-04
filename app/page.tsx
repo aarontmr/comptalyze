@@ -870,6 +870,108 @@ export default function LandingPage() {
         </Stagger>
       </section>
 
+      {/* Évolution continue */}
+      <section className="relative px-4 py-12 sm:py-16">
+        <div className="mx-auto max-w-5xl">
+          <FadeIn delay={0} y={12} duration={0.6}>
+            <div 
+              className="rounded-2xl p-8 sm:p-12 relative overflow-hidden"
+              style={{
+                background: "linear-gradient(135deg, rgba(0,208,132,0.08) 0%, rgba(46,108,246,0.08) 100%)",
+                border: "1px solid rgba(46,108,246,0.2)",
+              }}
+            >
+              {/* Gradient accent top */}
+              <div 
+                className="absolute top-0 left-0 right-0 h-1"
+                style={{
+                  background: "linear-gradient(90deg, #00D084 0%, #2E6CF6 100%)",
+                }}
+              />
+
+              <div className="text-center relative z-10">
+                <motion.div 
+                  className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-6"
+                  style={{
+                    background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                    boxShadow: "0 0 40px rgba(0, 208, 132, 0.3)",
+                  }}
+                  animate={{ 
+                    rotate: [0, 360],
+                    scale: [1, 1.05, 1]
+                  }}
+                  transition={{ 
+                    rotate: { duration: 20, repeat: Infinity, ease: "linear" },
+                    scale: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                >
+                  <Sparkles className="w-8 h-8 text-white" />
+                </motion.div>
+
+                <h2 className="text-2xl sm:text-3xl font-bold mb-4">
+                  Un outil en <span className="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">constante évolution</span>
+                </h2>
+                
+                <p className="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto mb-8">
+                  Comptalyze s'améliore continuellement grâce à vos retours. De nouvelles fonctionnalités sont ajoutées régulièrement pour répondre encore mieux à vos besoins de micro-entrepreneur.
+                </p>
+
+                {/* Récentes améliorations */}
+                <div className="grid sm:grid-cols-3 gap-4 mt-8">
+                  <motion.div 
+                    className="rounded-xl p-4"
+                    style={{
+                      backgroundColor: "#14161b",
+                      border: "1px solid #1f232b",
+                    }}
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <div className="text-2xl mb-2">🎯</div>
+                    <div className="text-sm font-semibold text-white mb-1">Simulateur TVA</div>
+                    <div className="text-xs text-gray-400">Ajouté récemment</div>
+                  </motion.div>
+
+                  <motion.div 
+                    className="rounded-xl p-4"
+                    style={{
+                      backgroundColor: "#14161b",
+                      border: "1px solid #1f232b",
+                    }}
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <div className="text-2xl mb-2">📅</div>
+                    <div className="text-sm font-semibold text-white mb-1">Calendrier fiscal</div>
+                    <div className="text-xs text-gray-400">Nouveauté 2025</div>
+                  </motion.div>
+
+                  <motion.div 
+                    className="rounded-xl p-4"
+                    style={{
+                      backgroundColor: "#14161b",
+                      border: "1px solid #1f232b",
+                    }}
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <div className="text-2xl mb-2">🤖</div>
+                    <div className="text-sm font-semibold text-white mb-1">Assistant IA</div>
+                    <div className="text-xs text-gray-400">En amélioration continue</div>
+                  </motion.div>
+                </div>
+
+                <div className="mt-8 pt-6 border-t" style={{ borderColor: "#2d3441" }}>
+                  <p className="text-sm text-gray-400">
+                    💡 <span className="font-medium text-gray-300">Votre avis compte !</span> Vos suggestions nous aident à créer l'outil parfait pour les micro-entrepreneurs.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
       {/* TESTIMONIALS */}
       <section className="relative px-4 py-12 sm:py-16 md:py-20">
         <div className="mx-auto max-w-6xl">
@@ -1066,108 +1168,6 @@ export default function LandingPage() {
               <p className="text-sm text-gray-400 sm:text-base">
                 Vos informations sont chiffrées et stockées de manière sécurisée. Nous respectons le RGPD et ne partageons jamais vos données avec des tiers.
               </p>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
-
-      {/* Évolution continue */}
-      <section className="relative px-4 py-12 sm:py-16">
-        <div className="mx-auto max-w-5xl">
-          <FadeIn delay={0} y={12} duration={0.6}>
-            <div 
-              className="rounded-2xl p-8 sm:p-12 relative overflow-hidden"
-              style={{
-                background: "linear-gradient(135deg, rgba(0,208,132,0.08) 0%, rgba(46,108,246,0.08) 100%)",
-                border: "1px solid rgba(46,108,246,0.2)",
-              }}
-            >
-              {/* Gradient accent top */}
-              <div 
-                className="absolute top-0 left-0 right-0 h-1"
-                style={{
-                  background: "linear-gradient(90deg, #00D084 0%, #2E6CF6 100%)",
-                }}
-              />
-
-              <div className="text-center relative z-10">
-                <motion.div 
-                  className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-6"
-                  style={{
-                    background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                    boxShadow: "0 0 40px rgba(0, 208, 132, 0.3)",
-                  }}
-                  animate={{ 
-                    rotate: [0, 360],
-                    scale: [1, 1.05, 1]
-                  }}
-                  transition={{ 
-                    rotate: { duration: 20, repeat: Infinity, ease: "linear" },
-                    scale: { duration: 2, repeat: Infinity, ease: "easeInOut" }
-                  }}
-                >
-                  <Sparkles className="w-8 h-8 text-white" />
-                </motion.div>
-
-                <h2 className="text-2xl sm:text-3xl font-bold mb-4">
-                  Un outil en <span className="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">constante évolution</span>
-                </h2>
-                
-                <p className="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto mb-8">
-                  Comptalyze s'améliore continuellement grâce à vos retours. De nouvelles fonctionnalités sont ajoutées régulièrement pour répondre encore mieux à vos besoins de micro-entrepreneur.
-                </p>
-
-                {/* Récentes améliorations */}
-                <div className="grid sm:grid-cols-3 gap-4 mt-8">
-                  <motion.div 
-                    className="rounded-xl p-4"
-                    style={{
-                      backgroundColor: "#14161b",
-                      border: "1px solid #1f232b",
-                    }}
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    <div className="text-2xl mb-2">🎯</div>
-                    <div className="text-sm font-semibold text-white mb-1">Simulateur TVA</div>
-                    <div className="text-xs text-gray-400">Ajouté récemment</div>
-                  </motion.div>
-
-                  <motion.div 
-                    className="rounded-xl p-4"
-                    style={{
-                      backgroundColor: "#14161b",
-                      border: "1px solid #1f232b",
-                    }}
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    <div className="text-2xl mb-2">📅</div>
-                    <div className="text-sm font-semibold text-white mb-1">Calendrier fiscal</div>
-                    <div className="text-xs text-gray-400">Nouveauté 2025</div>
-                  </motion.div>
-
-                  <motion.div 
-                    className="rounded-xl p-4"
-                    style={{
-                      backgroundColor: "#14161b",
-                      border: "1px solid #1f232b",
-                    }}
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    <div className="text-2xl mb-2">🤖</div>
-                    <div className="text-sm font-semibold text-white mb-1">Assistant IA</div>
-                    <div className="text-xs text-gray-400">En amélioration continue</div>
-                  </motion.div>
-                </div>
-
-                <div className="mt-8 pt-6 border-t" style={{ borderColor: "#2d3441" }}>
-                  <p className="text-sm text-gray-400">
-                    💡 <span className="font-medium text-gray-300">Votre avis compte !</span> Vos suggestions nous aident à créer l'outil parfait pour les micro-entrepreneurs.
-                  </p>
-                </div>
-              </div>
             </div>
           </FadeIn>
         </div>
