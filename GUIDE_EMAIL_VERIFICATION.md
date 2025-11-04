@@ -4,17 +4,23 @@
 
 Comptalyze utilise un email de vérification personnalisé pour l'inscription, avec un design professionnel qui correspond à la marque.
 
+## ⚠️ IMPORTANT : Réactiver "Confirm email"
+
+Si vous avez désactivé "Confirm email" dans Supabase, **réactivez-le** et utilisez le template personnalisé comme expliqué ci-dessous.
+
 ## Configuration requise
 
-### 1. Désactiver l'email automatique de Supabase
+### Option recommandée : Utiliser le template Supabase personnalisé
 
-Pour que les utilisateurs reçoivent notre email personnalisé au lieu de celui par défaut de Supabase :
+Pour utiliser le template HTML personnalisé Comptalyze directement dans Supabase :
 
-1. Allez dans votre **Supabase Dashboard**
-2. Naviguez vers **Authentication** > **Email Templates**
-3. Pour le template **"Confirm signup"**, vous avez deux options :
-   - **Option A (Recommandée)** : Désactivez complètement l'email automatique et utilisez uniquement notre système
-   - **Option B** : Laissez Supabase envoyer son email, mais notre email personnalisé sera aussi envoyé
+1. Consultez le guide détaillé : **`GUIDE_SUPABASE_TEMPLATE.md`**
+2. Copiez le contenu du fichier **`SUPABASE_EMAIL_TEMPLATE.html`**
+3. Collez-le dans Supabase Dashboard > **Authentication** > **Email Templates** > **Confirm signup**
+
+### Alternative : Désactiver l'email automatique de Supabase
+
+Pour que les utilisateurs reçoivent uniquement notre email personnalisé (via Resend) :
 
 ### 2. Configuration dans Supabase Dashboard
 
