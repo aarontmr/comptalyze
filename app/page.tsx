@@ -39,7 +39,6 @@ export default function LandingPage() {
   const handleCheckout = (plan: "pro" | "premium") => {
     // Vérifier que l'utilisateur est connecté
     if (!user) {
-      alert("Vous devez être connecté pour souscrire à un abonnement. Redirection vers la page de connexion...");
       window.location.href = "/login";
       return;
     }

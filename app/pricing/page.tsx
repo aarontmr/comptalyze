@@ -31,7 +31,6 @@ export default function PricingPage() {
 
   const handleStartTrial = async () => {
     if (!user) {
-      alert("Vous devez être connecté pour commencer l'essai gratuit. Redirection vers la page de connexion...");
       window.location.href = "/login";
       return;
     }
@@ -64,7 +63,6 @@ export default function PricingPage() {
   const handleCheckout = (plan: "pro" | "premium") => {
     // Vérifier que l'utilisateur est connecté
     if (!user) {
-      alert("Vous devez être connecté pour souscrire à un abonnement. Redirection vers la page de connexion...");
       window.location.href = "/login";
       return;
     }
