@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Check, ArrowRight, Sparkles } from "lucide-react";
 import logo from "@/public/logo.png";
 
-export default function SuccessPage() {
+function SuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const paymentIntent = searchParams.get("payment_intent");
@@ -217,6 +217,28 @@ export default function SuccessPage() {
         }
       `}</style>
     </main>
+  );
+}
+
+export default function SuccessPage() {
+  return (
+    <Suspense fallback={
+      <main
+        className="min-h-screen w-full flex items-center justify-center text-white"
+        style={{ backgroundColor: "#0e0f12", fontFamily: "Poppins, sans-serif" }}
+      >
+        <div className="relative w-16 h-16">
+          <div
+            className="absolute inset-0 rounded-full border-4 border-t-transparent animate-spin"
+            style={{
+              borderColor: "#2E6CF6 transparent transparent transparent",
+            }}
+          />
+        </div>
+      </main>
+    }>
+      <SuccessContent />
+    </Suspense>
   );
 }
 
