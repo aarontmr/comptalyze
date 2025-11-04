@@ -11,7 +11,7 @@ interface TutorialStep {
   id: string;
   title: string;
   description: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
   targetSelector?: string; // Pour pointer vers un élément spécifique
   position?: "top" | "bottom" | "left" | "right" | "center";
   requiresPro?: boolean;
