@@ -278,21 +278,23 @@ export default function DashboardLayout({
               );
             })}
 
-            {/* Tarifs - Section spéciale */}
-            <div className="mt-6 px-4">
-              <Link
-                href="/pricing"
-                className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-white transition-all duration-200 hover:scale-[1.02] cursor-pointer"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(0, 208, 132, 0.08) 0%, rgba(46, 108, 246, 0.08) 100%)',
-                  border: '1px solid rgba(0, 208, 132, 0.2)',
-                  boxShadow: '0 2px 8px rgba(0, 208, 132, 0.15)',
-                }}
-              >
-                <CreditCard className="w-5 h-5" style={{ color: '#00D084' }} />
-                <span>Tarifs & Plans</span>
-              </Link>
-            </div>
+            {/* Tarifs - Section spéciale (masqué pour Premium) */}
+            {!subscription.isPremium && (
+              <div className="mt-6 px-4">
+                <Link
+                  href="/pricing"
+                  className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-white transition-all duration-200 hover:scale-[1.02] cursor-pointer"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(0, 208, 132, 0.08) 0%, rgba(46, 108, 246, 0.08) 100%)',
+                    border: '1px solid rgba(0, 208, 132, 0.2)',
+                    boxShadow: '0 2px 8px rgba(0, 208, 132, 0.15)',
+                  }}
+                >
+                  <CreditCard className="w-5 h-5" style={{ color: '#00D084' }} />
+                  <span>Tarifs & Plans</span>
+                </Link>
+              </div>
+            )}
 
             {/* Bouton Upgrade */}
             {upgradeInfo && (
@@ -446,22 +448,24 @@ export default function DashboardLayout({
               );
             })}
 
-            {/* Tarifs - Section spéciale mobile */}
-            <div className="mt-6 px-4">
-              <Link
-                href="/pricing"
-                onClick={() => setSidebarOpen(false)}
-                className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-white transition-all duration-200 hover:scale-[1.02] cursor-pointer"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(0, 208, 132, 0.08) 0%, rgba(46, 108, 246, 0.08) 100%)',
-                  border: '1px solid rgba(0, 208, 132, 0.2)',
-                  boxShadow: '0 2px 8px rgba(0, 208, 132, 0.15)',
-                }}
-              >
-                <CreditCard className="w-5 h-5" style={{ color: '#00D084' }} />
-                <span>Tarifs & Plans</span>
-              </Link>
-            </div>
+            {/* Tarifs - Section spéciale mobile (masqué pour Premium) */}
+            {!subscription.isPremium && (
+              <div className="mt-6 px-4">
+                <Link
+                  href="/pricing"
+                  onClick={() => setSidebarOpen(false)}
+                  className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-white transition-all duration-200 hover:scale-[1.02] cursor-pointer"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(0, 208, 132, 0.08) 0%, rgba(46, 108, 246, 0.08) 100%)',
+                    border: '1px solid rgba(0, 208, 132, 0.2)',
+                    boxShadow: '0 2px 8px rgba(0, 208, 132, 0.15)',
+                  }}
+                >
+                  <CreditCard className="w-5 h-5" style={{ color: '#00D084' }} />
+                  <span>Tarifs & Plans</span>
+                </Link>
+              </div>
+            )}
 
             {/* Mobile - Bouton Upgrade */}
             {upgradeInfo && (
