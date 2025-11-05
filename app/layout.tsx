@@ -22,23 +22,37 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Comptalyze - Micro-Entreprises",
+  title: "Comptalyze - Comptabilité et Gestion pour Micro-Entreprise | Simulateur URSSAF Gratuit",
   description:
-    "Comptalyze simplifies micro-entrepreneurship: calculate your URSSAF contributions, track income, and anticipate your declarations effortlessly.",
+    "Comptalyze : logiciel de comptabilité pour micro-entreprise et auto-entrepreneur. Calculez vos cotisations URSSAF, gérez vos factures, suivez votre CA. Essai gratuit 3 jours.",
   keywords: [
+    "comptalyze",
+    "comptabilité micro-entreprise",
+    "comptabilité micro entreprise",
+    "comptabilité auto-entrepreneur",
+    "logiciel comptabilité micro-entreprise",
+    "gestion micro-entreprise",
     "URSSAF",
-    "micro-entreprise",
+    "simulateur URSSAF",
+    "calculateur URSSAF gratuit",
+    "cotisations URSSAF",
     "auto-entrepreneur",
-    "simulateur cotisations",
-    "revenu net",
-    "URSSAF calculator",
+    "micro-entreprise",
+    "factures micro-entreprise",
+    "revenu net micro-entreprise",
+    "déclaration URSSAF",
+    "simulateur cotisations sociales",
+    "calcul charges sociales",
+    "outil comptable auto-entrepreneur",
+    "gestion factures auto-entrepreneur",
+    "logiciel facturation micro-entreprise",
   ],
   authors: [{ name: "Comptalyze", url: "https://comptalyze.com" }],
   metadataBase: new URL("https://comptalyze.com"),
   openGraph: {
-    title: "Comptalyze – Simplify your URSSAF management",
+    title: "Comptalyze – Comptabilité simplifiée pour Micro-Entreprise",
     description:
-      "A smart, minimalist tool for micro-entrepreneurs to simulate URSSAF contributions and manage income effectively.",
+      "Logiciel de comptabilité pour auto-entrepreneur : calculez vos cotisations URSSAF, générez vos factures, suivez votre CA en temps réel. Essai gratuit 3 jours.",
     url: "https://comptalyze.com",
     siteName: "Comptalyze",
     images: ["/og-image.png"],
@@ -47,13 +61,16 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Comptalyze – URSSAF Simulator for Micro-Entrepreneurs",
+    title: "Comptalyze – Comptabilité Micro-Entreprise & Simulateur URSSAF",
     description:
-      "Manage your micro-business easily with Comptalyze: fast URSSAF calculation, income tracking, and forecasts.",
+      "Gérez votre micro-entreprise facilement avec Comptalyze : calcul URSSAF instantané, facturation, suivi de CA et prévisions.",
     images: ["/og-image.png"],
   },
   icons: {
     icon: "/favicon.ico",
+  },
+  alternates: {
+    canonical: "https://comptalyze.com",
   },
 };
 
