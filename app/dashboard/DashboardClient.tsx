@@ -65,10 +65,7 @@ export default function DashboardClient({ user: serverUser }: DashboardClientPro
 
   if (loading) {
     return (
-      <div
-        className="min-h-screen flex items-center justify-center"
-        style={{ backgroundColor: '#0e0f12' }}
-      >
+      <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-white text-lg">Chargement...</div>
       </div>
     );
