@@ -22,6 +22,7 @@ import {
   Download,
   Calendar as CalendarIcon,
   Percent,
+  CreditCard,
 } from 'lucide-react';
 import logo from '@/public/logo.png';
 import FloatingAIAssistant from '@/app/components/FloatingAIAssistant';
@@ -100,6 +101,7 @@ export default function DashboardLayout({
   const navItems: NavItem[] = [
     { label: 'Aperçu', href: '/dashboard', icon: LayoutDashboard },
     { label: 'Calcul URSSAF', href: '/dashboard/simulateur', icon: Calculator },
+    { label: 'Tarifs', href: '/pricing', icon: CreditCard },
     {
       label: 'Simulateur TVA',
       href: '/dashboard/tva',
