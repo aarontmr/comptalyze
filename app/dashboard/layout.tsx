@@ -101,7 +101,6 @@ export default function DashboardLayout({
   const navItems: NavItem[] = [
     { label: 'Aperçu', href: '/dashboard', icon: LayoutDashboard },
     { label: 'Calcul URSSAF', href: '/dashboard/simulateur', icon: Calculator },
-    { label: 'Tarifs', href: '/pricing', icon: CreditCard },
     {
       label: 'Simulateur TVA',
       href: '/dashboard/tva',
@@ -199,7 +198,7 @@ export default function DashboardLayout({
       >
       {/* Sidebar - Desktop */}
       <aside
-        className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0"
+        className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 z-40"
         style={{ backgroundColor: '#111216', borderRight: '1px solid rgba(45, 52, 65, 0.5)' }}
         data-tutorial="navigation"
       >
@@ -258,6 +257,22 @@ export default function DashboardLayout({
                 </Link>
               );
             })}
+
+            {/* Tarifs - Section spéciale */}
+            <div className="mt-6 px-4">
+              <Link
+                href="/pricing"
+                className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-white transition-all duration-200 hover:scale-[1.02] cursor-pointer"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(0, 208, 132, 0.08) 0%, rgba(46, 108, 246, 0.08) 100%)',
+                  border: '1px solid rgba(0, 208, 132, 0.2)',
+                  boxShadow: '0 2px 8px rgba(0, 208, 132, 0.15)',
+                }}
+              >
+                <CreditCard className="w-5 h-5" style={{ color: '#00D084' }} />
+                <span>Tarifs & Plans</span>
+              </Link>
+            </div>
 
             {/* Bouton Upgrade */}
             {upgradeInfo && (
@@ -388,6 +403,23 @@ export default function DashboardLayout({
                 </Link>
               );
             })}
+
+            {/* Tarifs - Section spéciale mobile */}
+            <div className="mt-6 px-4">
+              <Link
+                href="/pricing"
+                onClick={() => setSidebarOpen(false)}
+                className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-white transition-all duration-200 hover:scale-[1.02] cursor-pointer"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(0, 208, 132, 0.08) 0%, rgba(46, 108, 246, 0.08) 100%)',
+                  border: '1px solid rgba(0, 208, 132, 0.2)',
+                  boxShadow: '0 2px 8px rgba(0, 208, 132, 0.15)',
+                }}
+              >
+                <CreditCard className="w-5 h-5" style={{ color: '#00D084' }} />
+                <span>Tarifs & Plans</span>
+              </Link>
+            </div>
 
             {/* Mobile - Bouton Upgrade */}
             {upgradeInfo && (

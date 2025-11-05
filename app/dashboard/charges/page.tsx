@@ -105,7 +105,7 @@ export default function ChargesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#0e0f12' }}>
+      <div className="flex items-center justify-center min-h-[400px]">
         <div className="relative w-16 h-16">
           <div
             className="absolute inset-0 rounded-full border-4 border-t-transparent animate-spin"
@@ -117,8 +117,8 @@ export default function ChargesPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#0e0f12', fontFamily: 'Poppins, sans-serif' }}>
-      <div className="max-w-5xl mx-auto px-4 py-8">
+    <div>
+      <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
           <div>

@@ -75,11 +75,8 @@ export default function DashboardClient({ user: serverUser }: DashboardClientPro
   }
 
   return (
-    <div
-      className="min-h-screen"
-      style={{ backgroundColor: '#0e0f12', fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}
-    >
-      <div className="max-w-7xl mx-auto px-4 py-8">
+    <div>
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
         <header className="mb-8 flex items-center justify-between">
           <h1 className="text-3xl font-semibold text-white">Tableau de bord</h1>

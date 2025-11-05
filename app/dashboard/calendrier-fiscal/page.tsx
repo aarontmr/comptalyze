@@ -100,8 +100,8 @@ export default function CalendrierFiscalPage() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#0e0f12', fontFamily: 'Poppins, sans-serif' }}>
-      <div className="max-w-6xl mx-auto px-4 py-8">
+    <div>
+      <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
