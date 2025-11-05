@@ -163,20 +163,24 @@ export default function DashboardLayout({
     router.push(`/checkout/${plan}`);
   };
 
-  // Déterminer le plan supérieur et le texte
+  // Déterminer le plan supérieur et le texte - OFFRE DE LANCEMENT 🚀
   const getUpgradeInfo = () => {
     if (!subscription.isPro && !subscription.isPremium) {
       return {
         plan: "pro" as const,
         label: "Passer à Pro",
-        price: "5,90 €/mois",
+        price: "3,90 €/mois",
+        originalPrice: "5,90 €",
+        badge: "🚀 -34%",
       };
     }
     if (subscription.isPro && !subscription.isPremium) {
       return {
         plan: "premium" as const,
         label: "Passer à Premium",
-        price: "9,90 €/mois",
+        price: "7,90 €/mois",
+        originalPrice: "9,90 €",
+        badge: "🚀 -20%",
       };
     }
     return null; // Déjà Premium, pas besoin d'upgrade
@@ -256,16 +260,24 @@ export default function DashboardLayout({
               <div className="mt-4 px-4">
                 <button
                   onClick={() => handleUpgrade(upgradeInfo.plan)}
-                  className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-sm font-semibold text-white transition-all duration-200 hover:scale-[1.02]"
+                  className="relative flex items-center gap-3 w-full px-4 py-3 rounded-lg text-sm font-semibold text-white transition-all duration-200 hover:scale-[1.02] overflow-visible"
                   style={{
                     background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
                     boxShadow: "0 4px 15px rgba(46,108,246,0.3)",
                   }}
                 >
+                  {/* Badge Offre de lancement */}
+                  <div className="absolute -top-2 -right-2 text-[10px] px-2 py-0.5 rounded-full font-bold animate-pulse" style={{ backgroundColor: "#fff", color: "#00D084" }}>
+                    {upgradeInfo.badge}
+                  </div>
+                  
                   <Sparkles className="w-5 h-5" />
                   <div className="flex-1 text-left">
                     <div className="font-semibold">{upgradeInfo.label}</div>
-                    <div className="text-xs opacity-90">{upgradeInfo.price}</div>
+                    <div className="flex items-baseline gap-2">
+                      <div className="text-xs opacity-90">{upgradeInfo.price}</div>
+                      <div className="text-[10px] opacity-60 line-through">{upgradeInfo.originalPrice}</div>
+                    </div>
                   </div>
                 </button>
               </div>
@@ -381,16 +393,24 @@ export default function DashboardLayout({
                     handleUpgrade(upgradeInfo.plan);
                     setSidebarOpen(false);
                   }}
-                  className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-sm font-semibold text-white transition-all duration-200 hover:scale-[1.02]"
+                  className="relative flex items-center gap-3 w-full px-4 py-3 rounded-lg text-sm font-semibold text-white transition-all duration-200 hover:scale-[1.02] overflow-visible"
                   style={{
                     background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
                     boxShadow: "0 4px 15px rgba(46,108,246,0.3)",
                   }}
                 >
+                  {/* Badge Offre de lancement */}
+                  <div className="absolute -top-2 -right-2 text-[10px] px-2 py-0.5 rounded-full font-bold animate-pulse" style={{ backgroundColor: "#fff", color: "#00D084" }}>
+                    {upgradeInfo.badge}
+                  </div>
+                  
                   <Sparkles className="w-5 h-5" />
                   <div className="flex-1 text-left">
                     <div className="font-semibold">{upgradeInfo.label}</div>
-                    <div className="text-xs opacity-90">{upgradeInfo.price}</div>
+                    <div className="flex items-baseline gap-2">
+                      <div className="text-xs opacity-90">{upgradeInfo.price}</div>
+                      <div className="text-[10px] opacity-60 line-through">{upgradeInfo.originalPrice}</div>
+                    </div>
                   </div>
                 </button>
               </div>

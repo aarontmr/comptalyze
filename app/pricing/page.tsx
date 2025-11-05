@@ -73,19 +73,21 @@ export default function PricingPage() {
     window.location.href = `/checkout/${planWithCycle}`;
   };
 
-  // Prix et économies
+  // Prix et économies - OFFRE DE LANCEMENT 🚀
   const pricing = {
     pro: {
-      monthly: 5.90,
-      yearly: 56.90, // ~9.48€/mois (économie de 19%)
-      yearlyMonthly: 4.74,
-      savings: 13.90
+      monthly: 3.90,        // Offre de lancement (prix normal: 5,90 €)
+      yearly: 37.90,        // ~3,16 €/mois (économie de 20%)
+      yearlyMonthly: 3.16,
+      savings: 8.90,
+      originalMonthly: 5.90 // Prix normal pour afficher la réduction
     },
     premium: {
-      monthly: 9.90,
-      yearly: 94.90, // ~7.91€/mois (économie de 20%)
-      yearlyMonthly: 7.91,
-      savings: 24.90
+      monthly: 7.90,        // Offre de lancement (prix normal: 9,90 €)
+      yearly: 75.90,        // ~6,33 €/mois (économie de 20%)
+      yearlyMonthly: 6.33,
+      savings: 18.90,
+      originalMonthly: 9.90 // Prix normal pour afficher la réduction
     }
   };
 
@@ -96,8 +98,15 @@ export default function PricingPage() {
     >
       <section className="px-4 py-16 sm:py-20">
         <div className="mx-auto max-w-5xl text-center">
+          {/* Badge Offre de lancement */}
+          <div className="mb-6">
+            <span className="inline-flex items-center gap-2 text-sm px-4 py-2 rounded-full font-medium animate-pulse" style={{ backgroundColor: "rgba(0, 208, 132, 0.15)", color: "#00D084", border: "1px solid rgba(0, 208, 132, 0.3)" }}>
+              🚀 Offre de lancement exclusive - Jusqu'à -34% !
+            </span>
+          </div>
+          
           <h1 className="text-3xl font-semibold sm:text-4xl">Des plans simples et transparents</h1>
-          <p className="mt-3 text-gray-300">Commencez gratuitement, passez au Pro quand vous en avez besoin.</p>
+          <p className="mt-3 text-gray-300">Profitez de nos prix de lancement réduits pour nos premiers clients.</p>
           
           {/* Toggle Mensuel/Annuel */}
           <div className="mt-8 inline-flex items-center gap-3 rounded-xl p-1.5" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
@@ -182,26 +191,37 @@ export default function PricingPage() {
               boxShadow: "0 0 40px rgba(46,108,246,0.18)",
             }}
           >
-            <div className="absolute right-4 top-4 rounded-md px-2 py-1 text-xs font-medium" style={{ backgroundColor: "#2E6CF6" }}>
-              Recommandé
+            <div className="absolute right-4 top-4 flex gap-2">
+              <span className="rounded-md px-2 py-1 text-xs font-medium" style={{ backgroundColor: "#00D084", color: "#0e0f12" }}>
+                🚀 Offre de lancement
+              </span>
+              <span className="rounded-md px-2 py-1 text-xs font-medium" style={{ backgroundColor: "#2E6CF6" }}>
+                Recommandé
+              </span>
             </div>
             <div className="mb-2 text-sm font-medium" style={{ color: "#60a5fa" }}>Pro</div>
             <div className="mb-4">
               {billingCycle === "monthly" ? (
                 <>
-                  <span className="text-4xl font-bold">5,90 €</span>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-bold">{pricing.pro.monthly.toFixed(2)} €</span>
+                    <span className="text-xl text-gray-500 line-through">{pricing.pro.originalMonthly?.toFixed(2)} €</span>
+                  </div>
                   <span className="text-gray-400">/mois</span>
+                  <div className="mt-1 text-sm" style={{ color: "#00D084" }}>
+                    Économisez 2 € par mois !
+                  </div>
                 </>
               ) : (
                 <>
                   <div className="flex items-baseline gap-2 mb-1">
-                    <span className="text-4xl font-bold">56,90 €</span>
+                    <span className="text-4xl font-bold">{pricing.pro.yearly.toFixed(2)} €</span>
                     <span className="text-gray-400">/an</span>
                   </div>
                   <div className="text-sm text-gray-400">
-                    Soit <span className="text-white font-medium">4,74 €/mois</span>
+                    Soit <span className="text-white font-medium">{pricing.pro.yearlyMonthly.toFixed(2)} €/mois</span>
                     <span className="ml-2 text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: "#00D084", color: "#0e0f12" }}>
-                      Économisez 13,90 €
+                      Économisez {pricing.pro.savings.toFixed(2)} €
                     </span>
                   </div>
                 </>
@@ -270,8 +290,13 @@ export default function PricingPage() {
 
           {/* Premium */}
           <div className="rounded-2xl p-6 relative flex flex-col" style={{ backgroundColor: "#14161b", border: "1px solid rgba(0,208,132,0.3)" }}>
-            <div className="absolute right-4 top-4 rounded-md px-2 py-1 text-xs font-medium" style={{ background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)" }}>
-              Premium
+            <div className="absolute right-4 top-4 flex gap-2">
+              <span className="rounded-md px-2 py-1 text-xs font-medium" style={{ backgroundColor: "#00D084", color: "#0e0f12" }}>
+                🚀 Offre de lancement
+              </span>
+              <span className="rounded-md px-2 py-1 text-xs font-medium" style={{ background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)" }}>
+                Premium
+              </span>
             </div>
             <div className="mb-2 text-sm font-medium text-transparent bg-clip-text" style={{ backgroundImage: "linear-gradient(90deg, #00D084, #2E6CF6)" }}>
               Premium
@@ -279,19 +304,25 @@ export default function PricingPage() {
             <div className="mb-4">
               {billingCycle === "monthly" ? (
                 <>
-                  <span className="text-4xl font-bold">9,90 €</span>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-bold">{pricing.premium.monthly.toFixed(2)} €</span>
+                    <span className="text-xl text-gray-500 line-through">{pricing.premium.originalMonthly?.toFixed(2)} €</span>
+                  </div>
                   <span className="text-gray-400">/mois</span>
+                  <div className="mt-1 text-sm" style={{ color: "#00D084" }}>
+                    Économisez 2 € par mois !
+                  </div>
                 </>
               ) : (
                 <>
                   <div className="flex items-baseline gap-2 mb-1">
-                    <span className="text-4xl font-bold">94,90 €</span>
+                    <span className="text-4xl font-bold">{pricing.premium.yearly.toFixed(2)} €</span>
                     <span className="text-gray-400">/an</span>
                   </div>
                   <div className="text-sm text-gray-400">
-                    Soit <span className="text-white font-medium">7,91 €/mois</span>
+                    Soit <span className="text-white font-medium">{pricing.premium.yearlyMonthly.toFixed(2)} €/mois</span>
                     <span className="ml-2 text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: "#00D084", color: "#0e0f12" }}>
-                      Économisez 24,90 €
+                      Économisez {pricing.premium.savings.toFixed(2)} €
                     </span>
                   </div>
                 </>

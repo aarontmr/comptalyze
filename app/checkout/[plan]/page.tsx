@@ -134,6 +134,7 @@ export default function CheckoutPage() {
     },
   };
 
+  // OFFRE DE LANCEMENT 🚀 - Prix réduits pour les premiers clients
   const planDetails: Record<string, {
     name: string;
     price: string;
@@ -142,11 +143,13 @@ export default function CheckoutPage() {
     gradient?: string;
     pricePerMonth?: string;
     savings?: string;
+    originalPrice?: string;
     features: string[];
   }> = {
     pro: {
       name: "Pro",
-      price: "5,90 €",
+      price: "3,90 €",
+      originalPrice: "5,90 €",
       billingPeriod: "mois",
       color: "#2E6CF6",
       features: [
@@ -160,10 +163,11 @@ export default function CheckoutPage() {
     },
     pro_yearly: {
       name: "Pro",
-      price: "56,90 €",
-      pricePerMonth: "4,74 €",
+      price: "37,90 €",
+      originalPrice: "56,90 €",
+      pricePerMonth: "3,16 €",
       billingPeriod: "an",
-      savings: "13,90 €",
+      savings: "8,90 €",
       color: "#2E6CF6",
       features: [
         "Simulations illimitées",
@@ -176,7 +180,8 @@ export default function CheckoutPage() {
     },
     premium: {
       name: "Premium",
-      price: "9,90 €",
+      price: "7,90 €",
+      originalPrice: "9,90 €",
       billingPeriod: "mois",
       gradient: "linear-gradient(90deg, #00D084, #2E6CF6)",
       features: [
@@ -192,10 +197,11 @@ export default function CheckoutPage() {
     },
     premium_yearly: {
       name: "Premium",
-      price: "94,90 €",
-      pricePerMonth: "7,91 €",
+      price: "75,90 €",
+      originalPrice: "94,90 €",
+      pricePerMonth: "6,33 €",
       billingPeriod: "an",
-      savings: "24,90 €",
+      savings: "18,90 €",
       gradient: "linear-gradient(90deg, #00D084, #2E6CF6)",
       features: [
         "Tout le plan Pro",
@@ -296,6 +302,11 @@ export default function CheckoutPage() {
 
         {/* Titre principal */}
         <div className="text-center mb-12">
+          <div className="mb-4">
+            <span className="inline-flex items-center gap-2 text-sm px-4 py-2 rounded-full font-medium animate-pulse" style={{ backgroundColor: "rgba(0, 208, 132, 0.15)", color: "#00D084", border: "1px solid rgba(0, 208, 132, 0.3)" }}>
+              🚀 Offre de lancement exclusive - Prix réduits !
+            </span>
+          </div>
           <h1 className="text-3xl sm:text-4xl font-semibold mb-3">
             Finalisez votre abonnement
           </h1>
@@ -319,16 +330,36 @@ export default function CheckoutPage() {
             </div>
 
             <div className="mb-6">
+              {/* Badge Offre de lancement */}
+              <div className="mb-3">
+                <span className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-full font-medium" style={{ backgroundColor: "#00D084", color: "#0e0f12" }}>
+                  🚀 Offre de lancement
+                </span>
+              </div>
+              
               <div
                 className="text-lg font-semibold mb-1"
                 style={getPlanTitleStyle()}
               >
                 Plan {currentPlan.name}
               </div>
-              <div className="flex items-baseline gap-1 mb-1">
-                <span className="text-3xl font-bold">{currentPlan.price}</span>
-                <span className="text-gray-400">/{currentPlan.billingPeriod}</span>
+              
+              {/* Prix avec ancien prix barré */}
+              <div className="mb-1">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl font-bold">{currentPlan.price}</span>
+                  <span className="text-gray-400">/{currentPlan.billingPeriod}</span>
+                </div>
+                {currentPlan.originalPrice && (
+                  <div className="flex items-baseline gap-2 mt-1">
+                    <span className="text-lg text-gray-500 line-through">{currentPlan.originalPrice}</span>
+                    <span className="text-sm" style={{ color: "#00D084" }}>
+                      -{((parseFloat(currentPlan.originalPrice) - parseFloat(currentPlan.price)) / parseFloat(currentPlan.originalPrice) * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                )}
               </div>
+              
               {currentPlan.pricePerMonth && (
                 <div className="text-sm text-gray-400">
                   Soit <span className="text-white font-medium">{currentPlan.pricePerMonth}/mois</span>
