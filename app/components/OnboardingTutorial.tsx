@@ -167,6 +167,8 @@ export default function OnboardingTutorial({ user, onComplete }: OnboardingTutor
     const updatePositions = () => {
       const element = document.querySelector(targetSelector) as HTMLElement;
       if (!element) {
+        // Si l'élément n'existe pas (ex: pas Pro/Premium), passer à l'étape suivante
+        console.warn(`Élément tutoriel non trouvé: ${targetSelector}`);
         setTargetElement(null);
         setElementPosition(null);
         setTooltipPosition(null);
@@ -174,8 +176,7 @@ export default function OnboardingTutorial({ user, onComplete }: OnboardingTutor
       }
 
       // Ajouter un z-index élevé à l'élément pour qu'il reste visible
-      const originalZIndex = element.style.zIndex;
-      element.style.zIndex = "50";
+      element.style.zIndex = "9999";
       element.style.position = "relative";
 
       setTargetElement(element);
@@ -237,12 +238,14 @@ export default function OnboardingTutorial({ user, onComplete }: OnboardingTutor
 
       setTooltipPosition({ top, left });
 
-      // Scroller vers l'élément si nécessaire
-      element.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+      // Scroller vers l'élément si nécessaire de manière plus douce
+      setTimeout(() => {
+        element.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+      }, 150);
     };
 
     // Attendre un peu pour que le DOM soit prêt
-    const timeout = setTimeout(updatePositions, 100);
+    const timeout = setTimeout(updatePositions, 300);
 
     // Mettre à jour lors du scroll ou du resize
     window.addEventListener("scroll", updatePositions);
@@ -252,13 +255,18 @@ export default function OnboardingTutorial({ user, onComplete }: OnboardingTutor
       clearTimeout(timeout);
       window.removeEventListener("scroll", updatePositions);
       window.removeEventListener("resize", updatePositions);
-      // Restaurer le z-index original de l'élément
+    };
+  }, [currentStep, isVisible, steps]);
+
+  // Nettoyer le z-index de l'élément ciblé quand il change ou quand le tutoriel se ferme
+  useEffect(() => {
+    return () => {
       if (targetElement) {
         targetElement.style.zIndex = "";
         targetElement.style.position = "";
       }
     };
-  }, [currentStep, isVisible, steps, targetElement]);
+  }, [targetElement, isVisible]);
 
   const handleNext = async () => {
     if (currentStep < steps.length - 1) {
@@ -323,16 +331,18 @@ export default function OnboardingTutorial({ user, onComplete }: OnboardingTutor
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40"
+            className="fixed inset-0"
             style={{
+              zIndex: 9998,
               background: elementPosition
-                ? `radial-gradient(circle at ${elementPosition.left + elementPosition.width / 2}px ${elementPosition.top + elementPosition.height / 2}px, transparent 0%, transparent ${
-                    Math.max(elementPosition.width, elementPosition.height) / 2 + 20
-                  }px, rgba(0, 0, 0, 0.85) ${
-                    Math.max(elementPosition.width, elementPosition.height) / 2 + 40
-                  }px, rgba(0, 0, 0, 0.85) 100%)`
-                : "rgba(0, 0, 0, 0.85)",
-              backdropFilter: "blur(4px)",
+                ? `radial-gradient(circle at ${elementPosition.left + elementPosition.width / 2}px ${elementPosition.top + elementPosition.height / 2}px, 
+                    transparent 0%, 
+                    transparent ${Math.max(elementPosition.width, elementPosition.height) / 2 + 30}px, 
+                    rgba(0, 0, 0, 0.5) ${Math.max(elementPosition.width, elementPosition.height) / 2 + 80}px,
+                    rgba(0, 0, 0, 0.92) ${Math.max(elementPosition.width, elementPosition.height) / 2 + 120}px,
+                    rgba(0, 0, 0, 0.92) 100%)`
+                : "rgba(0, 0, 0, 0.92)",
+              backdropFilter: "none",
             }}
             onClick={!isLastStep ? handleSkip : undefined}
           />
@@ -345,7 +355,7 @@ export default function OnboardingTutorial({ user, onComplete }: OnboardingTutor
               exit={{ opacity: 0, scale: 0.95 }}
               className="fixed pointer-events-none"
               style={{
-                zIndex: 45,
+                zIndex: 10000,
                 top: elementPosition.top - 4,
                 left: elementPosition.left - 4,
                 width: elementPosition.width + 8,
@@ -353,7 +363,7 @@ export default function OnboardingTutorial({ user, onComplete }: OnboardingTutor
                 border: "3px solid",
                 borderImage: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%) 1",
                 borderRadius: "12px",
-                boxShadow: "0 0 0 4px rgba(0, 208, 132, 0.2), 0 0 20px rgba(46, 108, 246, 0.4)",
+                boxShadow: "0 0 0 4px rgba(0, 208, 132, 0.3), 0 0 30px rgba(46, 108, 246, 0.5)",
               }}
             />
           )}
@@ -365,9 +375,10 @@ export default function OnboardingTutorial({ user, onComplete }: OnboardingTutor
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed z-50 max-w-md"
-            style={
-              isCenter
+            className="fixed max-w-md"
+            style={{
+              zIndex: 10001,
+              ...(isCenter
                 ? {
                     top: "50%",
                     left: "50%",
@@ -382,13 +393,14 @@ export default function OnboardingTutorial({ user, onComplete }: OnboardingTutor
                     top: "2rem",
                     left: "50%",
                     transform: "translateX(-50%)",
-                  }
-            }
+                  })
+            }}
           >
             <div
-              className="bg-[#16181d] border border-gray-800 rounded-2xl p-6 shadow-2xl"
+              className="bg-[#16181d] border rounded-2xl p-6 shadow-2xl"
               style={{
-                boxShadow: "0 20px 60px rgba(0, 0, 0, 0.5)",
+                borderColor: "rgba(46, 108, 246, 0.3)",
+                boxShadow: "0 20px 60px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(46, 108, 246, 0.2)",
               }}
             >
               {/* Header */}
