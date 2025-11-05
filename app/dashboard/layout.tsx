@@ -151,37 +151,14 @@ export default function DashboardLayout({
     router.push('/');
   };
 
-  const handleUpgrade = async (plan: "pro" | "premium") => {
+  const handleUpgrade = (plan: "pro" | "premium") => {
     if (!user) {
       router.push('/login');
       return;
     }
 
-    try {
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan, userId: user.id }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        const errorMessage = data.error || "Une erreur est survenue lors de la création de la session de paiement";
-        alert(`Erreur: ${errorMessage}`);
-        console.error("Erreur API checkout:", data);
-        return;
-      }
-
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert("Erreur: Aucune URL de redirection reçue du serveur.");
-      }
-    } catch (error) {
-      console.error("Erreur lors de l'appel API:", error);
-      alert("Une erreur est survenue lors de la connexion au serveur.");
-    }
+    // Rediriger vers la page de checkout intégrée
+    router.push(`/checkout/${plan}`);
   };
 
   // Déterminer le plan supérieur et le texte

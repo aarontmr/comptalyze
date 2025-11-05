@@ -69,6 +69,7 @@ export default function PricingPage() {
 
     // Rediriger vers la page de checkout intégrée avec le cycle de facturation
     const planWithCycle = billingCycle === "yearly" ? `${plan}_yearly` : plan;
+    // Utiliser une redirection relative au lieu d'une URL complète
     window.location.href = `/checkout/${planWithCycle}`;
   };
 
