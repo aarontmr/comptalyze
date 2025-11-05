@@ -102,10 +102,10 @@ export default function PricingPage() {
           <div className="mt-8 inline-flex items-center gap-3 rounded-xl p-1.5" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
             <button
               onClick={() => setBillingCycle("monthly")}
-              className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+              className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 cursor-pointer ${
                 billingCycle === "monthly" 
-                  ? "text-white shadow-md" 
-                  : "text-gray-400 hover:text-gray-300"
+                  ? "text-white shadow-md scale-105" 
+                  : "text-gray-400 hover:text-gray-300 hover:scale-105 hover:bg-gray-800/30"
               }`}
               style={billingCycle === "monthly" ? {
                 background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
@@ -115,10 +115,10 @@ export default function PricingPage() {
             </button>
             <button
               onClick={() => setBillingCycle("yearly")}
-              className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 relative ${
+              className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 relative cursor-pointer ${
                 billingCycle === "yearly" 
-                  ? "text-white shadow-md" 
-                  : "text-gray-400 hover:text-gray-300"
+                  ? "text-white shadow-md scale-105" 
+                  : "text-gray-400 hover:text-gray-300 hover:scale-105 hover:bg-gray-800/30"
               }`}
               style={billingCycle === "yearly" ? {
                 background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
@@ -165,7 +165,7 @@ export default function PricingPage() {
             </div>
             <Link
               href="/signup"
-              className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm transition-transform duration-200 hover:scale-[1.02]"
+              className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm transition-all duration-300 hover:scale-[1.05] hover:shadow-lg cursor-pointer hover:bg-gray-800/50 active:scale-95"
               style={{ border: "1px solid #2b2f36", backgroundColor: "#0e0f12" }}
             >
               Commencer gratuitement
@@ -239,7 +239,7 @@ export default function PricingPage() {
                 return (
                   <a
                     href="/dashboard/compte"
-                    className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white transition-transform duration-200 hover:scale-[1.02]"
+                    className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white transition-all duration-300 hover:scale-[1.08] hover:brightness-110 hover:shadow-2xl cursor-pointer active:scale-95"
                     style={{
                       background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
                       boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
@@ -255,7 +255,7 @@ export default function PricingPage() {
                 <button
                   onClick={() => handleCheckout("pro")}
                   disabled={loading !== null}
-                  className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed transition-transform duration-200 hover:scale-[1.02] disabled:hover:scale-100"
+                  className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-[1.08] hover:brightness-110 hover:shadow-2xl cursor-pointer active:scale-95 disabled:hover:scale-100 disabled:hover:brightness-100"
                   style={{
                     background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
                     boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
@@ -337,7 +337,7 @@ export default function PricingPage() {
                     <button
                       onClick={() => handleCheckout("premium")}
                       disabled={loading !== null}
-                      className="w-full inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed transition-transform duration-200 hover:scale-[1.02] disabled:hover:scale-100"
+                      className="w-full inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-[1.08] hover:brightness-110 hover:shadow-2xl cursor-pointer active:scale-95 disabled:hover:scale-100 disabled:hover:brightness-100"
                       style={{
                         background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
                         boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
@@ -355,7 +355,7 @@ export default function PricingPage() {
                   return (
                     <a
                       href="/dashboard/compte"
-                      className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white transition-transform duration-200 hover:scale-[1.02]"
+                      className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white transition-all duration-300 hover:scale-[1.08] hover:brightness-110 hover:shadow-2xl cursor-pointer active:scale-95"
                       style={{
                         background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
                         boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
@@ -371,7 +371,7 @@ export default function PricingPage() {
                   <button
                     onClick={() => handleCheckout("premium")}
                     disabled={loading !== null}
-                    className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed transition-transform duration-200 hover:scale-[1.02] disabled:hover:scale-100"
+                    className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-[1.08] hover:brightness-110 hover:shadow-2xl cursor-pointer active:scale-95 disabled:hover:scale-100 disabled:hover:brightness-100"
                     style={{
                       background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
                       boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
@@ -387,7 +387,7 @@ export default function PricingPage() {
                   <button
                     onClick={handleStartTrial}
                     disabled={trialLoading || loading !== null}
-                    className="w-full inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed transition-transform duration-200 hover:scale-[1.02] disabled:hover:scale-100"
+                    className="w-full inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-[1.08] hover:brightness-110 hover:shadow-2xl cursor-pointer active:scale-95 disabled:hover:scale-100 disabled:hover:brightness-100"
                     style={{
                       background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
                       boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
@@ -398,7 +398,7 @@ export default function PricingPage() {
                   <button
                     onClick={() => handleCheckout("premium")}
                     disabled={loading !== null || trialLoading}
-                    className="w-full inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-transform duration-200 hover:scale-[1.02] disabled:hover:scale-100"
+                    className="w-full inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-[1.05] hover:bg-gray-800/30 hover:shadow-lg cursor-pointer active:scale-95 disabled:hover:scale-100"
                     style={{
                       border: "1px solid rgba(46,108,246,0.5)",
                       backgroundColor: "transparent",

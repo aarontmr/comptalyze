@@ -26,6 +26,7 @@ import {
 import logo from '@/public/logo.png';
 import FloatingAIAssistant from '@/app/components/FloatingAIAssistant';
 import MobileShell from '@/components/ui/MobileShell';
+import OnboardingTutorial from '@/app/components/OnboardingTutorial';
 
 interface NavItem {
   label: string;
@@ -45,6 +46,7 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showTutorial, setShowTutorial] = useState(true);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -452,6 +454,14 @@ export default function DashboardLayout({
 
       {/* Assistant IA flottant */}
       <FloatingAIAssistant user={user} />
+
+      {/* Tutoriel d'onboarding */}
+      {showTutorial && (
+        <OnboardingTutorial 
+          user={user} 
+          onComplete={() => setShowTutorial(false)} 
+        />
+      )}
     </div>
   );
 }

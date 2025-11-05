@@ -46,6 +46,10 @@ export default function OnboardingTutorial({ user, onComplete }: OnboardingTutor
       const metadata = user.user_metadata || {};
       const hasCompletedTutorial = metadata.onboarding_completed === true;
 
+      // Le tutoriel s'affiche dans ces cas :
+      // 1. Première inscription : onboarding_completed n'existe pas encore
+      // 2. Première connexion : onboarding_completed n'est pas défini
+      // 3. Utilisateur qui n'a jamais vu le tutoriel : onboarding_completed !== true
       if (!hasCompletedTutorial) {
         // Attendre un peu pour que le DOM soit chargé
         setTimeout(() => {
@@ -136,6 +140,9 @@ export default function OnboardingTutorial({ user, onComplete }: OnboardingTutor
   ];
 
   // Filtrer les étapes selon le plan de l'utilisateur
+  // Les étapes avec requiresPremium sont affichées uniquement aux utilisateurs Premium
+  // Les étapes avec requiresPro sont affichées aux utilisateurs Pro ET Premium
+  // Les autres étapes sont affichées à tous les utilisateurs (gratuit, pro, premium)
   const steps = allSteps.filter((step) => {
     if (step.requiresPremium && !subscription.isPremium) return false;
     if (step.requiresPro && !subscription.isPro && !subscription.isPremium) return false;

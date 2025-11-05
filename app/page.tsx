@@ -72,7 +72,7 @@ export default function LandingPage() {
               {user ? (
                 <Link
                   href="/dashboard"
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:scale-[1.02]"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-[1.08] hover:brightness-110 hover:shadow-2xl cursor-pointer active:scale-95"
                   style={{
                     background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
                     boxShadow: "0 4px 15px rgba(46,108,246,0.3)",
@@ -85,7 +85,7 @@ export default function LandingPage() {
                 <>
                   <Link
                     href="/dashboard"
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:scale-[1.02]"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-[1.05] hover:bg-gray-800/50 hover:shadow-lg cursor-pointer active:scale-95"
                     style={{
                       border: "1px solid #2b2f36",
                       backgroundColor: "#14161b",
@@ -96,7 +96,7 @@ export default function LandingPage() {
                   </Link>
                   <Link
                     href="/login"
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:scale-[1.02]"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-[1.05] hover:bg-gray-800/50 hover:shadow-lg cursor-pointer active:scale-95"
                     style={{
                       border: "1px solid #2b2f36",
                       backgroundColor: "#14161b",
@@ -107,7 +107,7 @@ export default function LandingPage() {
                   </Link>
                   <Link
                     href="/signup"
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white transition-all hover:scale-[1.02]"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white transition-all duration-300 hover:scale-[1.08] hover:brightness-110 hover:shadow-2xl cursor-pointer active:scale-95"
                     style={{
                       background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
                       boxShadow: "0 4px 15px rgba(46,108,246,0.3)",
@@ -304,7 +304,7 @@ export default function LandingPage() {
               <ScaleOnHover>
                 <Link
                   href="/signup"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-8 py-4 text-base sm:text-lg font-semibold text-white transition-all duration-200 glow shadow-xl"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-8 py-4 text-base sm:text-lg font-semibold text-white transition-all duration-300 hover:scale-[1.10] hover:brightness-110 hover:shadow-2xl cursor-pointer active:scale-95 glow shadow-xl"
                   style={{
                     background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
                     boxShadow: "0 12px 40px rgba(46,108,246,0.4)",
@@ -317,7 +317,7 @@ export default function LandingPage() {
               <ScaleOnHover>
                 <Link
                   href="/pricing"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-8 py-4 text-base sm:text-lg font-medium transition-all hover:bg-opacity-80"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-8 py-4 text-base sm:text-lg font-medium transition-all duration-300 hover:scale-[1.05] hover:bg-gray-800/50 hover:shadow-lg cursor-pointer active:scale-95"
                   style={{ border: "1px solid #2b2f36", backgroundColor: "#14161b" }}
                 >
                   <Percent className="w-5 h-5" />

@@ -54,11 +54,12 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || window.location.origin;
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`,
+          emailRedirectTo: `${baseUrl}/dashboard`,
         },
       });
 
@@ -237,7 +238,7 @@ export default function SignupPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full px-4 py-3 rounded-lg text-white font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
+                className="w-full px-4 py-3 rounded-lg text-white font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.05] hover:brightness-110 hover:shadow-2xl cursor-pointer active:scale-95 disabled:hover:scale-100 disabled:hover:brightness-100 flex items-center justify-center gap-2"
                 style={{
                   background: loading 
                     ? '#374151'
