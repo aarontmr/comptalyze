@@ -264,6 +264,55 @@ function generateFallbackResponse(message: string, records: any[]): string {
     };
   }
 
+  // Questions "que faire maintenant" avec un montant de CA
+  if ((lowerMessage.includes('que faire') || lowerMessage.includes('quoi faire') || lowerMessage.includes('faire maintenant')) || 
+      (lowerMessage.includes('fait') && lowerMessage.includes('ca') && (lowerMessage.includes('€') || /\d+/.test(lowerMessage)))) {
+    
+    // Extraire le montant si possible
+    const montantMatch = lowerMessage.match(/(\d+(?:[,\.]\d+)?)\s*€?/);
+    const montant = montantMatch ? parseFloat(montantMatch[1].replace(',', '.')) : null;
+    
+    let response = `**Que faire après avoir réalisé un CA** ${montant ? `de ${montant.toFixed(2)} €` : ''} **?**\n\n`;
+    
+    response += `Voici les étapes à suivre :\n\n`;
+    response += `1️⃣ **Enregistrez votre CA dans Comptalyze**\n`;
+    response += `   • Allez dans "Calcul URSSAF"\n`;
+    response += `   • Saisissez votre montant${montant ? ` (${montant.toFixed(2)} €)` : ''}\n`;
+    response += `   • Choisissez votre type d'activité\n\n`;
+    
+    if (montant) {
+      // Calculer les cotisations estimées
+      const tauxVente = 0.123; // 12,3% pour ventes
+      const tauxService = 0.212; // 21,2% pour services
+      const cotisationsVente = montant * tauxVente;
+      const cotisationsService = montant * tauxService;
+      
+      response += `2️⃣ **Vos cotisations estimées** :\n`;
+      if (lowerMessage.includes('vente') || lowerMessage.includes('shopify') || lowerMessage.includes('produit')) {
+        response += `   • Cotisations : ~${cotisationsVente.toFixed(2)} € (12,3%)\n`;
+        response += `   • Revenu net : ~${(montant - cotisationsVente).toFixed(2)} €\n\n`;
+      } else if (lowerMessage.includes('service') || lowerMessage.includes('prestation') || lowerMessage.includes('conseil')) {
+        response += `   • Cotisations : ~${cotisationsService.toFixed(2)} € (21,2%)\n`;
+        response += `   • Revenu net : ~${(montant - cotisationsService).toFixed(2)} €\n\n`;
+      } else {
+        response += `   • Si ventes : ~${cotisationsVente.toFixed(2)} € (12,3%)\n`;
+        response += `   • Si services : ~${cotisationsService.toFixed(2)} € (21,2%)\n\n`;
+      }
+    }
+    
+    response += `3️⃣ **Attendez la fin du mois**\n`;
+    response += `   • Cumulez tous vos CA du mois\n\n`;
+    
+    response += `4️⃣ **Déclarez à l'URSSAF**\n`;
+    response += `   • Avant la fin du mois suivant\n`;
+    response += `   • Sur autoentrepreneur.urssaf.fr\n`;
+    response += `   • Déclarez le total du mois\n\n`;
+    
+    response += `💡 **Conseil** : Ne déclarez pas vente par vente, mais le **total mensuel** !`;
+    
+    return response;
+  }
+  
   // Où/Comment s'inscrire
   if ((lowerMessage.includes('où') || lowerMessage.includes('comment')) && (lowerMessage.includes('inscrire') || lowerMessage.includes('créer'))) {
     return `**Créer votre micro-entreprise** :\n\n` +
