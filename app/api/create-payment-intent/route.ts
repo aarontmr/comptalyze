@@ -65,7 +65,8 @@ export async function POST(req: Request) {
     }
 
     // Créer une session Stripe Checkout en mode embedded
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || req.headers.get('origin') || 'http://localhost:3000';
+    // Utiliser NEXT_PUBLIC_BASE_URL en priorité pour éviter localhost en production
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || req.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'https://comptalyze.com';
     
     // Pour les plans annuels sans renouvellement auto, on configure l'abonnement différemment
     const isYearly = plan.includes("yearly");

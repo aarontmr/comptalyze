@@ -88,7 +88,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: errorMessage }, { status: 500 });
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || req.headers.get('origin') || 'http://localhost:3000';
+    // Utiliser NEXT_PUBLIC_BASE_URL en priorité pour éviter localhost en production
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || req.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'https://comptalyze.com';
 
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",

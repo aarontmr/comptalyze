@@ -24,10 +24,11 @@ export default function CheckoutForm({ plan }: CheckoutFormProps) {
     setIsLoading(true);
     setMessage(null);
 
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || window.location.origin;
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `${window.location.origin}/success`,
+        return_url: `${baseUrl}/success`,
       },
     });
 
