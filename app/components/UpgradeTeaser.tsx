@@ -160,7 +160,7 @@ export default function UpgradeTeaser({ currentPlan }: UpgradeTeaserProps) {
             </div>
             <Link
               href={`/pricing?upgrade=${targetPlan}`}
-              className="px-6 py-3 rounded-xl text-white font-semibold transition-all hover:scale-105 hover:shadow-xl whitespace-nowrap"
+              className="px-6 py-3 rounded-xl text-white font-semibold transition-all hover:scale-105 hover:shadow-xl whitespace-nowrap cursor-pointer"
               style={{
                 background: targetPlan === 'premium'
                   ? 'linear-gradient(135deg, #8B5CF6, #3B82F6)'

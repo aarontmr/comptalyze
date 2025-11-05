@@ -129,7 +129,7 @@ export default function FeaturePreview({
           >
             <Link
               href={defaultCtaHref}
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-white font-semibold transition-all hover:scale-105 hover:shadow-2xl"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-white font-semibold transition-all hover:scale-105 hover:shadow-2xl cursor-pointer"
               style={{
                 background: `linear-gradient(135deg, ${plan === 'premium' ? '#8B5CF6, #3B82F6' : '#00D084, #2E6CF6'})`,
                 boxShadow: '0 8px 32px rgba(46, 108, 246, 0.4)',

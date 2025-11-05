@@ -159,13 +159,17 @@ export default function FloatingAIAssistant({ user }: FloatingAIAssistantProps) 
         {!isOpen && (
           <button
             onClick={() => setIsOpen(true)}
-            className="fixed z-50 w-14 h-14 flex items-center justify-center rounded-full text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl relative"
+            id="ai-assistant-button"
+            className="w-14 h-14 flex items-center justify-center rounded-full text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl cursor-pointer"
             style={{
+              position: 'fixed',
+              zIndex: 9999,
               background: 'linear-gradient(135deg, #8B5CF6 0%, #3B82F6 100%)',
               boxShadow: '0 8px 24px rgba(139, 92, 246, 0.4)',
               bottom: '24px',
               right: '16px',
               top: 'auto',
+              left: 'auto',
             }}
             aria-label="Découvrir l'assistant IA Premium"
           >
@@ -271,7 +275,7 @@ export default function FloatingAIAssistant({ user }: FloatingAIAssistantProps) 
                 </ul>
                 <Link
                   href="/pricing?upgrade=premium"
-                  className="px-6 py-3 rounded-xl text-white font-semibold transition-all hover:scale-105 hover:shadow-xl flex items-center gap-2"
+                  className="px-6 py-3 rounded-xl text-white font-semibold transition-all hover:scale-105 hover:shadow-xl flex items-center gap-2 cursor-pointer"
                   style={{
                     background: 'linear-gradient(135deg, #8B5CF6, #3B82F6)',
                     boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)',
@@ -295,13 +299,17 @@ export default function FloatingAIAssistant({ user }: FloatingAIAssistantProps) 
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed z-50 w-14 h-14 flex items-center justify-center rounded-full text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl"
+          id="ai-assistant-button-premium"
+          className="w-14 h-14 flex items-center justify-center rounded-full text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl cursor-pointer"
           style={{
+            position: 'fixed',
+            zIndex: 9999,
             background: 'linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)',
             boxShadow: '0 8px 24px rgba(46, 108, 246, 0.4)',
             bottom: '24px',
             right: '16px',
             top: 'auto',
+            left: 'auto',
           }}
           aria-label="Ouvrir l'assistant IA"
         >

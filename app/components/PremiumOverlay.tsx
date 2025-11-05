@@ -52,7 +52,7 @@ export default function PremiumOverlay({
           </p>
           <Link
             href={ctaHref}
-            className="inline-block px-6 py-3 rounded-lg text-white font-medium transition-all hover:opacity-90 hover:scale-105"
+            className="inline-block px-6 py-3 rounded-lg text-white font-medium transition-all hover:opacity-90 hover:scale-105 cursor-pointer"
             style={{ background: 'linear-gradient(90deg, #00D084, #2E6CF6)' }}
           >
             {ctaText}

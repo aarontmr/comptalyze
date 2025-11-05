@@ -189,10 +189,14 @@ export default function DashboardLayout({
   const upgradeInfo = getUpgradeInfo();
 
   return (
-    <div
-      className="min-h-screen flex"
-      style={{ backgroundColor: '#0e0f12', fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}
-    >
+    <>
+      {/* Assistant IA flottant - EN DEHORS du layout pour éviter les conflits */}
+      <FloatingAIAssistant user={user} />
+      
+      <div
+        className="min-h-screen flex"
+        style={{ backgroundColor: '#0e0f12', fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}
+      >
       {/* Sidebar - Desktop */}
       <aside
         className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0"
@@ -260,7 +264,7 @@ export default function DashboardLayout({
               <div className="mt-4 px-4">
                 <button
                   onClick={() => handleUpgrade(upgradeInfo.plan)}
-                  className="relative flex items-center gap-3 w-full px-4 py-3 rounded-lg text-sm font-semibold text-white transition-all duration-200 hover:scale-[1.02] overflow-visible"
+                  className="relative flex items-center gap-3 w-full px-4 py-3 rounded-lg text-sm font-semibold text-white transition-all duration-200 hover:scale-[1.02] overflow-visible cursor-pointer"
                   style={{
                     background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
                     boxShadow: "0 4px 15px rgba(46,108,246,0.3)",
@@ -393,7 +397,7 @@ export default function DashboardLayout({
                     handleUpgrade(upgradeInfo.plan);
                     setSidebarOpen(false);
                   }}
-                  className="relative flex items-center gap-3 w-full px-4 py-3 rounded-lg text-sm font-semibold text-white transition-all duration-200 hover:scale-[1.02] overflow-visible"
+                  className="relative flex items-center gap-3 w-full px-4 py-3 rounded-lg text-sm font-semibold text-white transition-all duration-200 hover:scale-[1.02] overflow-visible cursor-pointer"
                   style={{
                     background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
                     boxShadow: "0 4px 15px rgba(46,108,246,0.3)",
@@ -451,9 +455,6 @@ export default function DashboardLayout({
         </div>
       </div>
 
-      {/* Assistant IA flottant */}
-      <FloatingAIAssistant user={user} />
-
       {/* Tutoriel d'onboarding */}
       {showTutorial && (
         <OnboardingTutorial 
@@ -462,6 +463,7 @@ export default function DashboardLayout({
         />
       )}
     </div>
+    </>
   );
 }
 
