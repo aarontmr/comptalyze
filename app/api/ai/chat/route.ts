@@ -100,16 +100,31 @@ export async function POST(req: NextRequest) {
     const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
       {
         role: 'system',
-        content: `Tu es un expert comptable français spécialisé dans les micro-entreprises, les cotisations URSSAF, et l'optimisation fiscale pour les indépendants. Tu donnes des conseils pratiques, précis et bienveillants en français.
+        content: `Tu es un expert comptable français spécialisé dans les micro-entreprises, les cotisations URSSAF, et l'optimisation fiscale pour les indépendants. Tu es un assistant IA polyvalent qui peut :
+
+1. **Répondre à toutes les questions générales** sur :
+   - La micro-entreprise et le statut auto-entrepreneur
+   - Les déclarations URSSAF (procédures, délais, sites web)
+   - Les cotisations sociales et leur calcul
+   - La fiscalité des indépendants
+   - Les seuils de CA
+   - La TVA
+   - Les charges déductibles
+   - Tout sujet lié à la gestion d'une micro-entreprise
+
+2. **Donner des conseils personnalisés** en utilisant les données de l'utilisateur quand c'est pertinent
 
 ${contextData}
 
-IMPORTANT :
-- Utilise les données de l'utilisateur quand elles sont disponibles pour donner des conseils personnalisés
-- Réponds de manière concise mais complète (maximum 200 mots par réponse)
-- Reste toujours professionnel et encourageant
-- Si tu n'as pas les informations nécessaires, demande à l'utilisateur de les fournir
-- Réponds UNIQUEMENT en français`,
+RÈGLES :
+- Réponds TOUJOURS à la question posée, même si c'est une question générale
+- Si la question est générale (ex: "comment déclarer sur l'URSSAF"), réponds directement sans forcement utiliser les données perso
+- Si la question porte sur la situation de l'utilisateur (ex: "combien je dois payer"), utilise ses données
+- Sois concis mais complet (maximum 250 mots)
+- Reste professionnel et encourageant
+- Fournis des informations pratiques et actionnables
+- Réponds UNIQUEMENT en français
+- N'invente pas d'informations, base-toi sur la réglementation française actuelle`,
       },
     ];
 
@@ -167,6 +182,50 @@ IMPORTANT :
 // Fonction helper pour générer une réponse de fallback intelligente
 function generateFallbackResponse(message: string, records: any[]): string {
   const lowerMessage = message.toLowerCase();
+  
+  // Questions générales (ne nécessitent pas les données utilisateur)
+  
+  // Déclarations URSSAF
+  if (lowerMessage.includes('comment') && (lowerMessage.includes('déclarer') || lowerMessage.includes('déclaration'))) {
+    return `Pour déclarer vos revenus sur l'URSSAF :\n\n` +
+           `1. **Connectez-vous sur** : autoentrepreneur.urssaf.fr\n` +
+           `2. **Identifiez-vous** avec votre numéro SIRET\n` +
+           `3. **Déclarez votre CA** du mois ou trimestre écoulé\n` +
+           `4. **Payez vos cotisations** en ligne (prélèvement ou CB)\n\n` +
+           `📅 **Délais** :\n` +
+           `• Mensuel : Avant la fin du mois suivant\n` +
+           `• Trimestriel : Avant la fin du mois suivant le trimestre\n\n` +
+           `💡 **Astuce** : Enregistrez vos CA dans Comptalyze au fur et à mesure pour ne rien oublier lors de vos déclarations !`;
+  }
+  
+  // TVA
+  if (lowerMessage.includes('tva') && !lowerMessage.includes('mon') && !lowerMessage.includes('ma')) {
+    return `**TVA en micro-entreprise** :\n\n` +
+           `Par défaut, vous êtes **exonéré de TVA** (franchise en base).\n\n` +
+           `**Seuils de franchise 2024** :\n` +
+           `• Prestations de services : 36 800 €\n` +
+           `• Ventes de marchandises : 91 900 €\n\n` +
+           `**Au-delà**, vous devez :\n` +
+           `1. Facturer avec TVA (20% généralement)\n` +
+           `2. La déclarer et reverser chaque mois/trimestre\n` +
+           `3. Perdre le bénéfice de la franchise\n\n` +
+           `Utilisez le simulateur TVA de Comptalyze pour estimer l'impact !`;
+  }
+  
+  // ACRE
+  if (lowerMessage.includes('acre') || lowerMessage.includes('exonération')) {
+    return `**ACRE (Aide à la Création d'Entreprise)** :\n\n` +
+           `Permet une **exonération partielle des cotisations** la première année.\n\n` +
+           `**Taux réduits :**\n` +
+           `• Année 1 : Environ 50% d'exonération\n` +
+           `• Services BIC/BNC : ~11% au lieu de 21,2%\n` +
+           `• Ventes : ~6,4% au lieu de 12,3%\n\n` +
+           `**Conditions :**\n` +
+           `• Demandeur d'emploi\n` +
+           `• Bénéficiaire RSA\n` +
+           `• Jeune de 18-25 ans\n\n` +
+           `La demande se fait lors de la création sur autoentrepreneur.urssaf.fr`;
+  }
 
   // Calculer les statistiques si on a des données
   let stats: any = null;
@@ -205,8 +264,32 @@ function generateFallbackResponse(message: string, records: any[]): string {
     };
   }
 
+  // Où/Comment s'inscrire
+  if ((lowerMessage.includes('où') || lowerMessage.includes('comment')) && (lowerMessage.includes('inscrire') || lowerMessage.includes('créer'))) {
+    return `**Créer votre micro-entreprise** :\n\n` +
+           `1. Rendez-vous sur **autoentrepreneur.urssaf.fr**\n` +
+           `2. Cliquez sur "Créer mon auto-entreprise"\n` +
+           `3. Remplissez le formulaire P0 en ligne\n` +
+           `4. Vous recevrez votre numéro SIRET sous 8-15 jours\n\n` +
+           `**Documents nécessaires** :\n` +
+           `• Pièce d'identité\n` +
+           `• Justificatif de domicile\n` +
+           `• Déclaration de non-condamnation\n\n` +
+           `L'inscription est **100% gratuite** !`;
+  }
+  
+  // Questions sur le site URSSAF
+  if (lowerMessage.includes('site') && (lowerMessage.includes('urssaf') || lowerMessage.includes('déclarer'))) {
+    return `**Sites officiels URSSAF** :\n\n` +
+           `🌐 **Déclarations et paiements** : autoentrepreneur.urssaf.fr\n` +
+           `🌐 **Création d'entreprise** : autoentrepreneur.urssaf.fr\n` +
+           `🌐 **Mon compte URSSAF** : urssaf.fr (espace personnel)\n` +
+           `🌐 **Informations générales** : secu-independants.fr\n\n` +
+           `💡 **Conseil** : Créez votre compte dès l'obtention de votre SIRET pour accéder à toutes vos déclarations en ligne.`;
+  }
+
   // Questions sur les cotisations
-  if (lowerMessage.includes('cotisation') || lowerMessage.includes('urssaf') || lowerMessage.includes('charge')) {
+  if (lowerMessage.includes('cotisation') && !lowerMessage.includes('comment') && !lowerMessage.includes('où')) {
     if (stats) {
       let response = `Basé sur vos ${stats.nbRecords} enregistrement(s), voici votre situation :\n\n`;
       response += `• Votre CA moyen mensuel : ${stats.avgCA.toFixed(2)} €\n`;
@@ -227,7 +310,17 @@ function generateFallbackResponse(message: string, records: any[]): string {
       
       return response;
     }
-    return 'Les cotisations URSSAF varient selon votre type d\'activité :\n• Prestations de services : 21,2%\n• Ventes de marchandises : 12,3%\n• Activités libérales : 21,1%\n\nEnregistrez vos chiffres d\'affaires dans Comptalyze pour obtenir des estimations précises basées sur votre activité.';
+    return `**Taux de cotisations URSSAF** :\n\n` +
+           `• Prestations de services BIC : **21,2%**\n` +
+           `• Activités libérales BNC : **21,1%**\n` +
+           `• Ventes de marchandises : **12,3%**\n` +
+           `• Hébergement (hôtels, etc.) : **6%**\n\n` +
+           `Ces cotisations couvrent :\n` +
+           `✓ Maladie-maternité\n` +
+           `✓ Retraite de base et complémentaire\n` +
+           `✓ Allocations familiales\n` +
+           `✓ CSG-CRDS\n\n` +
+           `💡 Enregistrez vos CA dans Comptalyze pour calculer vos cotisations précises !`;
   }
 
   // Questions sur les déclarations
@@ -326,7 +419,7 @@ function generateFallbackResponse(message: string, records: any[]): string {
   }
 
   // Questions sur les délais
-  if (lowerMessage.includes('délai') || lowerMessage.includes('date') || lowerMessage.includes('quand') || lowerMessage.includes('quand')) {
+  if (lowerMessage.includes('délai') || lowerMessage.includes('date') || lowerMessage.includes('quand')) {
     const now = new Date();
     const moisSuivant = new Date(now.getFullYear(), now.getMonth() + 1, 0);
     const dernierJour = moisSuivant.getDate();
@@ -336,22 +429,48 @@ function generateFallbackResponse(message: string, records: any[]): string {
            `📅 **Déclaration trimestrielle** : Si vous avez choisi le trimestre, déclarez avant le dernier jour du mois suivant le trimestre.\n\n` +
            `Enregistrez vos CA régulièrement dans Comptalyze pour ne rien oublier !`;
   }
-
-  // Réponse par défaut avec contexte
-  if (stats) {
-    return `Je peux vous aider avec vos questions sur votre micro-entreprise. ` +
-           `Basé sur vos ${stats.nbRecords} enregistrement(s), votre CA moyen mensuel est de ${stats.avgCA.toFixed(2)} € ` +
-           `et vos cotisations représentent ${stats.taux}% de votre chiffre d'affaires. ` +
-           `Posez-moi des questions sur les cotisations, les déclarations, les seuils, ou tout autre sujet lié à votre activité.`;
+  
+  // Questions sur la facturation
+  if (lowerMessage.includes('facture') || lowerMessage.includes('facturer')) {
+    return `**Facturation en micro-entreprise** :\n\n` +
+           `Vous **devez** émettre une facture pour :\n` +
+           `• Toute vente à un professionnel\n` +
+           `• Toute vente > 25€ à un particulier\n\n` +
+           `**Mentions obligatoires** :\n` +
+           `• Votre nom, adresse, SIRET\n` +
+           `• Numéro de facture unique\n` +
+           `• Date d'émission\n` +
+           `• Désignation et prix\n` +
+           `• "TVA non applicable, art. 293 B du CGI"\n\n` +
+           `💡 Utilisez le module Factures de Comptalyze pour générer des factures conformes automatiquement !`;
+  }
+  
+  // Questions sur les charges déductibles
+  if (lowerMessage.includes('déductible') || lowerMessage.includes('frais') || lowerMessage.includes('charge')) {
+    return `**Charges déductibles en micro-entreprise** :\n\n` +
+           `⚠️ En micro-entreprise, vous **ne pouvez PAS déduire** vos charges réelles.\n\n` +
+           `**À la place** :\n` +
+           `• Vous bénéficiez d'un **abattement forfaitaire** :\n` +
+           `  - Services BIC : 50%\n` +
+           `  - Services BNC : 34%\n` +
+           `  - Ventes : 71%\n\n` +
+           `Cet abattement est censé couvrir toutes vos charges professionnelles (loyer, matériel, etc.).\n\n` +
+           `💡 Si vos charges réelles dépassent l'abattement, le régime réel peut être plus avantageux.`;
   }
 
-  return `Je suis votre assistant spécialisé dans les micro-entreprises et les cotisations URSSAF. ` +
+  // Réponse par défaut - répondre à la question même si on ne comprend pas exactement
+  return `Je suis désolé, je n'ai pas bien compris votre question "${message.substring(0, 50)}..."\n\n` +
          `Je peux vous aider avec :\n\n` +
-         `• Les cotisations URSSAF (taux selon l'activité)\n` +
-         `• Les déclarations (délais et procédures)\n` +
-         `• Les seuils de chiffre d'affaires\n` +
-         `• L'optimisation fiscale\n` +
-         `• L'analyse de vos données\n\n` +
-         `Enregistrez vos chiffres d'affaires pour obtenir des conseils personnalisés basés sur votre activité réelle.`;
+         `💼 **Informations générales** :\n` +
+         `• Comment créer une micro-entreprise\n` +
+         `• Comment déclarer sur l'URSSAF\n` +
+         `• Les taux de cotisations selon l'activité\n` +
+         `• Les seuils de CA et la TVA\n` +
+         `• La facturation obligatoire\n\n` +
+         `📊 **Analyse personnalisée** :\n` +
+         `• Vos cotisations et revenus nets\n` +
+         `• L'évolution de votre activité\n` +
+         `• Des projections et optimisations\n\n` +
+         `Reformulez votre question ou demandez-moi quelque chose de spécifique !`;
 }
 
