@@ -6,12 +6,15 @@ import { supabase } from "@/lib/supabaseClient";
 import { getUserSubscription } from "@/lib/subscriptionUtils";
 import { User } from "@supabase/supabase-js";
 import { Check } from "lucide-react";
+import Toast from "@/app/components/Toast";
+import { useToast } from "@/app/hooks/useToast";
 
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
   const [trialLoading, setTrialLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
+  const { toast, success, error: showError, hideToast } = useToast();
 
   // Récupérer l'utilisateur connecté
   useEffect(() => {
@@ -46,16 +49,18 @@ export default function PricingPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(`Erreur: ${data.error || "Une erreur est survenue"}`);
+        showError(data.error || "Une erreur est survenue");
+        setTrialLoading(false);
         return;
       }
 
-      alert("🎉 Votre essai gratuit de 3 jours a commencé ! Profitez de toutes les fonctionnalités Premium.");
-      window.location.reload();
+      success("🎉 Votre essai gratuit de 3 jours a commencé ! Profitez de toutes les fonctionnalités Premium.");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     } catch (error) {
       console.error("Erreur lors du démarrage de l'essai:", error);
-      alert("Une erreur est survenue lors du démarrage de l'essai.");
-    } finally {
+      showError("Une erreur est survenue lors du démarrage de l'essai.");
       setTrialLoading(false);
     }
   };
@@ -92,10 +97,19 @@ export default function PricingPage() {
   };
 
   return (
-    <main
-      className="min-h-screen w-full text-white"
-      style={{ backgroundColor: "#0e0f12", fontFamily: "Poppins, sans-serif" }}
-    >
+    <>
+      {/* Toast notifications */}
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.isVisible}
+        onClose={hideToast}
+      />
+      
+      <main
+        className="min-h-screen w-full text-white"
+        style={{ backgroundColor: "#0e0f12", fontFamily: "Poppins, sans-serif" }}
+      >
       <section className="px-4 py-16 sm:py-20">
         <div className="mx-auto max-w-5xl text-center">
           {/* Badge Offre de lancement */}
@@ -471,5 +485,6 @@ export default function PricingPage() {
         </div>
       </section>
     </main>
+    </>
   );
 }

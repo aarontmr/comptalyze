@@ -204,7 +204,7 @@ export default function DashboardLayout({
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center justify-center h-20 px-6 border-b border-gray-800">
+          <div className="flex flex-col items-center justify-center h-20 px-6 border-b border-gray-800">
             <Link href="/dashboard" className="flex items-center">
               <Image
                 src={logo}
@@ -215,6 +215,26 @@ export default function DashboardLayout({
                 priority
               />
             </Link>
+            {/* Badge Essai Gratuit */}
+            {subscription.isTrial && subscription.trialEndsAt && (() => {
+              const trialEnd = new Date(subscription.trialEndsAt);
+              const daysLeft = Math.ceil((trialEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+              return (
+                <div
+                  className="mt-2 px-3 py-1 rounded-full text-xs font-bold animate-pulse"
+                  style={{
+                    background: daysLeft <= 1 
+                      ? 'linear-gradient(135deg, #F59E0B, #EF4444)'
+                      : subscription.isPremium
+                      ? 'linear-gradient(135deg, #8B5CF6, #3B82F6)'
+                      : 'linear-gradient(135deg, #00D084, #2E6CF6)',
+                    color: 'white',
+                  }}
+                >
+                  Essai : {daysLeft}j restant{daysLeft > 1 ? 's' : ''}
+                </div>
+              );
+            })()}
           </div>
 
           {/* Lien vers l'accueil */}
@@ -343,16 +363,38 @@ export default function DashboardLayout({
         <div className="flex flex-col h-full">
           {/* Mobile header */}
           <div className="flex items-center justify-between h-16 px-6 border-b border-gray-800">
-            <Link href="/dashboard" className="flex items-center">
-              <Image
-                src={logo}
-                alt="Comptalyze"
-                width={160}
-                height={40}
-                className="h-9 w-auto"
-                priority
-              />
-            </Link>
+            <div className="flex flex-col">
+              <Link href="/dashboard" className="flex items-center">
+                <Image
+                  src={logo}
+                  alt="Comptalyze"
+                  width={160}
+                  height={40}
+                  className="h-9 w-auto"
+                  priority
+                />
+              </Link>
+              {/* Badge Essai Gratuit Mobile */}
+              {subscription.isTrial && subscription.trialEndsAt && (() => {
+                const trialEnd = new Date(subscription.trialEndsAt);
+                const daysLeft = Math.ceil((trialEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+                return (
+                  <div
+                    className="mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold"
+                    style={{
+                      background: daysLeft <= 1 
+                        ? 'linear-gradient(135deg, #F59E0B, #EF4444)'
+                        : subscription.isPremium
+                        ? 'linear-gradient(135deg, #8B5CF6, #3B82F6)'
+                        : 'linear-gradient(135deg, #00D084, #2E6CF6)',
+                      color: 'white',
+                    }}
+                  >
+                    Essai : {daysLeft}j
+                  </div>
+                );
+              })()}
+            </div>
             <button
               onClick={() => setSidebarOpen(false)}
               className="text-gray-400 hover:text-white"
