@@ -17,6 +17,7 @@ export default function NewInvoicePage() {
   const [loading, setLoading] = useState(false);
   const [checkingPlan, setCheckingPlan] = useState(true);
   const [hasAccess, setHasAccess] = useState(false);
+  const [loadingDefaults, setLoadingDefaults] = useState(true);
   const [formData, setFormData] = useState({
     customer_name: '',
     customer_email: '',
@@ -30,9 +31,9 @@ export default function NewInvoicePage() {
     { description: '', quantity: 1, unit_price_eur: 0 },
   ]);
 
-  // Vérifier l'accès au plan
+  // Vérifier l'accès au plan et charger les valeurs par défaut
   useEffect(() => {
-    const checkAccess = async () => {
+    const checkAccessAndLoadDefaults = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session?.user) {
@@ -43,14 +44,34 @@ export default function NewInvoicePage() {
         const userPlan = await getUserPlan(supabase, session.user.id);
         const canAccess = userPlan === 'pro' || userPlan === 'premium';
         setHasAccess(canAccess);
+
+        if (canAccess) {
+          // Charger les valeurs par défaut depuis la base de données
+          const { data: defaults } = await supabase
+            .from('customer_defaults')
+            .select('*')
+            .eq('user_id', session.user.id)
+            .single();
+
+          if (defaults) {
+            setFormData(prev => ({
+              ...prev,
+              customer_name: defaults.customer_name || '',
+              customer_email: defaults.customer_email || '',
+              customer_address: defaults.customer_address || '',
+              vat_rate: defaults.vat_rate || 0,
+            }));
+          }
+        }
       } catch (error) {
         console.error('Erreur vérification plan:', error);
       } finally {
         setCheckingPlan(false);
+        setLoadingDefaults(false);
       }
     };
 
-    checkAccess();
+    checkAccessAndLoadDefaults();
   }, [router]);
 
   const addItem = () => {
@@ -81,6 +102,38 @@ export default function NewInvoicePage() {
     const subtotal = calculateSubtotal();
     const vat = subtotal * ((Number(formData.vat_rate) || 0) / 100);
     return subtotal + vat;
+  };
+
+  const clearDefaults = async () => {
+    if (!confirm('Voulez-vous effacer les informations par défaut sauvegardées ?')) {
+      return;
+    }
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) return;
+
+      await supabase
+        .from('customer_defaults')
+        .delete()
+        .eq('user_id', session.user.id);
+
+      // Réinitialiser le formulaire
+      setFormData({
+        customer_name: '',
+        customer_email: '',
+        customer_address: '',
+        issue_date: new Date().toISOString().split('T')[0],
+        due_date: '',
+        vat_rate: 0,
+        notes: '',
+      });
+
+      alert('Les valeurs par défaut ont été effacées.');
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error);
+      alert('Erreur lors de la suppression des valeurs par défaut.');
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -195,6 +248,26 @@ export default function NewInvoicePage() {
         return;
       }
 
+      // Sauvegarder les valeurs par défaut pour les prochaines factures
+      try {
+        const defaultValues = {
+          user_id: session.user.id,
+          customer_name: formData.customer_name.trim(),
+          customer_email: formData.customer_email.trim() || null,
+          customer_address: formData.customer_address.trim() || null,
+          vat_rate: Number(formData.vat_rate) || 0,
+          updated_at: new Date().toISOString(),
+        };
+
+        // Essayer d'insérer ou de mettre à jour avec upsert
+        await supabase
+          .from('customer_defaults')
+          .upsert(defaultValues, { onConflict: 'user_id' });
+      } catch (defaultsError) {
+        console.error('Erreur lors de la sauvegarde des valeurs par défaut:', defaultsError);
+        // Ne pas bloquer la création de facture si la sauvegarde échoue
+      }
+
       // Envoyer automatiquement l'email avec la facture
       try {
         const token = session.access_token;
@@ -267,7 +340,28 @@ export default function NewInvoicePage() {
   return (
     <div className="min-h-screen px-4 py-8" style={{ backgroundColor: '#0e0f12' }}>
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-3xl font-semibold text-white mb-6">Nouvelle facture</h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-semibold text-white">Nouvelle facture</h1>
+          {!loadingDefaults && (formData.customer_name || formData.customer_email || formData.customer_address) && (
+            <button
+              type="button"
+              onClick={clearDefaults}
+              className="text-sm px-4 py-2 rounded-lg text-gray-300 hover:text-white transition-colors"
+              style={{ backgroundColor: '#23272f', border: '1px solid #2d3441' }}
+              title="Effacer les informations par défaut"
+            >
+              🗑️ Effacer par défaut
+            </button>
+          )}
+        </div>
+
+        {!loadingDefaults && (formData.customer_name || formData.customer_email || formData.customer_address) && (
+          <div className="mb-4 p-4 rounded-lg" style={{ backgroundColor: '#1a1d24', border: '1px solid #2d3441' }}>
+            <p className="text-sm text-gray-300">
+              ℹ️ Les informations du client ont été remplies automatiquement. Vous pouvez les modifier pour cette facture.
+            </p>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Informations client */}

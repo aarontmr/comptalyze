@@ -14,6 +14,7 @@ import { DollarSign, TrendingUp, PieChart, ArrowRight, Sparkles, Calculator, Fil
 import Link from 'next/link';
 import PremiumAdvice from '@/app/components/PremiumAdvice';
 import { motion } from 'framer-motion';
+import UpgradeTeaser from '@/app/components/UpgradeTeaser';
 
 interface CARecord {
   amount_eur: number;
@@ -239,6 +240,9 @@ export default function DashboardOverview() {
         )}
       </div>
 
+      {/* Upgrade Teaser */}
+      <UpgradeTeaser currentPlan={subscription.plan} />
+
       {/* Actions rapides */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Link href="/dashboard/simulateur" data-tutorial="calculator">
@@ -400,6 +404,9 @@ export default function DashboardOverview() {
             </>
           )}
         </div>
+
+        {/* Upgrade Teaser */}
+        <UpgradeTeaser currentPlan={subscription.plan} />
 
         {/* Derniers enregistrements */}
         <SectionTitle title="Derniers enregistrements" />

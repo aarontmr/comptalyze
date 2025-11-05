@@ -4,7 +4,9 @@ import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { getUserSubscription } from '@/lib/subscriptionUtils';
 import { User } from '@supabase/supabase-js';
-import { MessageCircle, X, Minimize2, Send, Bot } from 'lucide-react';
+import { MessageCircle, X, Minimize2, Send, Bot, Lock, Sparkles } from 'lucide-react';
+import Link from 'next/link';
+import PlanBadge from './PlanBadge';
 
 interface Message {
   id: string;
@@ -149,21 +151,157 @@ export default function FloatingAIAssistant({ user }: FloatingAIAssistantProps) 
     setError(null);
   };
 
-  // Ne pas afficher si l'utilisateur n'est pas Premium
+  // Version Preview pour les non-Premium
   if (!subscription.isPremium || !user) {
-    return null;
+    return (
+      <>
+        {/* Bouton flottant avec badge Premium */}
+        {!isOpen && (
+          <button
+            onClick={() => setIsOpen(true)}
+            className="fixed z-50 w-14 h-14 flex items-center justify-center rounded-full text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl relative"
+            style={{
+              background: 'linear-gradient(135deg, #8B5CF6 0%, #3B82F6 100%)',
+              boxShadow: '0 8px 24px rgba(139, 92, 246, 0.4)',
+              bottom: '24px',
+              right: '16px',
+              top: 'auto',
+            }}
+            aria-label="Découvrir l'assistant IA Premium"
+          >
+            <MessageCircle className="w-6 h-6" />
+            <div className="absolute -top-2 -right-2">
+              <Sparkles className="w-5 h-5 text-yellow-400 animate-pulse" />
+            </div>
+          </button>
+        )}
+
+        {/* Fenêtre de preview */}
+        {isOpen && (
+          <div
+            className="fixed z-50 flex flex-col rounded-xl shadow-2xl w-80 sm:w-96 max-w-[calc(100vw-2rem)] h-[500px] sm:h-[600px] max-h-[calc(100vh-12rem)] sm:max-h-[calc(100vh-8rem)]"
+            style={{
+              backgroundColor: '#1a1d24',
+              border: '1px solid #2d3441',
+              bottom: '24px',
+              right: '16px',
+              top: 'auto',
+            }}
+          >
+            {/* Header */}
+            <div
+              className="flex items-center justify-between p-4 rounded-t-xl"
+              style={{
+                background: 'linear-gradient(135deg, #8B5CF6 0%, #3B82F6 100%)',
+              }}
+            >
+              <div className="flex items-center gap-3">
+                <Bot className="w-6 h-6 text-white" />
+                <div>
+                  <h3 className="font-semibold text-white">Assistant IA</h3>
+                  <PlanBadge plan="premium" size="sm" animated={false} />
+                </div>
+              </div>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="p-1 hover:bg-white/20 rounded-lg transition-colors"
+                aria-label="Fermer"
+              >
+                <X className="w-5 h-5 text-white" />
+              </button>
+            </div>
+
+            {/* Preview Content */}
+            <div className="flex-1 overflow-y-auto p-4 relative">
+              {/* Messages d'exemple floutés */}
+              <div className="space-y-4 opacity-40 blur-sm pointer-events-none">
+                <div className="flex gap-3">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, #8B5CF6, #3B82F6)' }}>
+                    <Bot className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="flex-1 rounded-xl p-3" style={{ backgroundColor: '#23272f' }}>
+                    <p className="text-gray-300 text-sm">
+                      Bonjour ! Je suis votre assistant IA spécialisé en micro-entreprise. Je peux vous aider à optimiser vos cotisations, prévoir vos revenus, et répondre à toutes vos questions fiscales.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 justify-end">
+                  <div className="flex-1 max-w-[80%] rounded-xl p-3" style={{ background: 'linear-gradient(135deg, #8B5CF6, #3B82F6)' }}>
+                    <p className="text-white text-sm">
+                      Combien dois-je facturer pour avoir 3000€ net par mois ?
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, #8B5CF6, #3B82F6)' }}>
+                    <Bot className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="flex-1 rounded-xl p-3" style={{ backgroundColor: '#23272f' }}>
+                    <p className="text-gray-300 text-sm">
+                      Pour atteindre 3000€ net mensuels, vous devrez facturer environ 4200€ HT. Voici le détail : CA : 4200€ - Cotisations (22%) : 924€ - Impôts (~10%) : 276€ = 3000€ net...
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Overlay Premium */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center p-6 bg-gradient-to-b from-transparent via-[#1a1d24]/90 to-[#1a1d24]">
+                <Sparkles className="w-16 h-16 mb-4" style={{ color: '#8B5CF6' }} />
+                <h3 className="text-2xl font-bold text-white mb-2 text-center">
+                  Assistant IA Premium
+                </h3>
+                <p className="text-gray-300 text-center mb-4 text-sm">
+                  Obtenez des conseils personnalisés et des analyses en temps réel de votre activité
+                </p>
+                <ul className="text-gray-300 text-sm space-y-2 mb-6">
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-400">✓</span> Conseils fiscaux personnalisés
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-400">✓</span> Prévisions de revenus IA
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-400">✓</span> Optimisation des cotisations
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-400">✓</span> Réponses instantanées 24/7
+                  </li>
+                </ul>
+                <Link
+                  href="/pricing?upgrade=premium"
+                  className="px-6 py-3 rounded-xl text-white font-semibold transition-all hover:scale-105 hover:shadow-xl flex items-center gap-2"
+                  style={{
+                    background: 'linear-gradient(135deg, #8B5CF6, #3B82F6)',
+                    boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)',
+                  }}
+                >
+                  <Lock className="w-5 h-5" />
+                  Passer à Premium - 7,90€/mois
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+      </>
+    );
   }
 
+  // Version complète pour les Premium
   return (
     <>
       {/* Bouton flottant */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-24 right-4 sm:bottom-6 sm:right-6 z-50 p-4 rounded-full text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl"
+          className="fixed z-50 w-14 h-14 flex items-center justify-center rounded-full text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl"
           style={{
             background: 'linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)',
             boxShadow: '0 8px 24px rgba(46, 108, 246, 0.4)',
+            bottom: '24px',
+            right: '16px',
+            top: 'auto',
           }}
           aria-label="Ouvrir l'assistant IA"
         >
@@ -174,13 +312,16 @@ export default function FloatingAIAssistant({ user }: FloatingAIAssistantProps) 
       {/* Fenêtre de chat */}
       {isOpen && (
         <div
-          className={`fixed bottom-24 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col rounded-xl shadow-2xl transition-all duration-300 ${
-            isMinimized ? 'w-72 sm:w-80 h-16' : 'w-[calc(100vw-2rem)] sm:w-96 max-w-md h-[500px] sm:h-[600px] max-h-[calc(100vh-12rem)] sm:max-h-[calc(100vh-8rem)]'
+          className={`fixed z-50 flex flex-col rounded-xl shadow-2xl transition-all duration-300 ${
+            isMinimized ? 'w-72 sm:w-80 h-16' : 'w-80 sm:w-96 max-w-[calc(100vw-2rem)] h-[500px] sm:h-[600px] max-h-[calc(100vh-12rem)] sm:max-h-[calc(100vh-8rem)]'
           }`}
           style={{
             backgroundColor: '#16181d',
             border: '1px solid rgba(45, 52, 65, 0.5)',
             boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
+            bottom: '24px',
+            right: '16px',
+            top: 'auto',
           }}
         >
           {/* Header */}

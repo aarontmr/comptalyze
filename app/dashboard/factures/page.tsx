@@ -10,6 +10,8 @@ import Link from 'next/link';
 import Card from '@/app/components/Card';
 import Breadcrumbs from '@/app/components/Breadcrumbs';
 import { FileText, Download, Mail, Eye } from 'lucide-react';
+import FeaturePreview from '@/app/components/FeaturePreview';
+import PlanBadge from '@/app/components/PlanBadge';
 
 interface Invoice {
   id: string;
@@ -162,26 +164,84 @@ export default function FacturesPage() {
           { label: 'Aperçu', href: '/dashboard' },
           { label: 'Factures' },
         ]} />
-        <h1 className="text-3xl font-semibold text-white mb-8">Factures</h1>
-        <Card>
-          <p className="text-gray-300 mb-4">
-            Le module de factures est disponible avec le plan{' '}
-            <span className="font-semibold text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(90deg, #00D084, #2E6CF6)' }}>
-              Pro
-            </span>{' '}
-            ou{' '}
-            <span className="font-semibold text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(90deg, #00D084, #2E6CF6)' }}>
-              Premium
-            </span>.
-          </p>
-          <Link
-            href="/pricing"
-            className="inline-block px-6 py-3 rounded-lg text-white font-medium transition-colors hover:opacity-90"
-            style={{ background: 'linear-gradient(90deg, #00D084, #2E6CF6)' }}
-          >
-            Voir les plans
-          </Link>
-        </Card>
+        
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-semibold text-white">Factures</h1>
+          <PlanBadge plan="pro" size="lg" />
+        </div>
+
+        {/* Aperçu avec exemple de factures */}
+        <FeaturePreview
+          title="Créez et gérez vos factures professionnelles"
+          description="Générez des factures PDF personnalisées, envoyez-les automatiquement par email et gardez un historique complet de toutes vos transactions."
+          benefits={[
+            'Génération PDF automatique et professionnelle',
+            'Envoi par email en un clic',
+            'Numérotation automatique des factures',
+            'Historique complet et recherche',
+            'Calculs TVA automatiques',
+            'Export et archivage'
+          ]}
+          plan="pro"
+          ctaText="Débloquer les factures - 3,90€/mois"
+          showPreview={true}
+          previewOpacity={0.15}
+        >
+          {/* Exemple visuel de liste de factures */}
+          <div className="p-6 space-y-4">
+            <div className="flex gap-4 mb-6">
+              <button className="px-6 py-3 rounded-lg font-medium" style={{ background: 'linear-gradient(90deg, #00D084, #2E6CF6)' }}>
+                ✨ Nouvelle facture
+              </button>
+              <button className="px-6 py-3 rounded-lg" style={{ backgroundColor: '#23272f', border: '1px solid #2d3441' }}>
+                Filtrer
+              </button>
+            </div>
+            
+            {/* Exemple de factures */}
+            <div className="space-y-3">
+              {[
+                { num: 'FACT-2025-001', client: 'Client ABC', montant: '1 250,00 €', date: '15 Jan 2025' },
+                { num: 'FACT-2025-002', client: 'Entreprise XYZ', montant: '890,00 €', date: '18 Jan 2025' },
+                { num: 'FACT-2025-003', client: 'SARL Dupont', montant: '2 450,00 €', date: '22 Jan 2025' },
+                { num: 'FACT-2025-004', client: 'SAS Martin', montant: '1 750,00 €', date: '25 Jan 2025' },
+              ].map((facture, index) => (
+                <div
+                  key={index}
+                  className="p-4 rounded-lg flex items-center justify-between"
+                  style={{ backgroundColor: '#1a1d24', border: '1px solid #2d3441' }}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 rounded-lg" style={{ backgroundColor: '#23272f' }}>
+                      <FileText className="w-6 h-6" style={{ color: '#00D084' }} />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-white">{facture.num}</div>
+                      <div className="text-sm text-gray-400">{facture.client}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-6">
+                    <div className="text-right">
+                      <div className="font-semibold" style={{ color: '#00D084' }}>{facture.montant}</div>
+                      <div className="text-sm text-gray-400">{facture.date}</div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button className="p-2 rounded-lg hover:bg-gray-800" style={{ backgroundColor: '#23272f' }}>
+                        <Eye className="w-5 h-5 text-gray-400" />
+                      </button>
+                      <button className="p-2 rounded-lg hover:bg-gray-800" style={{ backgroundColor: '#23272f' }}>
+                        <Download className="w-5 h-5 text-gray-400" />
+                      </button>
+                      <button className="p-2 rounded-lg hover:bg-gray-800" style={{ backgroundColor: '#23272f' }}>
+                        <Mail className="w-5 h-5 text-gray-400" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </FeaturePreview>
       </div>
     );
   }

@@ -11,7 +11,7 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import BadgePlan from '@/components/ui/BadgePlan';
 import EmailReminderToggle from '@/app/components/EmailReminderToggle';
 import Link from 'next/link';
-import { User as UserIcon, Mail, CreditCard, Bell, AlertTriangle, XCircle, LogOut, Shield, Trash2 } from 'lucide-react';
+import { User as UserIcon, Mail, CreditCard, Bell, AlertTriangle, XCircle, LogOut, Shield, Trash2, FileText } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function ComptePage() {
@@ -22,22 +22,47 @@ export default function ComptePage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
   const [deleting, setDeleting] = useState(false);
+  const [customerDefaults, setCustomerDefaults] = useState({
+    customer_name: '',
+    customer_email: '',
+    customer_address: '',
+    vat_rate: 0,
+  });
+  const [loadingDefaults, setLoadingDefaults] = useState(true);
+  const [savingDefaults, setSavingDefaults] = useState(false);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchUserAndDefaults = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.user) {
           setUser(session.user);
+          
+          // Charger les valeurs par défaut pour les factures
+          const { data: defaults } = await supabase
+            .from('customer_defaults')
+            .select('*')
+            .eq('user_id', session.user.id)
+            .single();
+
+          if (defaults) {
+            setCustomerDefaults({
+              customer_name: defaults.customer_name || '',
+              customer_email: defaults.customer_email || '',
+              customer_address: defaults.customer_address || '',
+              vat_rate: defaults.vat_rate || 0,
+            });
+          }
         }
       } catch (error) {
         console.error('Erreur:', error);
       } finally {
         setLoading(false);
+        setLoadingDefaults(false);
       }
     };
 
-    fetchUser();
+    fetchUserAndDefaults();
   }, []);
 
   const subscription = getUserSubscription(user);
@@ -104,6 +129,61 @@ export default function ComptePage() {
       console.error('Erreur:', error);
       alert('Une erreur est survenue lors de la suppression du compte.');
       setDeleting(false);
+    }
+  };
+
+  const handleSaveDefaults = async () => {
+    if (!user) return;
+    
+    setSavingDefaults(true);
+    try {
+      const defaultValues = {
+        user_id: user.id,
+        customer_name: customerDefaults.customer_name.trim() || null,
+        customer_email: customerDefaults.customer_email.trim() || null,
+        customer_address: customerDefaults.customer_address.trim() || null,
+        vat_rate: Number(customerDefaults.vat_rate) || 0,
+        updated_at: new Date().toISOString(),
+      };
+
+      const { error } = await supabase
+        .from('customer_defaults')
+        .upsert(defaultValues, { onConflict: 'user_id' });
+
+      if (error) {
+        throw error;
+      }
+
+      alert('Les valeurs par défaut ont été sauvegardées avec succès.');
+    } catch (error) {
+      console.error('Erreur:', error);
+      alert('Une erreur est survenue lors de la sauvegarde.');
+    } finally {
+      setSavingDefaults(false);
+    }
+  };
+
+  const handleClearDefaults = async () => {
+    if (!user) return;
+    if (!confirm('Voulez-vous effacer toutes les valeurs par défaut ?')) return;
+    
+    try {
+      await supabase
+        .from('customer_defaults')
+        .delete()
+        .eq('user_id', user.id);
+
+      setCustomerDefaults({
+        customer_name: '',
+        customer_email: '',
+        customer_address: '',
+        vat_rate: 0,
+      });
+
+      alert('Les valeurs par défaut ont été effacées.');
+    } catch (error) {
+      console.error('Erreur:', error);
+      alert('Une erreur est survenue lors de la suppression.');
     }
   };
 
@@ -197,6 +277,106 @@ export default function ComptePage() {
                 <EmailReminderToggle userId={user.id} isPremium={true} />
               </div>
             </div>
+          </Card>
+        </motion.div>
+      )}
+
+      {/* Valeurs par défaut des factures (Pro/Premium) */}
+      {(subscription.isPro || subscription.isPremium) && user && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="mb-6"
+        >
+          <Card>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(46, 108, 246, 0.1)' }}>
+                  <FileText className="w-6 h-6" style={{ color: '#2E6CF6' }} />
+                </div>
+                <h2 className="text-lg font-semibold text-white">Valeurs par défaut des factures</h2>
+              </div>
+            </div>
+            <p className="text-sm text-gray-400 mb-4">
+              Ces informations seront automatiquement remplies lors de la création d'une nouvelle facture.
+            </p>
+            {!loadingDefaults && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Nom du client par défaut
+                  </label>
+                  <input
+                    type="text"
+                    value={customerDefaults.customer_name}
+                    onChange={(e) => setCustomerDefaults({ ...customerDefaults, customer_name: e.target.value })}
+                    placeholder="Ex: Mon entreprise principale"
+                    className="w-full px-4 py-2 rounded-lg text-white placeholder-gray-500"
+                    style={{ backgroundColor: '#23272f', border: '1px solid #2d3441' }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Email par défaut
+                  </label>
+                  <input
+                    type="email"
+                    value={customerDefaults.customer_email}
+                    onChange={(e) => setCustomerDefaults({ ...customerDefaults, customer_email: e.target.value })}
+                    placeholder="client@exemple.com"
+                    className="w-full px-4 py-2 rounded-lg text-white placeholder-gray-500"
+                    style={{ backgroundColor: '#23272f', border: '1px solid #2d3441' }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Adresse par défaut
+                  </label>
+                  <textarea
+                    value={customerDefaults.customer_address}
+                    onChange={(e) => setCustomerDefaults({ ...customerDefaults, customer_address: e.target.value })}
+                    placeholder="Ex: 123 Rue de la Paix, 75000 Paris"
+                    rows={3}
+                    className="w-full px-4 py-2 rounded-lg text-white placeholder-gray-500"
+                    style={{ backgroundColor: '#23272f', border: '1px solid #2d3441' }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Taux de TVA par défaut (%)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    value={customerDefaults.vat_rate}
+                    onChange={(e) => setCustomerDefaults({ ...customerDefaults, vat_rate: parseFloat(e.target.value) || 0 })}
+                    className="w-full px-4 py-2 rounded-lg text-white"
+                    style={{ backgroundColor: '#23272f', border: '1px solid #2d3441' }}
+                  />
+                </div>
+                <div className="flex gap-3 pt-2">
+                  <button
+                    onClick={handleSaveDefaults}
+                    disabled={savingDefaults}
+                    className="flex-1 px-6 py-3 rounded-lg text-white font-medium transition-all hover:opacity-90 disabled:opacity-50"
+                    style={{ background: 'linear-gradient(90deg, #00D084, #2E6CF6)' }}
+                  >
+                    {savingDefaults ? 'Sauvegarde...' : 'Sauvegarder'}
+                  </button>
+                  <button
+                    onClick={handleClearDefaults}
+                    disabled={savingDefaults}
+                    className="px-6 py-3 rounded-lg text-gray-300 font-medium transition-all hover:bg-gray-800 disabled:opacity-50"
+                    style={{ backgroundColor: '#23272f', border: '1px solid #2d3441' }}
+                  >
+                    Effacer
+                  </button>
+                </div>
+              </div>
+            )}
           </Card>
         </motion.div>
       )}
@@ -546,6 +726,98 @@ export default function ComptePage() {
                     <EmailReminderToggle userId={user.id} isPremium={true} />
                   </div>
                 </div>
+              </Card>
+            </motion.div>
+          )}
+
+          {/* Valeurs par défaut des factures (Pro/Premium) - Mobile */}
+          {(subscription.isPro || subscription.isPremium) && user && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <SectionTitle title="Factures - Valeurs par défaut" />
+              <Card>
+                <p className="text-xs text-gray-400 mb-4">
+                  Ces informations seront automatiquement remplies lors de la création d'une nouvelle facture.
+                </p>
+                {!loadingDefaults && (
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-300 mb-1">
+                        Nom du client par défaut
+                      </label>
+                      <input
+                        type="text"
+                        value={customerDefaults.customer_name}
+                        onChange={(e) => setCustomerDefaults({ ...customerDefaults, customer_name: e.target.value })}
+                        placeholder="Ex: Mon entreprise principale"
+                        className="w-full px-3 py-2 rounded-lg text-sm text-white placeholder-gray-500"
+                        style={{ backgroundColor: '#23272f', border: '1px solid #2d3441' }}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-300 mb-1">
+                        Email par défaut
+                      </label>
+                      <input
+                        type="email"
+                        value={customerDefaults.customer_email}
+                        onChange={(e) => setCustomerDefaults({ ...customerDefaults, customer_email: e.target.value })}
+                        placeholder="client@exemple.com"
+                        className="w-full px-3 py-2 rounded-lg text-sm text-white placeholder-gray-500"
+                        style={{ backgroundColor: '#23272f', border: '1px solid #2d3441' }}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-300 mb-1">
+                        Adresse par défaut
+                      </label>
+                      <textarea
+                        value={customerDefaults.customer_address}
+                        onChange={(e) => setCustomerDefaults({ ...customerDefaults, customer_address: e.target.value })}
+                        placeholder="Ex: 123 Rue de la Paix, 75000 Paris"
+                        rows={2}
+                        className="w-full px-3 py-2 rounded-lg text-sm text-white placeholder-gray-500"
+                        style={{ backgroundColor: '#23272f', border: '1px solid #2d3441' }}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-300 mb-1">
+                        Taux de TVA par défaut (%)
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        value={customerDefaults.vat_rate}
+                        onChange={(e) => setCustomerDefaults({ ...customerDefaults, vat_rate: parseFloat(e.target.value) || 0 })}
+                        className="w-full px-3 py-2 rounded-lg text-sm text-white"
+                        style={{ backgroundColor: '#23272f', border: '1px solid #2d3441' }}
+                      />
+                    </div>
+                    <div className="flex gap-2 pt-2">
+                      <button
+                        onClick={handleSaveDefaults}
+                        disabled={savingDefaults}
+                        className="flex-1 px-4 py-2 rounded-lg text-white text-sm font-medium transition-all hover:opacity-90 disabled:opacity-50"
+                        style={{ background: 'linear-gradient(90deg, #00D084, #2E6CF6)' }}
+                      >
+                        {savingDefaults ? 'Sauvegarde...' : 'Sauvegarder'}
+                      </button>
+                      <button
+                        onClick={handleClearDefaults}
+                        disabled={savingDefaults}
+                        className="px-4 py-2 rounded-lg text-gray-300 text-sm font-medium transition-all hover:bg-gray-800 disabled:opacity-50"
+                        style={{ backgroundColor: '#23272f', border: '1px solid #2d3441' }}
+                      >
+                        Effacer
+                      </button>
+                    </div>
+                  </div>
+                )}
               </Card>
             </motion.div>
           )}
