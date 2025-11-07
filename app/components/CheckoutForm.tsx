@@ -46,6 +46,10 @@ export default function CheckoutForm({ plan }: CheckoutFormProps) {
     <form onSubmit={handleSubmit} className="space-y-6">
       <PaymentElement options={{
         layout: "tabs",
+        wallets: {
+          applePay: "auto",
+          googlePay: "auto"
+        }
       }} />
 
       {message && (
