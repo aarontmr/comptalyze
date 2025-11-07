@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, FormEvent } from "react";
-import { useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js";
+import { useState, FormEvent, useEffect } from "react";
+import { useStripe, useElements, PaymentElement, PaymentRequestButtonElement } from "@stripe/react-stripe-js";
 import { Lock } from "lucide-react";
 
 interface CheckoutFormProps {
@@ -13,6 +13,56 @@ export default function CheckoutForm({ plan }: CheckoutFormProps) {
   const elements = useElements();
   const [message, setMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [paymentRequest, setPaymentRequest] = useState<any>(null);
+
+  // Initialiser Payment Request pour Apple Pay / Google Pay
+  useEffect(() => {
+    if (!stripe) {
+      return;
+    }
+
+    const pr = stripe.paymentRequest({
+      country: 'FR',
+      currency: 'eur',
+      total: {
+        label: `Abonnement Comptalyze ${plan}`,
+        amount: plan.includes("pro") ? (plan.includes("yearly") ? 3790 : 390) : (plan.includes("yearly") ? 7590 : 790),
+      },
+      requestPayerName: true,
+      requestPayerEmail: true,
+    });
+
+    // Vérifier si Apple Pay ou Google Pay est disponible
+    pr.canMakePayment().then((result) => {
+      if (result) {
+        setPaymentRequest(pr);
+        console.log("✅ Apple Pay / Google Pay disponible");
+      } else {
+        console.log("❌ Apple Pay / Google Pay non disponible sur cet appareil");
+      }
+    });
+
+    pr.on('paymentmethod', async (ev) => {
+      // Traiter le paiement avec Apple Pay / Google Pay
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || window.location.origin;
+      
+      const { error } = await stripe.confirmPayment({
+        elements: elements!,
+        confirmParams: {
+          return_url: `${baseUrl}/success`,
+        },
+        redirect: 'if_required',
+      });
+
+      if (error) {
+        ev.complete('fail');
+        setMessage(error.message || "Une erreur est survenue");
+      } else {
+        ev.complete('success');
+        window.location.href = `${baseUrl}/success`;
+      }
+    });
+  }, [stripe, plan, elements]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -44,6 +94,26 @@ export default function CheckoutForm({ plan }: CheckoutFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Bouton Apple Pay / Google Pay (Express Checkout) */}
+      {paymentRequest && (
+        <div className="mb-6">
+          <div className="mb-4 text-center">
+            <span className="text-sm text-gray-400">Paiement express</span>
+          </div>
+          <PaymentRequestButtonElement options={{ paymentRequest }} />
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-700"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-4 text-gray-400" style={{ backgroundColor: "#14161b" }}>
+                Ou payer par carte
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       <PaymentElement options={{
         layout: "tabs",
         wallets: {
