@@ -8,11 +8,11 @@ interface BreadcrumbItem {
   href?: string;
 }
 
-interface BreadcrumbProps {
+interface BreadcrumbsProps {
   items: BreadcrumbItem[];
 }
 
-export default function Breadcrumb({ items }: BreadcrumbProps) {
+export default function Breadcrumbs({ items }: BreadcrumbsProps) {
   // Generate structured data for breadcrumbs (SEO)
   const structuredData = {
     '@context': 'https://schema.org',
