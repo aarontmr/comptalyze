@@ -3,7 +3,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getArticleBySlug, getAllArticleSlugs, extractHeadings, getAllArticles } from '@/lib/mdx-utils';
 import TableOfContents from '@/app/components/TableOfContents';
-import Breadcrumb from '@/app/components/Breadcrumb';
+import Breadcrumbs from '@/app/components/Breadcrumbs';
 import RelatedArticles from '@/app/components/RelatedArticles';
 
 interface PageProps {
@@ -198,7 +198,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
           {/* Contenu principal */}
           <article className="min-w-0">
             {/* Breadcrumb */}
-            <Breadcrumb
+            <Breadcrumbs
               items={[
                 { label: 'Blog', href: '/blog' },
                 { label: article.metadata.title },
