@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import logo from '@/public/logo.png';
 import dynamic from 'next/dynamic';
+import QuickSettings from '@/app/components/QuickSettings';
 
 // Dynamic imports pour les composants lourds
 const FloatingAIAssistant = dynamic(() => import('@/app/components/FloatingAIAssistant'), {
@@ -337,6 +338,11 @@ export default function DashboardLayout({
             )}
           </nav>
 
+          {/* Paramètres rapides */}
+          <div className="px-4 py-2 border-t border-gray-800 flex-shrink-0">
+            <QuickSettings />
+          </div>
+
           {/* User info & Sign out */}
           <div className="px-4 py-4 border-t border-gray-800 flex-shrink-0">
             <div className="mb-3 px-4 py-2 rounded-lg" style={{ backgroundColor: '#16181d' }}>
@@ -516,6 +522,11 @@ export default function DashboardLayout({
               </div>
             )}
           </nav>
+
+          {/* Paramètres rapides mobile */}
+          <div className="px-4 py-2 border-t border-gray-800 flex-shrink-0">
+            <QuickSettings />
+          </div>
 
           {/* Mobile user info & Sign out */}
           <div className="px-4 py-4 border-t border-gray-800 flex-shrink-0">

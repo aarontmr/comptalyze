@@ -10,6 +10,7 @@ import { trackEvent } from '@/lib/analytics';
 import UrssafPrefill from './UrssafPrefill';
 import { Trash2, Info } from 'lucide-react';
 import { computeMonth, mapActivityType, type IRMode, type Activity } from '@/lib/calculs';
+import { useUserPreferences } from '@/app/hooks/useUserPreferences';
 
 interface CARecord {
   id: string;
@@ -64,6 +65,9 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
   const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
   const [showToast, setShowToast] = useState<string | null>(null);
+  
+  // Préférences utilisateur
+  const { preferences } = useUserPreferences();
   
   // Vérifier le plan d'abonnement de l'utilisateur
   const subscription = getUserSubscription(user);
@@ -614,22 +618,24 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
                 Impôt sur le Revenu (IR)
               </label>
               
-              {/* Explication claire et visible */}
-              <div className="mb-3 p-3 rounded-lg" style={{ backgroundColor: 'rgba(0, 208, 132, 0.05)', border: '1px solid rgba(0, 208, 132, 0.2)' }}>
-                <p className="text-xs text-gray-300 mb-2">
-                  💡 <strong className="text-white">L&apos;IR</strong> est un impôt sur vos bénéfices, en plus des cotisations URSSAF.
-                </p>
-                <p className="text-xs text-gray-400 mb-2">
-                  <strong>Exemple :</strong> CA 3000€ - Cotis. 636€ = Net 2364€ {' '}
-                  <span className="text-yellow-400">- IR ~142€</span> = <strong className="text-[#00D084]">Net final 2222€</strong>
-                </p>
-                <p className="text-xs text-blue-400">
-                  ℹ️ <strong>Barème classique :</strong> Pas d&apos;IR à payer la 1ère année, uniquement à partir de la 2ème année (en septembre N+1).
-                </p>
-                <p className="text-xs text-yellow-400 mt-1">
-                  ⚡ <strong>Versement libératoire :</strong> Payé chaque mois/trimestre dès le début avec l&apos;URSSAF.
-                </p>
-              </div>
+              {/* Explication claire et visible (masquable via préférences) */}
+              {preferences.showHelperTexts && (
+                <div className="mb-3 p-3 rounded-lg" style={{ backgroundColor: 'rgba(0, 208, 132, 0.05)', border: '1px solid rgba(0, 208, 132, 0.2)' }}>
+                  <p className="text-xs text-gray-300 mb-2">
+                    💡 <strong className="text-white">L&apos;IR</strong> est un impôt sur vos bénéfices, en plus des cotisations URSSAF.
+                  </p>
+                  <p className="text-xs text-gray-400 mb-2">
+                    <strong>Exemple :</strong> CA 3000€ - Cotis. 636€ = Net 2364€ {' '}
+                    <span className="text-yellow-400">- IR ~142€</span> = <strong className="text-[#00D084]">Net final 2222€</strong>
+                  </p>
+                  <p className="text-xs text-blue-400">
+                    ℹ️ <strong>Barème classique :</strong> Pas d&apos;IR à payer la 1ère année, uniquement à partir de la 2ème année (en septembre N+1).
+                  </p>
+                  <p className="text-xs text-yellow-400 mt-1">
+                    ⚡ <strong>Versement libératoire :</strong> Payé chaque mois/trimestre dès le début avec l&apos;URSSAF.
+                  </p>
+                </div>
+              )}
 
               <select
                 id="irMode"
@@ -646,9 +652,11 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
                 <option value="bareme">Barème classique (selon vos revenus totaux)</option>
               </select>
               
-              <p className="mt-2 text-xs text-gray-500">
-                Choisissez le régime fiscal que vous utilisez réellement
-              </p>
+              {preferences.showHelperTexts && (
+                <p className="mt-2 text-xs text-gray-500">
+                  Choisissez le régime fiscal que vous utilisez réellement
+                </p>
+              )}
             </div>
 
             {/* Input taux de provision (si barème sélectionné) */}
@@ -694,14 +702,16 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
                     border: '1px solid #2d3441',
                   }}
                 />
-                <p className="mt-2 text-xs text-gray-500">
-                  💡 <strong>Exemple :</strong> Si vous avez payé 1200€ d&apos;IR sur 20 000€ de revenu net imposable, votre taux moyen est de 6% (1200 ÷ 20000 = 0.06).
-                </p>
+                {preferences.showHelperTexts && (
+                  <p className="mt-2 text-xs text-gray-500">
+                    💡 <strong>Exemple :</strong> Si vous avez payé 1200€ d&apos;IR sur 20 000€ de revenu net imposable, votre taux moyen est de 6% (1200 ÷ 20000 = 0.06).
+                  </p>
+                )}
               </div>
             )}
 
             {/* Info note pour versement libératoire */}
-            {irMode === 'vl' && (
+            {irMode === 'vl' && preferences.showHelperTexts && (
               <div className="p-4 rounded-lg" style={{ backgroundColor: 'rgba(46, 108, 246, 0.1)', border: '1px solid rgba(46, 108, 246, 0.3)' }}>
                 <p className="text-sm text-gray-300">
                   <strong className="text-blue-400">Le versement libératoire</strong> est payé en même temps que vos cotisations URSSAF :
@@ -817,7 +827,7 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
                 <p className="text-xl font-semibold" style={{ color: '#00D084' }}>
                   {formatEuro(charges)} €
                 </p>
-                {hasACRE && getACREYear() > 0 && (
+                {hasACRE && getACREYear() > 0 && preferences.showHelperTexts && (
                   <p className="text-xs text-gray-500 mt-1">
                     Économie grâce à l&apos;ACRE : {formatEuro((baseRate * caValue) - charges)} €
                   </p>
@@ -871,7 +881,7 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
                   <p className="text-xl font-semibold" style={{ color: '#00D084' }}>
                     {formatEuro(ir)} €
                   </p>
-                  {irMode === 'bareme' && (
+                  {irMode === 'bareme' && preferences.showHelperTexts && (
                     <p className="text-xs text-gray-500 mt-1">
                       Basé sur un taux de provision de {baremeProvisionRate}% • {formatEuro(caValue * (activity === 'vente' ? 0.71 : activity === 'services' ? 0.5 : 0.34))} € d&apos;abattement
                     </p>
