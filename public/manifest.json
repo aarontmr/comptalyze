@@ -1,0 +1,29 @@
+{
+  "name": "Comptalyze - Comptabilité Micro-Entrepreneurs",
+  "short_name": "Comptalyze",
+  "description": "Logiciel de comptabilité pour micro-entrepreneurs : calcul automatique des cotisations URSSAF, factures conformes, statistiques CA.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0e0f12",
+  "theme_color": "#00D084",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "lang": "fr",
+  "dir": "ltr",
+  "categories": ["business", "finance", "productivity"]
+}
+
+

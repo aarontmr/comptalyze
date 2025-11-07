@@ -170,3 +170,6 @@ setTimeout(() => {
 - Configuration : `/scripts/config.json`
 - Scripts : `/scripts/render-preview.mjs`, `trim-and-gif.mjs`, `optimize-gif.mjs`
 
+
+
+

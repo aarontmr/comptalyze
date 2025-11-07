@@ -114,3 +114,6 @@ BEGIN
   RAISE NOTICE '   3. Accéder à /admin/feedback pour voir la liste';
 END $$;
 
+
+
+

@@ -448,3 +448,6 @@ Après le déploiement :
 
 **✅ Votre FAQ est maintenant optimisée pour le SEO et prête à générer des rich results dans Google !**
 
+
+
+

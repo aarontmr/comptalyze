@@ -706,3 +706,6 @@ className="absolute left-2 top-1/4"
 
 **Impact :** Valorisation du Premium, augmentation des conversions Premium, différenciation concurrentielle forte.
 
+
+
+

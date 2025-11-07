@@ -302,3 +302,6 @@ Pour toute question sur la mise à jour des témoignages :
 
 **✅ Félicitations !** Vous savez maintenant gérer les témoignages et statistiques de Comptalyze.
 
+
+
+

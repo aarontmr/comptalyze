@@ -172,3 +172,6 @@ Si vous préférez hCaptcha à reCAPTCHA :
 
 **✅ Configuration terminée !** Votre formulaire d'inscription est maintenant sécurisé contre les bots.
 
+
+
+

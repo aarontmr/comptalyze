@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /factures/
+Disallow: /checkout/
+
+# Crawl-delay for good behavior
+Crawl-delay: 1
+
+# Sitemap
+Sitemap: https://comptalyze.com/sitemap.xml
+
+# Allow all search engines to index blog
+User-agent: Googlebot
+Allow: /blog/
+
+User-agent: Bingbot
+Allow: /blog/

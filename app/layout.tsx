@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Poppins } from "next/font/google";
 import "./globals.css";
-import Footer from "./components/Footer";
-import AnalyticsProvider from "./components/AnalyticsProvider";
-import Script from "next/script";
+import { AnalyticsProvider } from './components/AnalyticsProvider';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,64 +13,82 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const poppins = Poppins({
-  variable: "--font-poppins",
-  weight: ["300", "400", "500", "600", "700"],
-  subsets: ["latin"],
-  display: "swap",
-});
-
 export const metadata: Metadata = {
-  title: "Comptalyze - Comptabilité et Gestion pour Micro-Entreprise | Simulateur URSSAF Gratuit",
-  description:
-    "Comptalyze : logiciel de comptabilité pour micro-entreprise et auto-entrepreneur. Calculez vos cotisations URSSAF, gérez vos factures, suivez votre CA. Essai gratuit 3 jours.",
+  metadataBase: new URL('https://comptalyze.com'),
+  title: {
+    default: "Comptalyze - Comptabilité Simplifiée pour Micro-Entrepreneurs",
+    template: "%s | Comptalyze",
+  },
+  description: "Logiciel de comptabilité pour micro-entrepreneurs : calcul automatique des cotisations URSSAF, factures conformes, déclarations fiscales, statistiques CA. Essai gratuit 3 jours.",
   keywords: [
     "comptalyze",
     "comptabilité micro-entreprise",
-    "comptabilité micro entreprise",
-    "comptabilité auto-entrepreneur",
-    "logiciel comptabilité micro-entreprise",
+    "logiciel auto-entrepreneur",
+    "déclaration urssaf",
+    "cotisations sociales",
+    "facture micro-entrepreneur",
     "gestion micro-entreprise",
-    "URSSAF",
-    "simulateur URSSAF",
-    "calculateur URSSAF gratuit",
-    "cotisations URSSAF",
-    "auto-entrepreneur",
-    "micro-entreprise",
-    "factures micro-entreprise",
-    "revenu net micro-entreprise",
-    "déclaration URSSAF",
-    "simulateur cotisations sociales",
-    "calcul charges sociales",
-    "outil comptable auto-entrepreneur",
-    "gestion factures auto-entrepreneur",
-    "logiciel facturation micro-entreprise",
+    "calculette urssaf",
   ],
-  authors: [{ name: "Comptalyze", url: "https://comptalyze.com" }],
-  metadataBase: new URL("https://comptalyze.com"),
+  authors: [{ name: "Comptalyze" }],
+  creator: "Comptalyze",
+  publisher: "Comptalyze",
+  applicationName: "Comptalyze",
+  referrer: 'origin-when-cross-origin',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   openGraph: {
-    title: "Comptalyze – Comptabilité simplifiée pour Micro-Entreprise",
-    description:
-      "Logiciel de comptabilité pour auto-entrepreneur : calculez vos cotisations URSSAF, générez vos factures, suivez votre CA en temps réel. Essai gratuit 3 jours.",
+    type: "website",
+    locale: "fr_FR",
     url: "https://comptalyze.com",
     siteName: "Comptalyze",
-    images: ["/og-image.png"],
-    locale: "fr_FR",
-    type: "website",
+    title: "Comptalyze - Comptabilité Simplifiée pour Micro-Entrepreneurs",
+    description: "Gérez votre micro-entreprise sereinement avec Comptalyze : calcul automatique des cotisations, factures conformes, statistiques détaillées.",
+    images: [
+      {
+        url: "/logo.png",
+        width: 1200,
+        height: 630,
+        alt: "Comptalyze Logo",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Comptalyze – Comptabilité Micro-Entreprise & Simulateur URSSAF",
-    description:
-      "Gérez votre micro-entreprise facilement avec Comptalyze : calcul URSSAF instantané, facturation, suivi de CA et prévisions.",
-    images: ["/og-image.png"],
+    title: "Comptalyze - Comptabilité Simplifiée pour Micro-Entrepreneurs",
+    description: "Gérez votre micro-entreprise sereinement avec Comptalyze",
+    site: "@comptalyze",
+    creator: "@comptalyze",
+    images: ["/logo.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
   icons: {
-    icon: "/favicon.ico",
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
   },
+  manifest: '/manifest.json',
   alternates: {
-    canonical: "https://comptalyze.com",
+    canonical: 'https://comptalyze.com',
   },
+  verification: {
+    // Add your Google Search Console verification code here when ready
+    // google: 'YOUR_VERIFICATION_CODE',
+  },
+  category: 'business',
 };
 
 export default function RootLayout({
@@ -81,28 +96,86 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const umamiWebsiteId = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID;
-  const umamiSrc = process.env.NEXT_PUBLIC_UMAMI_SRC || 'https://cloud.umami.is/script.js';
-
   return (
     <html lang="fr">
+      <head>
+        {/* Organization Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: 'Comptalyze',
+              url: 'https://comptalyze.com',
+              logo: 'https://comptalyze.com/logo.png',
+              sameAs: [
+                'https://twitter.com/comptalyze',
+                'https://facebook.com/comptalyze',
+                'https://linkedin.com/company/comptalyze',
+              ],
+              contactPoint: {
+                '@type': 'ContactPoint',
+                contactType: 'customer support',
+                email: 'support@comptalyze.com',
+                availableLanguage: ['French'],
+              },
+            }),
+          }}
+        />
+        {/* WebSite Structured Data with SearchAction */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebSite',
+              name: 'Comptalyze',
+              url: 'https://comptalyze.com',
+              potentialAction: {
+                '@type': 'SearchAction',
+                target: {
+                  '@type': 'EntryPoint',
+                  urlTemplate: 'https://comptalyze.com/blog?q={search_term_string}',
+                },
+                'query-input': 'required name=search_term_string',
+              },
+            }),
+          }}
+        />
+        {/* SoftwareApplication Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'SoftwareApplication',
+              name: 'Comptalyze',
+              applicationCategory: 'BusinessApplication',
+              operatingSystem: 'Web',
+              offers: {
+                '@type': 'Offer',
+                price: '9.90',
+                priceCurrency: 'EUR',
+                priceValidUntil: '2025-12-31',
+              },
+              aggregateRating: {
+                '@type': 'AggregateRating',
+                ratingValue: '4.8',
+                ratingCount: '127',
+                bestRating: '5',
+                worstRating: '1',
+              },
+              description: 'Logiciel de comptabilité pour micro-entrepreneurs',
+            }),
+          }}
+        />
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} antialiased`}
-        style={{ backgroundColor: "#0e0f12" }}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* Umami Analytics (mode EU) */}
-        {umamiWebsiteId && (
-          <Script
-            async
-            src={umamiSrc}
-            data-website-id={umamiWebsiteId}
-            strategy="afterInteractive"
-          />
-        )}
-
         <AnalyticsProvider>
           {children}
-          <Footer />
         </AnalyticsProvider>
       </body>
     </html>

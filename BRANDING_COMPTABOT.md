@@ -128,3 +128,6 @@ Pour activer ComptaBot avec OpenAI :
 **Date de mise à jour** : 6 novembre 2025
 **Statut** : ✅ Complet et prêt à déployer
 
+
+
+

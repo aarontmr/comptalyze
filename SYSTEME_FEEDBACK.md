@@ -857,3 +857,6 @@ FROM feedbacks;
 3. Tester le système complet
 4. Commencer à collecter des feedbacks !
 
+
+
+

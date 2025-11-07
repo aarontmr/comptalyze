@@ -645,3 +645,6 @@ Si problème technique :
 
 **🎉 Bravo ! Votre FAQ est optimisée SEO et prête à générer des rich results dans Google !**
 
+
+
+
