@@ -263,13 +263,13 @@ export default function LandingPage() {
       </header>
 
       {/* Accent gradient background */}
-      <div className="pointer-events-none fixed inset-0" aria-hidden>
+      <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden>
         <div
           className="absolute -top-40 left-1/2 h-[600px] w-[600px] -translate-x-1/2 rounded-full blur-3xl opacity-30"
           style={{ background: "radial-gradient(closest-side, #00D084, rgba(0,0,0,0))" }}
         />
         <div
-          className="absolute top-1/3 -right-24 h-[500px] w-[500px] rounded-full blur-3xl opacity-25"
+          className="absolute top-1/3 -right-12 md:-right-24 h-[400px] w-[400px] md:h-[500px] md:w-[500px] rounded-full blur-3xl opacity-25"
           style={{ background: "radial-gradient(closest-side, #2E6CF6, rgba(0,0,0,0))" }}
         />
       </div>
@@ -418,13 +418,13 @@ export default function LandingPage() {
 
                 {/* Decorative elements */}
                 <div 
-                  className="absolute -bottom-8 -right-8 w-32 h-32 rounded-full blur-3xl opacity-20 pointer-events-none"
+                  className="absolute -bottom-4 -right-4 md:-bottom-8 md:-right-8 w-24 h-24 md:w-32 md:h-32 rounded-full blur-3xl opacity-20 pointer-events-none"
                   style={{
                     background: "radial-gradient(circle, #2E6CF6 0%, transparent 70%)",
                   }}
                 />
                 <div 
-                  className="absolute -top-8 -left-8 w-24 h-24 rounded-full blur-2xl opacity-15 pointer-events-none"
+                  className="absolute -top-4 -left-4 md:-top-8 md:-left-8 w-20 h-20 md:w-24 md:h-24 rounded-full blur-2xl opacity-15 pointer-events-none"
                   style={{
                     background: "radial-gradient(circle, #00D084 0%, transparent 70%)",
                   }}

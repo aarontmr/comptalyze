@@ -119,7 +119,7 @@ export default function BeforeAfterSection() {
 
             {/* Effet visuel */}
             <div
-              className="absolute -bottom-8 -right-8 w-32 h-32 rounded-full blur-3xl opacity-10"
+              className="absolute -bottom-4 -right-4 md:-bottom-8 md:-right-8 w-24 h-24 md:w-32 md:h-32 rounded-full blur-3xl opacity-10"
               style={{ background: "radial-gradient(circle, #EF4444 0%, transparent 70%)" }}
             />
           </motion.div>
@@ -168,7 +168,7 @@ export default function BeforeAfterSection() {
 
             {/* Effet visuel */}
             <div
-              className="absolute -bottom-8 -right-8 w-32 h-32 rounded-full blur-3xl opacity-20"
+              className="absolute -bottom-4 -right-4 md:-bottom-8 md:-right-8 w-24 h-24 md:w-32 md:h-32 rounded-full blur-3xl opacity-20"
               style={{ background: "radial-gradient(circle, #00D084 0%, transparent 70%)" }}
             />
           </motion.div>

@@ -84,9 +84,11 @@ body {
   will-change: transform, opacity;
 }
 
-/* Smooth scroll global */
+/* Smooth scroll global + Prévenir scroll horizontal */
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 /* Optimisation du rendu pour les animations */
@@ -224,8 +226,17 @@ div[onclick] {
   max-width: 100%;
 }
 
+html,
 body {
   overflow-x: hidden;
+  width: 100%;
+  position: relative;
+}
+
+/* Conteneur principal sans débordement */
+main {
+  overflow-x: hidden;
+  width: 100%;
 }
 
 /* Optimisation des tableaux sur mobile */
