@@ -179,21 +179,31 @@ async function generatePDF(records: any[], year: number): Promise<Buffer> {
     const itemHeight = 25;
     const pageHeight = doc.page.height;
 
+    // Définir les colonnes avec espacement optimisé
+    const colMois = 50;
+    const colActivite = 130;
+    const colCA = 320;
+    const colCotisations = 410;
+    const colNet = 500;
+    const tableWidth = 520;
+
     // En-têtes du tableau
     doc
       .fillColor('#0e0f12')
       .fontSize(10)
-      .text('Mois', 50, y);
-    doc.text('Activité', 120, y);
-    doc.text('CA (€)', 280, y, { align: 'right' });
-    doc.text('Cotisations (€)', 360, y, { align: 'right' });
-    doc.text('Net (€)', 460, y, { align: 'right' });
+      .font('Helvetica-Bold')
+      .text('Mois', colMois, y);
+    doc.text('Activité', colActivite, y);
+    doc.text('CA (€)', colCA, y, { width: 80, align: 'right' });
+    doc.text('Cotisations (€)', colCotisations, y, { width: 80, align: 'right' });
+    doc.text('Net (€)', colNet, y, { width: 70, align: 'right' });
 
     y += 20;
     doc
-      .moveTo(50, y)
-      .lineTo(550, y)
+      .moveTo(colMois, y)
+      .lineTo(colMois + tableWidth, y)
       .strokeColor('#cccccc')
+      .lineWidth(1)
       .stroke();
 
     y += 10;
@@ -228,11 +238,12 @@ async function generatePDF(records: any[], year: number): Promise<Buffer> {
       doc
         .fillColor('#333333')
         .fontSize(9)
-        .text(monthName, 50, y);
-      doc.text(record.activity_type, 120, y, { width: 150 });
-      doc.text(ca.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), 280, y, { align: 'right' });
-      doc.text(contrib.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), 360, y, { align: 'right' });
-      doc.text(net.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), 460, y, { align: 'right' });
+        .font('Helvetica')
+        .text(monthName, colMois, y, { width: 70 });
+      doc.text(record.activity_type, colActivite, y, { width: 180 });
+      doc.text(ca.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), colCA, y, { width: 80, align: 'right' });
+      doc.text(contrib.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), colCotisations, y, { width: 80, align: 'right' });
+      doc.text(net.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), colNet, y, { width: 70, align: 'right' });
 
       y += itemHeight;
     });
@@ -240,24 +251,33 @@ async function generatePDF(records: any[], year: number): Promise<Buffer> {
     // Ligne de séparation avant les totaux
     y += 5;
     doc
-      .moveTo(50, y)
-      .lineTo(550, y)
-      .strokeColor('#cccccc')
+      .moveTo(colMois, y)
+      .lineTo(colMois + tableWidth, y)
+      .strokeColor('#333333')
+      .lineWidth(2)
       .stroke();
 
-    y += 10;
+    y += 15;
 
     // Totaux
     doc
       .fillColor('#0e0f12')
       .fontSize(11)
-      .text('TOTAL', 50, y);
-    doc.text(totalCA.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €', 280, y, { align: 'right' });
-    doc.text(totalContrib.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €', 360, y, { align: 'right' });
+      .font('Helvetica-Bold')
+      .text('TOTAL', colMois, y, { width: 70 });
+    
+    doc
+      .fillColor('#0e0f12')
+      .font('Helvetica-Bold')
+      .text(totalCA.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), colCA, y, { width: 80, align: 'right' });
+    
+    doc
+      .fillColor('#0e0f12')
+      .text(totalContrib.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), colCotisations, y, { width: 80, align: 'right' });
     
     doc
       .fillColor('#00D084')
-      .text(totalNet.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €', 460, y, { align: 'right' });
+      .text(totalNet.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), colNet, y, { width: 70, align: 'right' });
 
     // Pied de page
     const footerY = doc.page.height - 50;
