@@ -11,11 +11,24 @@ import { FadeIn, Stagger, ScaleOnHover, fadeInVariant } from "@/app/components/a
 import Counter from "@/app/components/anim/Counter";
 import GradientBlob from "@/app/components/anim/GradientBlob";
 import { motion, AnimatePresence } from "framer-motion";
-import ExtraInfoCards from "@/app/components/landing/ExtraInfoCards";
-import LandingPreviewsSection from "@/app/components/landing/LandingPreviewsSection";
-import TestimonialsSection from "@/app/components/TestimonialsSection";
-import FaqSection from "@/app/components/FaqSection";
-import FeedbackButton from "@/app/components/FeedbackButton";
+import dynamic from "next/dynamic";
+
+// Dynamic imports pour les composants lourds (chargés uniquement quand visibles)
+const ExtraInfoCards = dynamic(() => import("@/app/components/landing/ExtraInfoCards"), {
+  loading: () => <div className="py-20" />,
+});
+const LandingPreviewsSection = dynamic(() => import("@/app/components/landing/LandingPreviewsSection"), {
+  loading: () => <div className="py-20" />,
+});
+const TestimonialsSection = dynamic(() => import("@/app/components/TestimonialsSection"), {
+  loading: () => <div className="py-20" />,
+});
+const FaqSection = dynamic(() => import("@/app/components/FaqSection"), {
+  loading: () => <div className="py-20" />,
+});
+const FeedbackButton = dynamic(() => import("@/app/components/FeedbackButton"), {
+  ssr: false,
+});
 
 export default function LandingPage() {
   const router = useRouter();
@@ -768,7 +781,9 @@ export default function LandingPage() {
                 width={800}
                 height={535}
                 className="w-full h-auto"
-                priority={false}
+                loading="lazy"
+                quality={90}
+                sizes="(max-width: 768px) 100vw, 1200px"
               />
             </div>
 

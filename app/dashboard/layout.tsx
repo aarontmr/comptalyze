@@ -25,9 +25,15 @@ import {
   CreditCard,
 } from 'lucide-react';
 import logo from '@/public/logo.png';
-import FloatingAIAssistant from '@/app/components/FloatingAIAssistant';
-import MobileShell from '@/components/ui/MobileShell';
-import OnboardingTutorial from '@/app/components/OnboardingTutorial';
+import dynamic from 'next/dynamic';
+
+// Dynamic imports pour les composants lourds
+const FloatingAIAssistant = dynamic(() => import('@/app/components/FloatingAIAssistant'), {
+  ssr: false,
+});
+const OnboardingTutorial = dynamic(() => import('@/app/components/OnboardingTutorial'), {
+  ssr: false,
+});
 
 interface NavItem {
   label: string;

@@ -89,7 +89,10 @@ export default function LandingPreviewsSection() {
                       width={1280}
                       height={800}
                       className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-[1.02]"
-                      priority={i < 2}
+                      loading={i < 2 ? "eager" : "lazy"}
+                      priority={i === 0}
+                      quality={85}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       onError={() => handleImageError(c.src)}
                     />
                   </div>

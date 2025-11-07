@@ -102,6 +102,12 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <head>
+        {/* Préchargement des ressources critiques */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://vercel.com" />
+        <link rel="dns-prefetch" href="https://comptalyze.com" />
+        
         {/* Organization Structured Data */}
         <script
           type="application/ld+json"

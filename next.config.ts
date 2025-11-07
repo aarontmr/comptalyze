@@ -5,6 +5,11 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
+  
+  // Optimisations de performance
+  compress: true,
+  poweredByHeader: false,
+  
   images: {
     // Autoriser des query strings de type ?v=... sur le logo local
     localPatterns: [
@@ -16,6 +21,15 @@ const nextConfig: NextConfig = {
         pathname: "/previews/**",
       },
     ],
+    formats: ['image/avif', 'image/webp'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 60,
+  },
+  
+  // Optimisation du bundler
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts'],
   },
   async headers() {
     return [
@@ -38,6 +52,24 @@ const nextConfig: NextConfig = {
           {
             key: 'Content-Type',
             value: 'text/plain',
+          },
+        ],
+      },
+      {
+        source: '/:all*(svg|jpg|png|gif|webp|avif)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/_next/static/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
           },
         ],
       },
