@@ -619,9 +619,15 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
                 <p className="text-xs text-gray-300 mb-2">
                   💡 <strong className="text-white">L&apos;IR</strong> est un impôt sur vos bénéfices, en plus des cotisations URSSAF.
                 </p>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-gray-400 mb-2">
                   <strong>Exemple :</strong> CA 3000€ - Cotis. 636€ = Net 2364€ {' '}
                   <span className="text-yellow-400">- IR ~142€</span> = <strong className="text-[#00D084]">Net final 2222€</strong>
+                </p>
+                <p className="text-xs text-blue-400">
+                  ℹ️ <strong>Barème classique :</strong> Pas d&apos;IR à payer la 1ère année, uniquement à partir de la 2ème année (en septembre N+1).
+                </p>
+                <p className="text-xs text-yellow-400 mt-1">
+                  ⚡ <strong>Versement libératoire :</strong> Payé chaque mois/trimestre dès le début avec l&apos;URSSAF.
                 </p>
               </div>
 
