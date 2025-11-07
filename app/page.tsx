@@ -17,6 +17,9 @@ import dynamic from "next/dynamic";
 const TrustBadges = dynamic(() => import("@/app/components/TrustBadges"), {
   loading: () => <div className="py-12" />,
 });
+const BeforeAfterSection = dynamic(() => import("@/app/components/BeforeAfterSection"), {
+  loading: () => <div className="py-20" />,
+});
 const ExtraInfoCards = dynamic(() => import("@/app/components/landing/ExtraInfoCards"), {
   loading: () => <div className="py-20" />,
 });
@@ -1285,6 +1288,9 @@ export default function LandingPage() {
           </motion.div>
         </Stagger>
       </section>
+
+      {/* BEFORE/AFTER COMPARISON */}
+      <BeforeAfterSection />
 
       {/* TESTIMONIALS */}
       <TestimonialsSection />
