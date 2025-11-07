@@ -610,44 +610,21 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
 
             {/* Sélecteur de régime IR */}
             <div>
-              <label htmlFor="irMode" className="block text-sm font-medium text-gray-300 mb-2">
-                <span className="flex items-center gap-2">
-                  Impôt sur le Revenu (IR)
-                  <button
-                    type="button"
-                    className="group relative inline-flex items-center justify-center"
-                    onClick={(e) => e.preventDefault()}
-                  >
-                    <Info className="w-4 h-4 text-gray-400 hover:text-[#00D084] cursor-help transition-colors" />
-                    <div className="absolute left-0 bottom-full mb-2 w-[280px] sm:w-80 p-4 rounded-lg text-xs text-gray-300 bg-[#1a1d24] border border-[#00D084] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none z-50 shadow-2xl">
-                      <p className="font-semibold text-white text-sm mb-2">
-                        💡 Qu&apos;est-ce que l&apos;IR ?
-                      </p>
-                      
-                      <p className="mb-2 text-gray-300 text-xs">
-                        L&apos;<strong className="text-white">IR</strong> est un impôt sur vos <strong className="text-white">bénéfices</strong>, en plus des cotisations URSSAF.
-                      </p>
-
-                      <div className="mb-2 p-2 rounded bg-[#23272f] border border-gray-700">
-                        <p className="text-[10px] text-gray-400 mb-1"><strong>Exemple :</strong></p>
-                        <p className="text-[10px] text-gray-300 leading-relaxed">
-                          CA 3000€ - Cotis. 636€ = Net 2364€<br/>
-                          <span className="text-yellow-400">- IR ~142€</span> = <strong className="text-[#00D084]">Net final 2222€</strong>
-                        </p>
-                      </div>
-
-                      <p className="mb-1 text-gray-300 text-xs">
-                        <strong>3 options :</strong>
-                      </p>
-                      <ul className="space-y-1 text-[10px] text-gray-400">
-                        <li><span className="text-[#00D084]">•</span> <strong>Aucun :</strong> Juste cotisations</li>
-                        <li><span className="text-blue-400">•</span> <strong>Versement lib. :</strong> Taux fixe 1-2,2%</li>
-                        <li><span className="text-purple-400">•</span> <strong>Barème :</strong> Selon vos revenus</li>
-                      </ul>
-                    </div>
-                  </button>
-                </span>
+              <label htmlFor="irMode" className="block text-sm font-medium text-gray-300 mb-3">
+                Impôt sur le Revenu (IR)
               </label>
+              
+              {/* Explication claire et visible */}
+              <div className="mb-3 p-3 rounded-lg" style={{ backgroundColor: 'rgba(0, 208, 132, 0.05)', border: '1px solid rgba(0, 208, 132, 0.2)' }}>
+                <p className="text-xs text-gray-300 mb-2">
+                  💡 <strong className="text-white">L&apos;IR</strong> est un impôt sur vos bénéfices, en plus des cotisations URSSAF.
+                </p>
+                <p className="text-xs text-gray-400">
+                  <strong>Exemple :</strong> CA 3000€ - Cotis. 636€ = Net 2364€ {' '}
+                  <span className="text-yellow-400">- IR ~142€</span> = <strong className="text-[#00D084]">Net final 2222€</strong>
+                </p>
+              </div>
+
               <select
                 id="irMode"
                 value={irMode}
@@ -659,9 +636,13 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
                 }}
               >
                 <option value="none">Aucun (juste cotisations URSSAF)</option>
-                <option value="vl">Versement libératoire (taux fixe)</option>
-                <option value="bareme">Barème classique (selon vos revenus)</option>
+                <option value="vl">Versement libératoire (taux fixe 1-2,2%)</option>
+                <option value="bareme">Barème classique (selon vos revenus totaux)</option>
               </select>
+              
+              <p className="mt-2 text-xs text-gray-500">
+                Choisissez le régime fiscal que vous utilisez réellement
+              </p>
             </div>
 
             {/* Input taux de provision (si barème sélectionné) */}
