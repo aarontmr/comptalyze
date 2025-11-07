@@ -16,18 +16,17 @@ export default function Counter({
   suffix = " €"
 }: CounterProps) {
   const [val, setVal] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
   const startRef = useRef<number | null>(null);
   const elementRef = useRef<HTMLSpanElement>(null);
   const hasStartedRef = useRef(false);
+  const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
-    // Start animation immediately or when component enters viewport
     const startAnimation = () => {
       if (hasStartedRef.current) return;
       hasStartedRef.current = true;
       startRef.current = null;
-
-      let raf: number;
 
       const step = (t: number) => {
         if (startRef.current === null) startRef.current = t;
@@ -41,45 +40,59 @@ export default function Counter({
         setVal(Math.round(to * eased));
 
         if (p < 1) {
-          raf = requestAnimationFrame(step);
+          rafRef.current = requestAnimationFrame(step);
         } else {
           setVal(to);
         }
       };
 
-      raf = requestAnimationFrame(step);
+      rafRef.current = requestAnimationFrame(step);
     };
 
-    // Try IntersectionObserver first
+    // IntersectionObserver pour détecter la visibilité
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) {
-          startAnimation();
-        }
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !hasStartedRef.current) {
+            setIsVisible(true);
+            startAnimation();
+          }
+        });
       },
-      { threshold: 0.1 }
+      { 
+        threshold: 0.1,
+        rootMargin: '50px'
+      }
     );
 
     const element = elementRef.current;
     if (element) {
       observer.observe(element);
-      // Also check if already visible (for SSR/hydration)
-      if (element.getBoundingClientRect().top < window.innerHeight) {
-        startAnimation();
-      }
     }
 
-    return () => {
-      if (element) {
-        observer.unobserve(element);
+    // Fallback : Si après 2 secondes l'animation n'a pas démarré, la forcer
+    const fallbackTimer = setTimeout(() => {
+      if (!hasStartedRef.current && element) {
+        const rect = element.getBoundingClientRect();
+        const isInViewport = rect.top < window.innerHeight && rect.bottom > 0;
+        
+        if (isInViewport) {
+          startAnimation();
+        }
       }
+    }, 2000);
+
+    return () => {
+      if (element) observer.unobserve(element);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      clearTimeout(fallbackTimer);
     };
   }, [to, duration]);
 
   return (
     <>
-      <span ref={elementRef} className="sr-only" aria-hidden />
-      <span>{prefix}{val.toLocaleString("fr-FR")}{suffix}</span>
+      <span ref={elementRef} />
+      <span suppressHydrationWarning>{prefix}{val.toLocaleString("fr-FR")}{suffix}</span>
     </>
   );
 }
