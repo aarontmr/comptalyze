@@ -14,6 +14,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
 
 // Dynamic imports pour les composants lourds (chargés uniquement quand visibles)
+const TrustBadges = dynamic(() => import("@/app/components/TrustBadges"), {
+  loading: () => <div className="py-12" />,
+});
 const ExtraInfoCards = dynamic(() => import("@/app/components/landing/ExtraInfoCards"), {
   loading: () => <div className="py-20" />,
 });
@@ -428,6 +431,9 @@ export default function LandingPage() {
           </FadeIn>
         </div>
       </section>
+
+      {/* TRUST BADGES - Nouveauté */}
+      <TrustBadges />
 
       {/* DEMO VIDEO HERO */}
       <section className="relative px-4 py-12 sm:py-16">

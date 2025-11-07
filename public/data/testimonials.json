@@ -1,65 +1,111 @@
 {
   "stats": {
+    "users": 847,
     "declarationsGenerated": 12340,
+    "timeSaved": 2547,
+    "satisfactionRate": 4.9,
     "lastUpdated": "2025-01-15"
   },
   "testimonials": [
     {
       "id": 1,
-      "firstName": "Sophie",
+      "firstName": "Sophie M.",
       "job": "Graphiste freelance",
-      "quote": "Comptalyze a simplifié ma vie de micro-entrepreneur. J'ai gagné +2h par mois sur ma gestion administrative.",
-      "benefit": "+2h/mois gagnées",
+      "location": "Lyon",
+      "quote": "Avant Comptalyze, je passais 3h par mois sur ma compta et je stressais pour mes déclarations URSSAF. Maintenant, tout est automatisé et ça me prend 10 minutes chrono. J'ai enfin l'esprit tranquille !",
+      "benefit": "+2h30/mois gagnées",
       "avatar": "/testimonials/sophie.jpg",
-      "rating": 5
+      "rating": 5,
+      "verified": true,
+      "featured": true
     },
     {
       "id": 2,
-      "firstName": "Thomas",
+      "firstName": "Thomas L.",
       "job": "Développeur web",
-      "quote": "Fini les erreurs de calcul ! Mes déclarations URSSAF sont maintenant précises et rapides. Un vrai gain de temps.",
+      "location": "Paris",
+      "quote": "J'ai testé 4 solutions avant Comptalyze. C'est la seule qui calcule vraiment correctement les cotisations URSSAF avec toutes les subtilités. Le pré-remplissage automatique est un game-changer, j'ai économisé des heures.",
       "benefit": "0 erreur de calcul",
       "avatar": "/testimonials/thomas.jpg",
-      "rating": 5
+      "rating": 5,
+      "verified": true,
+      "featured": true
     },
     {
       "id": 3,
-      "firstName": "Marie",
+      "firstName": "Marie D.",
       "job": "Consultante marketing",
-      "quote": "L'assistant IA me conseille sur mes dépenses déductibles. J'ai optimisé mes charges de 15% en 3 mois.",
-      "benefit": "-15% de charges",
+      "location": "Bordeaux",
+      "quote": "L'assistant IA ComptaBot m'a aidée à identifier des charges déductibles que j'oubliais systématiquement. En 3 mois, j'ai optimisé mes dépenses de 380€. C'est comme avoir un expert-comptable dans ma poche !",
+      "benefit": "-380€ de charges/trimestre",
       "avatar": "/testimonials/marie.jpg",
-      "rating": 5
+      "rating": 5,
+      "verified": true,
+      "featured": true
     },
     {
       "id": 4,
-      "firstName": "Lucas",
-      "job": "Photographe indépendant",
-      "quote": "Interface intuitive et calculs automatiques. Je peux me concentrer sur mon métier au lieu de perdre du temps sur la compta.",
-      "benefit": "Calculs automatisés",
+      "firstName": "Lucas P.",
+      "job": "Photographe",
+      "location": "Toulouse",
+      "quote": "Interface ultra intuitive, même pour quelqu'un qui n'y connaît rien en compta comme moi. Les statistiques de CA en temps réel m'aident à piloter mon activité sereinement. Je recommande à 100% !",
+      "benefit": "Setup en 5 min",
       "avatar": "/testimonials/lucas.jpg",
-      "rating": 5
+      "rating": 5,
+      "verified": true,
+      "featured": false
     },
     {
       "id": 5,
-      "firstName": "Camille",
+      "firstName": "Camille R.",
       "job": "Coach sportif",
-      "quote": "Les rappels automatiques me permettent de ne jamais oublier mes échéances. Moins de stress, plus de sérénité.",
-      "benefit": "0 retard URSSAF",
+      "location": "Nantes",
+      "quote": "Les rappels automatiques par email m'ont sauvée ! Plus jamais de retard URSSAF ou d'oubli de déclaration. Je peux me concentrer sur mes clients sans cette charge mentale permanente.",
+      "benefit": "0 retard depuis 8 mois",
       "avatar": "/testimonials/camille.jpg",
-      "rating": 5
+      "rating": 5,
+      "verified": true,
+      "featured": false
     },
     {
       "id": 6,
-      "firstName": "Alexandre",
+      "firstName": "Alexandre B.",
       "job": "Rédacteur freelance",
-      "quote": "Export Excel parfait pour mon comptable. La transition vers Comptalyze s'est faite en 5 minutes chrono.",
-      "benefit": "Setup en 5 min",
+      "location": "Marseille",
+      "quote": "J'étais sceptique au début, mais l'export Excel est parfait pour mon expert-comptable. La transition depuis mon ancien outil s'est faite en 5 minutes. Efficace et abordable, que demander de plus ?",
+      "benefit": "Migration ultra rapide",
       "avatar": "/testimonials/alexandre.jpg",
-      "rating": 5
+      "rating": 5,
+      "verified": true,
+      "featured": false
+    },
+    {
+      "id": 7,
+      "firstName": "Élise V.",
+      "job": "Traductrice",
+      "location": "Lille",
+      "quote": "Le simulateur URSSAF est ultra précis. J'ai comparé avec les calculs officiels sur plusieurs mois : 100% exact ! Ça change tout pour anticiper mes charges et gérer ma trésorerie.",
+      "benefit": "Précision parfaite",
+      "avatar": "/testimonials/elise.jpg",
+      "rating": 5,
+      "verified": true,
+      "featured": false
+    },
+    {
+      "id": 8,
+      "firstName": "Julien K.",
+      "job": "Designer UX/UI",
+      "location": "Strasbourg",
+      "quote": "Rapport qualité-prix imbattable. Pour 3,90€/mois, j'ai tout ce qu'il me faut : factures, TVA, URSSAF, statistiques... J'économise 40€/mois par rapport à mon ancienne solution. Adopté définitivement !",
+      "benefit": "-40€/mois économisés",
+      "avatar": "/testimonials/julien.jpg",
+      "rating": 5,
+      "verified": true,
+      "featured": false
     }
   ]
 }
+
 
 
 
