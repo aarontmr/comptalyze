@@ -98,6 +98,8 @@ export async function POST(req: Request) {
       success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/cancel`,
       automatic_tax: { enabled: true },
+      // Activer les codes promo (LAUNCH5, etc.)
+      allow_promotion_codes: true,
       // Passer l'userId pour que le webhook puisse identifier l'utilisateur
       client_reference_id: userId,
       metadata: {
