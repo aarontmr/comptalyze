@@ -1,21 +1,88 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
+import { trackEvent } from '@/lib/analytics';
 import Link from 'next/link';
 import Image from 'next/image';
 import logo from '@/public/logo.png';
-import { Mail, Lock, ArrowRight, Shield, UserPlus } from 'lucide-react';
+import { Mail, Lock, ArrowRight, Shield, UserPlus, Eye, EyeOff, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
+
+declare global {
+  interface Window {
+    grecaptcha: any;
+    onRecaptchaLoad: () => void;
+  }
+}
 
 export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [acceptTerms, setAcceptTerms] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [showVerificationMessage, setShowVerificationMessage] = useState(false);
+  const [recaptchaLoaded, setRecaptchaLoaded] = useState(false);
+  const recaptchaRef = useRef<any>(null);
   const router = useRouter();
+
+  // Calcul de la force du mot de passe
+  const calculatePasswordStrength = (pwd: string) => {
+    let strength = 0;
+    if (pwd.length >= 8) strength++;
+    if (pwd.length >= 12) strength++;
+    if (/[a-z]/.test(pwd) && /[A-Z]/.test(pwd)) strength++;
+    if (/\d/.test(pwd)) strength++;
+    if (/[^a-zA-Z\d]/.test(pwd)) strength++;
+    return Math.min(strength, 4); // 0-4
+  };
+
+  const passwordStrength = calculatePasswordStrength(password);
+  
+  const getPasswordStrengthInfo = () => {
+    if (password.length === 0) return { text: '', color: '', width: '0%' };
+    if (passwordStrength <= 1) return { text: 'Faible', color: '#ef4444', width: '25%' };
+    if (passwordStrength === 2) return { text: 'Moyen', color: '#f59e0b', width: '50%' };
+    if (passwordStrength === 3) return { text: 'Bon', color: '#10b981', width: '75%' };
+    return { text: 'Excellent', color: '#00D084', width: '100%' };
+  };
+
+  const passwordStrengthInfo = getPasswordStrengthInfo();
+
+  const passwordRequirements = [
+    { text: 'Au moins 8 caractères', met: password.length >= 8 },
+    { text: 'Une majuscule et une minuscule', met: /[a-z]/.test(password) && /[A-Z]/.test(password) },
+    { text: 'Un chiffre', met: /\d/.test(password) },
+    { text: 'Un caractère spécial', met: /[^a-zA-Z\d]/.test(password) },
+  ];
+
+  // Charger reCAPTCHA
+  useEffect(() => {
+    const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+    
+    if (!recaptchaSiteKey) {
+      console.warn('reCAPTCHA site key not found');
+      return;
+    }
+
+    // Charger le script reCAPTCHA
+    const script = document.createElement('script');
+    script.src = `https://www.google.com/recaptcha/api.js?render=${recaptchaSiteKey}`;
+    script.async = true;
+    script.defer = true;
+    script.onload = () => {
+      setRecaptchaLoaded(true);
+    };
+    document.body.appendChild(script);
+
+    return () => {
+      // Cleanup
+      document.body.removeChild(script);
+    };
+  }, []);
 
   // Vérifier si l'utilisateur est déjà connecté
   useEffect(() => {
@@ -51,15 +118,88 @@ export default function SignupPage() {
     setError('');
     setSuccessMessage('');
     setShowVerificationMessage(false);
+
+    // Validations côté client
+    if (password.length < 8) {
+      setError('Le mot de passe doit contenir au moins 8 caractères.');
+      return;
+    }
+
+    if (!acceptTerms) {
+      setError('Vous devez accepter les CGV et la Politique de confidentialité.');
+      return;
+    }
+
     setLoading(true);
 
+    // Track signup started
+    await trackEvent('signup_started', { email });
+
     try {
+      // Vérifier le rate-limiting via l'API
+      const rateLimitCheck = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, acceptTerms }),
+      });
+
+      if (rateLimitCheck.status === 429) {
+        const data = await rateLimitCheck.json();
+        setError(
+          `⏱️ ${data.error || 'Trop de tentatives d\'inscription.'} Veuillez patienter.`
+        );
+        setLoading(false);
+        return;
+      }
+
+      if (!rateLimitCheck.ok) {
+        const data = await rateLimitCheck.json();
+        setError(data.error || 'Erreur de validation');
+        setLoading(false);
+        return;
+      }
+      // Obtenir le token reCAPTCHA
+      let recaptchaToken = null;
+      const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+      
+      if (recaptchaSiteKey && window.grecaptcha) {
+        try {
+          recaptchaToken = await window.grecaptcha.execute(recaptchaSiteKey, { action: 'signup' });
+        } catch (recaptchaError) {
+          console.error('reCAPTCHA error:', recaptchaError);
+          setError('Erreur de vérification reCAPTCHA. Veuillez réessayer.');
+          setLoading(false);
+          return;
+        }
+      }
+
+      // Vérifier le token reCAPTCHA côté serveur
+      if (recaptchaToken) {
+        const verifyResponse = await fetch('/api/verify-recaptcha', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: recaptchaToken }),
+        });
+
+        const verifyData = await verifyResponse.json();
+        
+        if (!verifyResponse.ok || !verifyData.success) {
+          setError('Vérification de sécurité échouée. Veuillez réessayer.');
+          setLoading(false);
+          return;
+        }
+      }
+
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || window.location.origin;
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           emailRedirectTo: `${baseUrl}/dashboard`,
+          data: {
+            accepted_terms: true,
+            accepted_terms_at: new Date().toISOString(),
+          }
         },
       });
 
@@ -69,8 +209,21 @@ export default function SignupPage() {
       if (data.user && !data.session) {
         setShowVerificationMessage(true);
         setSuccessMessage('Un email de vérification a été envoyé à votre adresse.');
+        
+        // Track signup completed (email verification required)
+        await trackEvent('signup_completed', { 
+          email, 
+          verification_required: true 
+        });
       } else if (data.session) {
         setSuccessMessage('Inscription réussie...');
+        
+        // Track signup completed (no verification)
+        await trackEvent('signup_completed', { 
+          email, 
+          verification_required: false 
+        });
+        
         setTimeout(() => {
           router.push('/dashboard');
         }, 500);
@@ -217,22 +370,103 @@ export default function SignupPage() {
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
                     id="password"
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    minLength={6}
+                    minLength={8}
                     placeholder="••••••••"
-                    className="w-full pl-12 pr-4 py-3 rounded-lg text-white placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                    className="w-full pl-12 pr-12 py-3 rounded-lg text-white placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                     style={{ 
                       backgroundColor: '#0e0f12',
                       border: '1px solid #2d3441'
                     }}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300 transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
                 </div>
-                <p className="mt-2 text-xs text-gray-400">
-                  Minimum 6 caractères
-                </p>
+                
+                {/* Indicateur de force du mot de passe */}
+                {password.length > 0 && (
+                  <div className="mt-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs text-gray-400">Force du mot de passe :</span>
+                      <span className="text-xs font-medium" style={{ color: passwordStrengthInfo.color }}>
+                        {passwordStrengthInfo.text}
+                      </span>
+                    </div>
+                    <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full transition-all duration-300 rounded-full"
+                        style={{ 
+                          width: passwordStrengthInfo.width,
+                          backgroundColor: passwordStrengthInfo.color
+                        }}
+                      />
+                    </div>
+                    
+                    {/* Critères du mot de passe */}
+                    <div className="mt-3 space-y-1.5">
+                      {passwordRequirements.map((req, index) => (
+                        <div key={index} className="flex items-center gap-2 text-xs">
+                          {req.met ? (
+                            <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#00D084' }} />
+                          ) : (
+                            <XCircle className="w-3.5 h-3.5 flex-shrink-0 text-gray-600" />
+                          )}
+                          <span className={req.met ? 'text-gray-300' : 'text-gray-500'}>
+                            {req.text}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Checkbox CGV */}
+              <div className="flex items-start gap-3">
+                <input
+                  type="checkbox"
+                  id="acceptTerms"
+                  checked={acceptTerms}
+                  onChange={(e) => setAcceptTerms(e.target.checked)}
+                  required
+                  className="mt-1 w-4 h-4 rounded border-gray-600 text-blue-600 focus:ring-blue-500 focus:ring-offset-gray-900 cursor-pointer"
+                  style={{
+                    backgroundColor: acceptTerms ? '#2E6CF6' : '#0e0f12',
+                    borderColor: acceptTerms ? '#2E6CF6' : '#2d3441'
+                  }}
+                />
+                <label htmlFor="acceptTerms" className="text-sm text-gray-300 cursor-pointer">
+                  J'accepte les{' '}
+                  <Link 
+                    href="/legal/cgv" 
+                    target="_blank"
+                    className="font-medium text-transparent bg-clip-text hover:opacity-80 transition-opacity underline"
+                    style={{
+                      backgroundImage: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)"
+                    }}
+                  >
+                    Conditions Générales de Vente
+                  </Link>
+                  {' '}et la{' '}
+                  <Link 
+                    href="/legal/politique-de-confidentialite" 
+                    target="_blank"
+                    className="font-medium text-transparent bg-clip-text hover:opacity-80 transition-opacity underline"
+                    style={{
+                      backgroundImage: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)"
+                    }}
+                  >
+                    Politique de confidentialité
+                  </Link>
+                </label>
               </div>
 
               <button

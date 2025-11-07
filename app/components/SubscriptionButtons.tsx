@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { trackEvent } from "@/lib/analytics";
 import { User } from "@supabase/supabase-js";
 
 export default function SubscriptionButtons() {
@@ -17,12 +18,15 @@ export default function SubscriptionButtons() {
     getCurrentUser();
   }, []);
 
-  const handleCheckout = (plan: "pro" | "premium") => {
+  const handleCheckout = async (plan: "pro" | "premium") => {
     // Vérifier que l'utilisateur est connecté
     if (!user) {
       window.location.href = "/login";
       return;
     }
+
+    // Track upgrade clicked
+    await trackEvent('upgrade_clicked', { plan });
 
     // Rediriger vers la page de checkout intégrée
     window.location.href = `/checkout/${plan}`;

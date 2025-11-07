@@ -52,6 +52,23 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
+      // Vérifier le rate-limiting via l'API
+      const rateLimitCheck = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (rateLimitCheck.status === 429) {
+        const data = await rateLimitCheck.json();
+        setError(
+          `⏱️ ${data.error || 'Trop de tentatives.'} Réessayez dans ${data.retryAfter || 60} secondes.`
+        );
+        setLoading(false);
+        return;
+      }
+
+      // Procéder à la connexion Supabase
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,

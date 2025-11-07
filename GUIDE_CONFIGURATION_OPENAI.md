@@ -1,8 +1,8 @@
-# 🤖 Guide de Configuration OpenAI pour le Chatbot
+# 🤖 Guide de Configuration OpenAI pour ComptaBot
 
 ## ✅ Oui, ça fonctionnera !
 
-Si vous configurez votre clé OpenAI dans les variables d'environnement, **tous vos clients Premium** pourront utiliser le chatbot avec des réponses IA avancées.
+Si vous configurez votre clé OpenAI dans les variables d'environnement, **tous vos clients Premium** pourront utiliser ComptaBot avec des réponses IA avancées.
 
 ## 📝 Configuration Locale (Développement)
 
@@ -37,15 +37,16 @@ npm run dev
 
 ## 🔍 Vérification
 
-Une fois configuré, le chatbot :
+Une fois configuré, ComptaBot :
 - ✅ Utilisera **GPT-4o-mini** pour des réponses intelligentes
 - ✅ Aura accès aux **données CA** de chaque client pour des conseils personnalisés
 - ✅ Maintiendra le **contexte de conversation** (10 derniers messages)
 - ✅ Basculera automatiquement sur le **fallback** si OpenAI est indisponible
+- ✅ Se présentera comme "ComptaBot, l'assistant intelligent de Comptalyze"
 
 ## 💰 Coûts OpenAI
 
-Le chatbot utilise **GPT-4o-mini** qui est :
+ComptaBot utilise **GPT-4o-mini** qui est :
 - ✅ **Très économique** (environ $0.15 par million de tokens d'entrée)
 - ✅ **Rapide** (réponses en quelques secondes)
 - ✅ **Efficace** pour les questions spécialisées
@@ -85,6 +86,7 @@ Si OpenAI est indisponible ou si une erreur se produit :
 Paramètres configurés :
 - `max_tokens: 300` (réponses concises)
 - `temperature: 0.7` (équilibre créativité/précision)
+
 
 
 

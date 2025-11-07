@@ -34,7 +34,7 @@ export default function PremiumChatbot({ userId }: PremiumChatbotProps) {
     const welcomeMessage: Message = {
       id: 'welcome',
       role: 'assistant',
-      content: 'Bonjour ! Je suis votre assistant IA spécialisé dans les micro-entreprises et les cotisations URSSAF. Posez-moi toutes vos questions sur votre activité, vos cotisations, vos déclarations, ou tout autre sujet lié à votre micro-entreprise. Je peux analyser vos chiffres d\'affaires enregistrés pour vous donner des conseils personnalisés.',
+      content: 'Bonjour ! Je suis ComptaBot, votre assistant intelligent Comptalyze 🤖\n\nJe suis spécialisé dans les micro-entreprises et je peux vous aider sur :\n• Les cotisations URSSAF et leur optimisation\n• Les déclarations et démarches administratives\n• L\'analyse de vos chiffres d\'affaires\n• Les conseils fiscaux personnalisés\n\nPosez-moi toutes vos questions sur votre micro-entreprise !',
       timestamp: new Date(),
     };
     setMessages([welcomeMessage]);
@@ -135,15 +135,15 @@ export default function PremiumChatbot({ userId }: PremiumChatbotProps) {
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: 'rgba(46,108,246,0.3)' }}>
           <h3 className="text-lg font-semibold text-white">
-            <span className="inline-block mr-2">💬</span>
-            Chatbot IA (Premium)
+            <span className="inline-block mr-2">🤖</span>
+            ComptaBot
           </h3>
           <button
             onClick={() => {
               const welcomeMessage: Message = {
                 id: 'welcome',
                 role: 'assistant',
-                content: 'Bonjour ! Je suis votre assistant IA spécialisé dans les micro-entreprises et les cotisations URSSAF. Posez-moi toutes vos questions sur votre activité, vos cotisations, vos déclarations, ou tout autre sujet lié à votre micro-entreprise. Je peux analyser vos chiffres d\'affaires enregistrés pour vous donner des conseils personnalisés.',
+                content: 'Bonjour ! Je suis ComptaBot, votre assistant intelligent Comptalyze 🤖\n\nJe suis spécialisé dans les micro-entreprises et je peux vous aider sur :\n• Les cotisations URSSAF et leur optimisation\n• Les déclarations et démarches administratives\n• L\'analyse de vos chiffres d\'affaires\n• Les conseils fiscaux personnalisés\n\nPosez-moi toutes vos questions sur votre micro-entreprise !',
                 timestamp: new Date(),
               };
               setMessages([welcomeMessage]);
@@ -242,6 +242,7 @@ export default function PremiumChatbot({ userId }: PremiumChatbotProps) {
     </div>
   );
 }
+
 
 
 

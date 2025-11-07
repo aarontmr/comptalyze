@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { getUserSubscription, hasFeatureAccess } from '@/lib/subscriptionUtils';
 import { supabase } from '@/lib/supabaseClient';
+import { trackEvent } from '@/lib/analytics';
 import UrssafPrefill from './UrssafPrefill';
 import { Trash2, Info } from 'lucide-react';
 import { computeMonth, mapActivityType, type IRMode, type Activity } from '@/lib/calculs';
@@ -303,6 +304,13 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
         showToastMessage('Aucun enregistrement n\'a été créé. Vérifiez les logs pour plus de détails.');
         return;
       }
+
+      // Track record created
+      await trackEvent('record_created', {
+        type: 'ca_record',
+        activity_type: selectedActivity.label,
+        amount_eur: caValue,
+      });
 
       // Vérifier les seuils après l'enregistrement (en arrière-plan, sans bloquer)
       (async () => {

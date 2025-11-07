@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
+import { trackEvent } from '@/lib/analytics';
 import { generateInvoiceNumber } from '@/lib/invoiceUtils';
 import { getUserPlan } from '@/lib/plan';
 
@@ -247,6 +248,13 @@ export default function NewInvoicePage() {
         alert('La facture a été créée mais aucune donnée n\'a été retournée.');
         return;
       }
+
+      // Track record created
+      await trackEvent('record_created', {
+        type: 'invoice',
+        invoice_number: invoiceNumber,
+        total_eur: total,
+      });
 
       // Sauvegarder les valeurs par défaut pour les prochaines factures
       try {

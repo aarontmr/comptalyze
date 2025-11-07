@@ -1,0 +1,63 @@
+{
+  "stats": {
+    "declarationsGenerated": 12340,
+    "lastUpdated": "2025-01-15"
+  },
+  "testimonials": [
+    {
+      "id": 1,
+      "firstName": "Sophie",
+      "job": "Graphiste freelance",
+      "quote": "Comptalyze a simplifié ma vie de micro-entrepreneur. J'ai gagné +2h par mois sur ma gestion administrative.",
+      "benefit": "+2h/mois gagnées",
+      "avatar": "/testimonials/sophie.jpg",
+      "rating": 5
+    },
+    {
+      "id": 2,
+      "firstName": "Thomas",
+      "job": "Développeur web",
+      "quote": "Fini les erreurs de calcul ! Mes déclarations URSSAF sont maintenant précises et rapides. Un vrai gain de temps.",
+      "benefit": "0 erreur de calcul",
+      "avatar": "/testimonials/thomas.jpg",
+      "rating": 5
+    },
+    {
+      "id": 3,
+      "firstName": "Marie",
+      "job": "Consultante marketing",
+      "quote": "L'assistant IA me conseille sur mes dépenses déductibles. J'ai optimisé mes charges de 15% en 3 mois.",
+      "benefit": "-15% de charges",
+      "avatar": "/testimonials/marie.jpg",
+      "rating": 5
+    },
+    {
+      "id": 4,
+      "firstName": "Lucas",
+      "job": "Photographe indépendant",
+      "quote": "Interface intuitive et calculs automatiques. Je peux me concentrer sur mon métier au lieu de perdre du temps sur la compta.",
+      "benefit": "Calculs automatisés",
+      "avatar": "/testimonials/lucas.jpg",
+      "rating": 5
+    },
+    {
+      "id": 5,
+      "firstName": "Camille",
+      "job": "Coach sportif",
+      "quote": "Les rappels automatiques me permettent de ne jamais oublier mes échéances. Moins de stress, plus de sérénité.",
+      "benefit": "0 retard URSSAF",
+      "avatar": "/testimonials/camille.jpg",
+      "rating": 5
+    },
+    {
+      "id": 6,
+      "firstName": "Alexandre",
+      "job": "Rédacteur freelance",
+      "quote": "Export Excel parfait pour mon comptable. La transition vers Comptalyze s'est faite en 5 minutes chrono.",
+      "benefit": "Setup en 5 min",
+      "avatar": "/testimonials/alexandre.jpg",
+      "rating": 5
+    }
+  ]
+}
+

@@ -1,0 +1,392 @@
+<!-- 
+  EXEMPLES D'INTÉGRATION - Démo Hero Comptalyze
+  Copiez-collez l'un de ces exemples dans votre hero section
+-->
+
+<!-- ========================================
+     OPTION 1 : Vidéo MP4 Simple (Recommandé)
+     ======================================== -->
+
+<video
+  class="w-full rounded-2xl shadow-2xl"
+  autoplay
+  muted
+  loop
+  playsinline
+  poster="/hero-demo-poster.jpg"
+  aria-label="Démo de Comptalyze : calculez vos cotisations en un clic"
+>
+  <source src="/hero-demo.mp4" type="video/mp4" />
+  Votre navigateur ne supporte pas la vidéo HTML5.
+</video>
+
+
+<!-- ========================================
+     OPTION 2 : GIF Animé (Fallback universel)
+     ======================================== -->
+
+<img
+  src="/hero-demo.gif"
+  alt="Démo Comptalyze : calculez vos cotisations en un clic"
+  class="w-full rounded-2xl shadow-2xl"
+  loading="lazy"
+/>
+
+
+<!-- ========================================
+     OPTION 3 : Hybrid avec Skeleton Loader
+     ======================================== -->
+
+<div class="relative rounded-2xl overflow-hidden shadow-2xl">
+  <!-- Skeleton pendant le chargement -->
+  <div 
+    id="demo-skeleton" 
+    class="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-100 animate-pulse"
+  ></div>
+
+  <!-- Vidéo -->
+  <video
+    class="w-full relative z-10"
+    autoplay
+    muted
+    loop
+    playsinline
+    onloadeddata="document.getElementById('demo-skeleton').style.display='none'"
+    aria-label="Démo de Comptalyze"
+  >
+    <source src="/hero-demo.mp4" type="video/mp4" />
+  </video>
+</div>
+
+
+<!-- ========================================
+     OPTION 4 : Avec Badge "Démo interactive"
+     ======================================== -->
+
+<div class="relative rounded-2xl overflow-hidden shadow-2xl">
+  <video
+    class="w-full"
+    autoplay
+    muted
+    loop
+    playsinline
+    aria-label="Démo de Comptalyze"
+  >
+    <source src="/hero-demo.mp4" type="video/mp4" />
+  </video>
+
+  <!-- Badge overlay -->
+  <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-semibold text-[#0b5cff] shadow-lg">
+    ▶️ Démo interactive
+  </div>
+</div>
+
+
+<!-- ========================================
+     OPTION 5 : Desktop only (économie mobile)
+     ======================================== -->
+
+<!-- Vidéo sur desktop -->
+<video
+  class="hidden md:block w-full rounded-2xl shadow-2xl"
+  autoplay
+  muted
+  loop
+  playsinline
+  aria-label="Démo de Comptalyze"
+>
+  <source src="/hero-demo.mp4" type="video/mp4" />
+</video>
+
+<!-- Image statique sur mobile -->
+<img
+  src="/hero-demo-poster.jpg"
+  alt="Aperçu de Comptalyze"
+  class="md:hidden w-full rounded-2xl shadow-2xl"
+/>
+
+
+<!-- ========================================
+     OPTION 6 : Composant React/Next.js complet
+     ======================================== -->
+
+<!-- 
+  Créez app/components/HeroDemo.tsx :
+  
+  'use client';
+  
+  import { useState } from 'react';
+  
+  export default function HeroDemo() {
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [hasError, setHasError] = useState(false);
+  
+    return (
+      <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+        {!isLoaded && !hasError && (
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-100 animate-pulse" />
+        )}
+  
+        {!hasError ? (
+          <video
+            className="w-full relative z-10"
+            autoPlay
+            muted
+            loop
+            playsInline
+            onLoadedData={() => setIsLoaded(true)}
+            onError={() => setHasError(true)}
+            aria-label="Démo de Comptalyze : calculez vos cotisations en un clic"
+          >
+            <source src="/hero-demo.mp4" type="video/mp4" />
+          </video>
+        ) : (
+          <img
+            src="/hero-demo.gif"
+            alt="Démo Comptalyze"
+            className="w-full"
+          />
+        )}
+  
+        <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-semibold text-[#0b5cff] shadow-lg">
+          ▶️ Démo interactive
+        </div>
+      </div>
+    );
+  }
+  
+  Puis dans votre page :
+  
+  import HeroDemo from '@/components/HeroDemo';
+  
+  export default function Home() {
+    return (
+      <section className="py-20 px-6">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <h1 className="text-5xl font-bold mb-6">
+              Gérez votre micro-entreprise en toute simplicité
+            </h1>
+            <p className="text-xl text-gray-600 mb-8">
+              Calculez vos cotisations, suivez votre CA et pré-remplissez l'URSSAF en un clic.
+            </p>
+            <button className="bg-[#0b5cff] text-white px-8 py-4 rounded-xl font-semibold hover:bg-[#0a4fd9] transition">
+              Commencer gratuitement
+            </button>
+          </div>
+          <div>
+            <HeroDemo />
+          </div>
+        </div>
+      </section>
+    );
+  }
+-->
+
+
+<!-- ========================================
+     OPTION 7 : Avec Intersection Observer (lazy load)
+     ======================================== -->
+
+<div class="relative rounded-2xl overflow-hidden shadow-2xl">
+  <video
+    id="hero-video"
+    class="w-full"
+    muted
+    loop
+    playsinline
+    aria-label="Démo de Comptalyze"
+  >
+    <source src="/hero-demo.mp4" type="video/mp4" />
+  </video>
+</div>
+
+<script>
+  // Auto-play quand visible
+  const video = document.getElementById('hero-video');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        video.play();
+      } else {
+        video.pause();
+      }
+    });
+  }, { threshold: 0.5 });
+  
+  observer.observe(video);
+</script>
+
+
+<!-- ========================================
+     OPTIMISATIONS PERFORMANCE
+     ======================================== -->
+
+<!-- 1. Preload (dans <head>) -->
+<link 
+  rel="preload" 
+  href="/hero-demo.mp4" 
+  as="video" 
+  media="(min-width: 768px)"
+>
+
+<!-- 2. Poster image (première frame) -->
+<!-- Générer avec : ffmpeg -i public/hero-demo.mp4 -ss 00:00:05 -frames:v 1 public/hero-demo-poster.jpg -->
+<video poster="/hero-demo-poster.jpg" ...>
+
+<!-- 3. Lazy loading -->
+<video loading="lazy" ...>
+
+
+<!-- ========================================
+     STYLES CSS RECOMMANDÉS
+     ======================================== -->
+
+<style>
+  /* Container avec aspect ratio */
+  .demo-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Vidéo responsive */
+  .demo-container video,
+  .demo-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Skeleton loader animé */
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      #f0f0f0 25%,
+      #e0e0e0 50%,
+      #f0f0f0 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Badge overlay style Comptalyze */
+  .demo-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #0b5cff;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+  }
+
+  /* Hover effet */
+  .demo-container:hover {
+    transform: scale(1.02);
+    transition: transform 0.3s ease;
+  }
+
+  /* Bordure gradient */
+  .demo-gradient-border {
+    position: relative;
+    padding: 4px;
+    background: linear-gradient(135deg, #0b5cff, #8b5cf6);
+    border-radius: 1rem;
+  }
+
+  .demo-gradient-border video {
+    border-radius: calc(1rem - 4px);
+  }
+</style>
+
+
+<!-- ========================================
+     ACCESSIBILITÉ
+     ======================================== -->
+
+<!-- 
+  ✅ Toujours inclure :
+  - aria-label descriptif
+  - Alt text pour images
+  - Fallback textuel si vidéo ne charge pas
+  - Respect de prefers-reduced-motion
+-->
+
+<video
+  aria-label="Démo de Comptalyze montrant le calcul des cotisations sociales à partir du chiffre d'affaires"
+  ...
+>
+  <source src="/hero-demo.mp4" type="video/mp4" />
+  <p>
+    Votre navigateur ne supporte pas la vidéo. 
+    <a href="/hero-demo.gif">Voir la démo en GIF</a>
+  </p>
+</video>
+
+<style>
+  /* Respecter prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    video {
+      animation: none !important;
+    }
+  }
+</style>
+
+
+<!-- ========================================
+     ANALYTICS (optionnel)
+     ======================================== -->
+
+<video
+  id="hero-demo-video"
+  onplay="gtag('event', 'play', { event_category: 'video', event_label: 'hero_demo' })"
+  onended="gtag('event', 'complete', { event_category: 'video', event_label: 'hero_demo' })"
+  ...
+>
+
+
+<!-- ========================================
+     NOTES D'INTÉGRATION
+     ======================================== -->
+
+<!--
+  TAILLES FICHIERS :
+  • hero-demo.mp4 : ~6-8 Mo (1280×720, 24fps, 15s)
+  • hero-demo.gif : ~1.5-2 Mo (optimisé)
+  
+  ATTRIBUTS IMPORTANTS :
+  • autoplay : démarrage automatique
+  • muted : obligatoire pour autoplay (politique navigateurs)
+  • loop : boucle infinie
+  • playsinline : évite fullscreen sur iOS
+  • poster : image de préchargement
+  
+  COMPATIBILITÉ :
+  • MP4 (H.264) : 97%+ navigateurs
+  • GIF : 100% navigateurs
+  
+  PERFORMANCE :
+  • LCP : utiliser poster + lazy loading
+  • CLS : définir width/height ou aspect-ratio
+  • Bandwidth : considérer version mobile allégée
+  
+  SEO :
+  • Ajouter schema.org VideoObject
+  • Texte alternatif descriptif
+  • Transcription dans contenu adjacent
+-->
+

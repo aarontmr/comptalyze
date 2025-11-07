@@ -7,7 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "check-env": "node scripts/check-env.js"
+    "check-env": "node scripts/check-env.js",
+    "check-demo": "node scripts/check-demo-deps.mjs",
+    "demo:record": "node scripts/render-preview.mjs",
+    "demo:optimize": "node scripts/optimize-gif.mjs",
+    "demo:build": "npm run demo:record && npm run demo:optimize",
+    "demo:fromRaw": "node scripts/trim-and-gif.mjs"
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^5.3.0",
@@ -37,6 +42,8 @@
     "canvas": "^3.2.0",
     "eslint": "^9",
     "eslint-config-next": "16.0.1",
+    "mime-types": "^2.1.35",
+    "puppeteer": "^23.11.1",
     "sharp": "^0.34.4",
     "tailwindcss": "^4",
     "typescript": "^5"

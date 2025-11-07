@@ -197,7 +197,7 @@ export default function TrialBanner({ trialEndsAt, plan }: TrialBannerProps) {
                   <>
                     <li className="flex items-center gap-2">
                       <Zap className="w-4 h-4 text-purple-400" />
-                      Assistant IA personnalisé
+                      ComptaBot - Assistant IA
                     </li>
                     <li className="flex items-center gap-2">
                       <Zap className="w-4 h-4 text-purple-400" />

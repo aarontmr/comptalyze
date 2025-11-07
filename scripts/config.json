@@ -1,0 +1,12 @@
+{
+  "durationSec": 15,
+  "fps": 24,
+  "width": 1280,
+  "height": 720,
+  "primaryColor": "#0b5cff",
+  "maxMp4Size": 8388608,
+  "maxGifSize": 2097152,
+  "gifFallbackWidth": 960,
+  "gifFallbackHeight": 540
+}
+

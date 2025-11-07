@@ -167,32 +167,29 @@ export default function PricingPage() {
               <span className="text-4xl font-bold">0 €</span>
               <span className="text-gray-400">/mois</span>
             </div>
-            <div className="flex-1 min-h-[280px] mb-6">
-              <ul className="space-y-2.5 text-sm">
+            <div className="flex-1 mb-6">
+              <div className="text-xs font-semibold text-gray-400 mb-4 uppercase tracking-wider">Pour découvrir</div>
+              <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2 text-gray-300">
                   <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
-                  <span>3 simulations par mois</span>
+                  <span>3 enregistrements par mois</span>
                 </li>
                 <li className="flex items-start gap-2 text-gray-300">
                   <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
-                  <span>Simulateur URSSAF</span>
+                  <span>Simulateur URSSAF (cotisations sociales)</span>
                 </li>
                 <li className="flex items-start gap-2 text-gray-300">
                   <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
-                  <span>Calcul des cotisations</span>
-                </li>
-                <li className="flex items-start gap-2 text-gray-300">
-                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
-                  <span>Projection annuelle</span>
+                  <span>Projection simple de votre activité</span>
                 </li>
               </ul>
             </div>
             <Link
-              href="/signup"
-              className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm transition-all duration-300 hover:scale-[1.05] hover:shadow-lg cursor-pointer hover:bg-gray-800/50 active:scale-95"
+              href="/signup?plan=free"
+              className="mt-auto inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm transition-all duration-300 hover:scale-[1.05] hover:shadow-lg cursor-pointer hover:bg-gray-800/50 active:scale-95"
               style={{ border: "1px solid #2b2f36", backgroundColor: "#0e0f12" }}
             >
-              Commencer gratuitement
+              Essayer gratuitement
             </Link>
           </div>
 
@@ -241,28 +238,32 @@ export default function PricingPage() {
                 </>
               )}
             </div>
-            <div className="flex-1 min-h-[320px] mb-6">
-              <div className="text-xs text-gray-500 mb-4">FONCTIONNALITÉS CLÉS</div>
+            <div className="flex-1 mb-6">
+              <div className="text-xs font-semibold text-gray-400 mb-4 uppercase tracking-wider">Gestion complète</div>
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2 text-gray-200">
                   <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                  <span><strong>Simulations illimitées</strong></span>
+                  <span><strong>Enregistrements illimités</strong></span>
                 </li>
                 <li className="flex items-start gap-2 text-gray-200">
                   <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                  <span>Simulateur de TVA</span>
+                  <span>Calcul TVA automatique</span>
                 </li>
                 <li className="flex items-start gap-2 text-gray-200">
                   <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                  <span>Charges déductibles</span>
+                  <span>Gestion charges déductibles</span>
+                </li>
+              </ul>
+              
+              <div className="text-xs font-semibold text-gray-400 mt-5 mb-3 uppercase tracking-wider">Documents & Exports</div>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-start gap-2 text-gray-200">
+                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                  <span>Factures complètes au format PDF</span>
                 </li>
                 <li className="flex items-start gap-2 text-gray-200">
                   <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                  <span>Export Excel/CSV/PDF</span>
-                </li>
-                <li className="flex items-start gap-2 text-gray-200">
-                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                  <span>Factures complètes</span>
+                  <span>Export CSV/PDF (journal simple)</span>
                 </li>
               </ul>
             </div>
@@ -342,28 +343,38 @@ export default function PricingPage() {
                 </>
               )}
             </div>
-            <div className="flex-1 min-h-[320px] mb-6">
-              <div className="text-xs text-gray-500 mb-4">TOUT PRO +</div>
+            <div className="flex-1 mb-6">
+              <div className="text-xs font-semibold text-gray-500 mb-4 uppercase tracking-wider">Tout Pro +</div>
+              
+              <div className="text-xs font-semibold text-gray-400 mb-3 uppercase tracking-wider">Intelligence Artificielle</div>
+              <ul className="space-y-3 text-sm mb-5">
+                <li className="flex items-start gap-2 text-gray-200">
+                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                  <span><strong>Assistant IA personnalisé</strong> (ComptaBot)</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-200">
+                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                  <span>Pré-remplissage automatique URSSAF</span>
+                </li>
+              </ul>
+              
+              <div className="text-xs font-semibold text-gray-400 mb-3 uppercase tracking-wider">Analytics & Alertes</div>
+              <ul className="space-y-3 text-sm mb-5">
+                <li className="flex items-start gap-2 text-gray-200">
+                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                  <span>Analytics avancés & alertes seuils</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-200">
+                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                  <span>Export comptable Excel (journal enrichi)</span>
+                </li>
+              </ul>
+              
+              <div className="text-xs font-semibold text-gray-400 mb-3 uppercase tracking-wider">Automatisations</div>
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2 text-gray-200">
                   <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                  <span><strong>Assistant IA</strong> personnalisé</span>
-                </li>
-                <li className="flex items-start gap-2 text-gray-200">
-                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                  <span><strong>Calendrier fiscal</strong> intelligent</span>
-                </li>
-                <li className="flex items-start gap-2 text-gray-200">
-                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                  <span>Rappels automatiques URSSAF</span>
-                </li>
-                <li className="flex items-start gap-2 text-gray-200">
-                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                  <span>Pré-remplissage URSSAF</span>
-                </li>
-                <li className="flex items-start gap-2 text-gray-200">
-                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                  <span>Analytics avancés</span>
+                  <span>Rappels automatiques & calendrier fiscal</span>
                 </li>
               </ul>
             </div>

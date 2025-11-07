@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comptalyze - Démo Hero</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a0a;
+            color: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+            overflow: hidden;
+        }
+
+        .demo-container {
+            width: 100%;
+            max-width: 680px;
+            position: relative;
+        }
+
+        /* Input Section */
+        .input-section {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(11, 92, 255, 0.15);
+            border: 1px solid #2a2a2a;
+            margin-bottom: 24px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .input-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e5e7eb;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 16px 20px;
+            font-size: 24px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            border: 2px solid #2a2a2a;
+            border-radius: 12px;
+            background: #0f0f0f;
+            color: #ffffff;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .input-field:focus {
+            border-color: #0b5cff;
+            background: #1a1a1a;
+        }
+
+        .cursor-blink {
+            display: inline-block;
+            width: 2px;
+            height: 28px;
+            background: #0b5cff;
+            margin-left: 4px;
+            animation: blink 0.6s step-end infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .calc-button {
+            width: 100%;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(90deg, #00D084, #2E6CF6);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .calc-button:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(0, 208, 132, 0.4);
+        }
+
+        .calc-button:active {
+            transform: translateY(0);
+        }
+
+        /* Loader */
+        .loader {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Results Section */
+        .results-section {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .results-section.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .result-card {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .result-card.show {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .result-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 20px rgba(11, 92, 255, 0.2);
+        }
+
+        .result-label {
+            font-size: 13px;
+            color: #9ca3af;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .result-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .badge-card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .badge-icon {
+            font-size: 32px;
+            margin-bottom: 4px;
+        }
+
+        .badge-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #10b981;
+        }
+
+        /* Chart Section */
+        .chart-container {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 12px rgba(11, 92, 255, 0.15);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .chart-container.show {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.6s ease-out;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 14px;
+            color: #9ca3af;
+            font-weight: 500;
+        }
+
+        .chart-growth {
+            font-size: 18px;
+            font-weight: 700;
+            color: #10b981;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 120px;
+            gap: 12px;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(180deg, #0b5cff 0%, #0a4fd9 100%);
+            border-radius: 8px 8px 0 0;
+            height: 0;
+            transition: height 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+
+        .chart-bar.animate {
+            height: var(--bar-height);
+        }
+
+        .chart-bar-label {
+            position: absolute;
+            bottom: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: #9ca3af;
+            white-space: nowrap;
+        }
+
+        /* URSSAF Section */
+        .urssaf-section {
+            background: linear-gradient(135deg, #1a1a1a 0%, #252525 100%);
+            border: 2px solid #0b5cff;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        .urssaf-section.show {
+            opacity: 1;
+            transform: scale(1);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .urssaf-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 16px;
+        }
+
+        .urssaf-button {
+            padding: 12px 28px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            background: transparent;
+            color: #0b5cff;
+            border: 2px solid #0b5cff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .urssaf-button:hover {
+            background: #0b5cff;
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(11, 92, 255, 0.4);
+        }
+
+        /* Fade out animation */
+        .fade-out {
+            animation: fadeOut 1s ease-out forwards;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0.3;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <!-- Input Section -->
+        <div class="input-section">
+            <label class="input-label" for="ca-input">Chiffre d'affaires</label>
+            <div class="input-wrapper">
+                <input 
+                    type="text" 
+                    id="ca-input" 
+                    class="input-field" 
+                    placeholder="Ex. 3 000 €"
+                    readonly
+                    aria-label="Champ chiffre d'affaires"
+                >
+            </div>
+            <button class="calc-button" id="calc-btn" aria-label="Calculer les cotisations">
+                <span id="btn-text">Calculer</span>
+            </button>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="results">
+            <div class="results-grid">
+                <div class="result-card" data-delay="0">
+                    <div class="result-label">Cotisations</div>
+                    <div class="result-value">660 €</div>
+                </div>
+                <div class="result-card" data-delay="150">
+                    <div class="result-label">Revenu net</div>
+                    <div class="result-value">2 340 €</div>
+                </div>
+                <div class="result-card badge-card" data-delay="300">
+                    <div class="badge-icon">✅</div>
+                    <div class="badge-text">À jour</div>
+                </div>
+            </div>
+
+            <!-- Chart -->
+            <div class="chart-container" id="chart">
+                <div class="chart-header">
+                    <span class="chart-title">Croissance CA (M-1 → M)</span>
+                    <span class="chart-growth">+12%</span>
+                </div>
+                <div class="chart-bars">
+                    <div class="chart-bar" style="--bar-height: 75%;">
+                        <span class="chart-bar-label">M-1</span>
+                    </div>
+                    <div class="chart-bar" style="--bar-height: 84%;">
+                        <span class="chart-bar-label">M</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- URSSAF Section -->
+            <div class="urssaf-section" id="urssaf">
+                <div class="urssaf-title">Pré-remplissage URSSAF en 1 clic</div>
+                <button class="urssaf-button" aria-label="Générer le pré-remplissage URSSAF">
+                    Générer maintenant
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Animation Timeline
+        const timeline = {
+            init: function() {
+                this.startAnimation();
+            },
+
+            startAnimation: function() {
+                // Phase 1: Cursor blink + auto-typing (0-2s)
+                setTimeout(() => {
+                    this.typeNumber();
+                }, 600);
+
+                // Phase 2: Click button + loader (2-3s)
+                setTimeout(() => {
+                    this.clickButton();
+                }, 2000);
+
+                // Phase 3: Show results (3-7s)
+                setTimeout(() => {
+                    this.showResults();
+                }, 3000);
+
+                // Phase 4: Animate chart (7-10s)
+                setTimeout(() => {
+                    this.animateChart();
+                }, 7000);
+
+                // Phase 5: Show URSSAF (10-12s)
+                setTimeout(() => {
+                    this.showUrssaf();
+                }, 10000);
+
+                // Phase 6: Fade out for loop (12-15s)
+                setTimeout(() => {
+                    this.fadeForLoop();
+                }, 12000);
+
+                // Signal ready for recording
+                setTimeout(() => {
+                    window.__demoReady = true;
+                }, 100);
+
+                // Loop restart (15s)
+                setTimeout(() => {
+                    this.restart();
+                }, 15000);
+            },
+
+            typeNumber: function() {
+                const input = document.getElementById('ca-input');
+                const text = '3 000 €';
+                let index = 0;
+
+                input.value = '';
+                input.placeholder = '';
+
+                const typeInterval = setInterval(() => {
+                    if (index < text.length) {
+                        input.value += text[index];
+                        index++;
+                    } else {
+                        clearInterval(typeInterval);
+                    }
+                }, 80);
+            },
+
+            clickButton: function() {
+                const btn = document.getElementById('calc-btn');
+                const btnText = document.getElementById('btn-text');
+                
+                btn.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    btn.style.transform = 'scale(1)';
+                }, 100);
+
+                // Show loader
+                btnText.innerHTML = '<span class="loader"></span>';
+            },
+
+            showResults: function() {
+                const btn = document.getElementById('calc-btn');
+                const btnText = document.getElementById('btn-text');
+                const results = document.getElementById('results');
+                const cards = document.querySelectorAll('.result-card');
+
+                // Hide loader
+                btnText.textContent = 'Calculer';
+                btn.disabled = true;
+                btn.style.opacity = '0.6';
+
+                // Show results section
+                results.classList.add('show');
+
+                // Animate cards with stagger
+                cards.forEach((card, index) => {
+                    const delay = parseInt(card.dataset.delay);
+                    setTimeout(() => {
+                        card.classList.add('show');
+                    }, delay);
+                });
+            },
+
+            animateChart: function() {
+                const chart = document.getElementById('chart');
+                const bars = document.querySelectorAll('.chart-bar');
+
+                chart.classList.add('show');
+
+                setTimeout(() => {
+                    bars.forEach((bar, index) => {
+                        setTimeout(() => {
+                            bar.classList.add('animate');
+                        }, index * 200);
+                    });
+                }, 300);
+            },
+
+            showUrssaf: function() {
+                const urssaf = document.getElementById('urssaf');
+                urssaf.classList.add('show');
+            },
+
+            fadeForLoop: function() {
+                const container = document.querySelector('.demo-container');
+                container.classList.add('fade-out');
+            },
+
+            restart: function() {
+                location.reload();
+            }
+        };
+
+        // Start animation when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            timeline.init();
+        });
+    </script>
+</body>
+</html>
+

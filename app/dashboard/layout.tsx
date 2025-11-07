@@ -189,7 +189,7 @@ export default function DashboardLayout({
 
   return (
     <>
-      {/* Assistant IA flottant - EN DEHORS du layout pour éviter les conflits */}
+      {/* ComptaBot flottant - EN DEHORS du layout pour éviter les conflits */}
       <FloatingAIAssistant user={user} />
       
       <div

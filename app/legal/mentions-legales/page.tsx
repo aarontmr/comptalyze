@@ -36,10 +36,19 @@ export default function Page() {
       </section>
 
       <section>
-        <h2>Hébergeur</h2>
+        <h2>Hébergement et infrastructure</h2>
         <p>
-          <strong>Vercel Inc.</strong>, 340 S Lemon Ave #4133, Walnut, CA 91789, USA –
-          <a href="https://vercel.com" target="_blank" rel="noopener noreferrer">https://vercel.com</a>.
+          <strong>Hébergement web :</strong> <strong>Vercel Inc.</strong>, 340 S Lemon Ave #4133, Walnut, CA 91789, USA –
+          <a href="https://vercel.com" target="_blank" rel="noopener noreferrer" className="text-[#00D084] hover:text-[#00c077] underline">https://vercel.com</a>.
+        </p>
+        <p className="mt-2">
+          Les données sont hébergées dans des <strong>régions de l'Union Européenne</strong> chez Vercel. 
+          Les transferts de données hors UE sont encadrés par les <strong>Clauses Contractuelles Types (SCC)</strong> 
+          conformément au RGPD.
+        </p>
+        <p className="mt-2">
+          <strong>Base de données :</strong> Supabase (PostgreSQL hébergé en Europe) – 
+          <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer" className="text-[#00D084] hover:text-[#00c077] underline">https://supabase.com/privacy</a>
         </p>
       </section>
 
@@ -81,9 +90,13 @@ export default function Page() {
       </section>
 
       <section>
-        <h2>Contact</h2>
+        <h2>Contact et Délégué à la Protection des Données (DPO)</h2>
         <p>
-          Pour toute question, vous pouvez écrire à <a href="mailto:contact@comptalyze.com">contact@comptalyze.com</a>.
+          Pour toute question générale : <a href="mailto:contact@comptalyze.com" className="text-[#00D084] hover:text-[#00c077] underline">contact@comptalyze.com</a>
+        </p>
+        <p className="mt-2">
+          Pour toute question relative à la protection de vos données personnelles (RGPD) : 
+          <a href="mailto:dpo@comptalyze.com" className="text-[#00D084] hover:text-[#00c077] underline"> dpo@comptalyze.com</a>
         </p>
       </section>
     </LegalLayout>

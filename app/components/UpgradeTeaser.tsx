@@ -39,7 +39,7 @@ export default function UpgradeTeaser({ currentPlan }: UpgradeTeaserProps) {
   ] : [
     {
       icon: Brain,
-      title: 'Assistant IA personnalisé',
+      title: 'ComptaBot - Assistant IA',
       description: 'Conseils en temps réel adaptés à votre activité',
       color: '#8B5CF6',
     },

@@ -187,7 +187,7 @@ export default function CheckoutPage() {
       features: [
         "Tout le plan Pro",
         "Rappels URSSAF automatiques",
-        "Assistant IA personnalisé",
+        "ComptaBot - Assistant IA personnalisé",
         "Conseils IA basés sur vos données",
         "Graphiques d'évolution du CA",
         "Pré-remplissage automatique URSSAF",
@@ -206,7 +206,7 @@ export default function CheckoutPage() {
       features: [
         "Tout le plan Pro",
         "Rappels URSSAF automatiques",
-        "Assistant IA personnalisé",
+        "ComptaBot - Assistant IA personnalisé",
         "Conseils IA basés sur vos données",
         "Graphiques d'évolution du CA",
         "Pré-remplissage automatique URSSAF",

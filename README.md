@@ -70,9 +70,9 @@ Pour activer les rappels mensuels par email (fonctionnalité Premium), configure
 
 **Note** : La route vérifie également que c'est bien le 2 du mois en heure Europe/Paris avant d'envoyer les emails, pour éviter les problèmes de fuseau horaire.
 
-## Configuration OpenAI pour le Chatbot Premium
+## Configuration OpenAI pour ComptaBot (Assistant IA Premium)
 
-Le chatbot IA utilise OpenAI pour fournir des réponses intelligentes aux clients Premium. Pour l'activer :
+ComptaBot, l'assistant intelligent de Comptalyze, utilise OpenAI pour fournir des réponses intelligentes aux clients Premium. Pour l'activer :
 
 1. **Créez un compte OpenAI** sur https://platform.openai.com si ce n'est pas déjà fait
 2. **Récupérez votre clé API** dans Settings > API keys
@@ -81,6 +81,6 @@ Le chatbot IA utilise OpenAI pour fournir des réponses intelligentes aux client
    - Sur Vercel : ajoutez `OPENAI_API_KEY` dans Settings > Environment Variables
 4. **Redéployez** votre application
 
-Le chatbot utilise **GPT-4o-mini** (économique et rapide) et accède automatiquement aux données CA de chaque client pour des conseils personnalisés.
+ComptaBot utilise **GPT-4o-mini** (économique et rapide) et accède automatiquement aux données CA de chaque client pour des conseils personnalisés.
 
 **Voir le guide détaillé** : `GUIDE_CONFIGURATION_OPENAI.md`

@@ -87,6 +87,24 @@ export async function POST(request: NextRequest) {
               subscription_status: 'active',
             },
           });
+
+          // Track upgrade completed dans analytics_events
+          try {
+            await supabaseAdmin
+              .from('analytics_events')
+              .insert([{
+                event_name: 'upgrade_completed',
+                user_id: userId,
+                metadata: {
+                  plan,
+                  stripe_subscription_id: subscriptionId,
+                  stripe_customer_id: session.customer,
+                }
+              }]);
+            console.log(`📊 Événement upgrade_completed tracké pour ${userId}`);
+          } catch (err) {
+            console.error('Erreur lors du tracking de l\'événement upgrade_completed:', err);
+          }
           
           console.log(`✅ Utilisateur ${userId} mis à jour avec le plan ${plan}`);
         }

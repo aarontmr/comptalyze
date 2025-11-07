@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import Footer from "./components/Footer";
+import AnalyticsProvider from "./components/AnalyticsProvider";
+import Script from "next/script";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -79,14 +81,29 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const umamiWebsiteId = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID;
+  const umamiSrc = process.env.NEXT_PUBLIC_UMAMI_SRC || 'https://cloud.umami.is/script.js';
+
   return (
     <html lang="fr">
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} antialiased`}
         style={{ backgroundColor: "#0e0f12" }}
       >
-        {children}
-        <Footer />
+        {/* Umami Analytics (mode EU) */}
+        {umamiWebsiteId && (
+          <Script
+            async
+            src={umamiSrc}
+            data-website-id={umamiWebsiteId}
+            strategy="afterInteractive"
+          />
+        )}
+
+        <AnalyticsProvider>
+          {children}
+          <Footer />
+        </AnalyticsProvider>
       </body>
     </html>
   );

@@ -11,6 +11,11 @@ export default function Footer() {
           <span>Basé sur les données officielles de l'URSSAF</span>
         </div>
         
+        {/* Hébergement et conformité */}
+        <div className="text-center text-xs text-zinc-500">
+          Données hébergées dans des régions UE chez Vercel; transferts encadrés par les Clauses Contractuelles Types (SCC).
+        </div>
+        
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div className="text-zinc-400 text-sm">
             © {new Date().getFullYear()} Comptalyze

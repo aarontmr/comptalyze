@@ -37,7 +37,7 @@ export default function FloatingAIAssistant({ user }: FloatingAIAssistantProps) 
       const welcomeMessage: Message = {
         id: 'welcome',
         role: 'assistant',
-        content: 'Bonjour ! Je suis votre assistant IA spécialisé dans les micro-entreprises et les cotisations URSSAF. Posez-moi toutes vos questions sur votre activité, vos cotisations, vos déclarations, ou tout autre sujet lié à votre micro-entreprise. Je peux analyser vos chiffres d\'affaires enregistrés pour vous donner des conseils personnalisés.',
+        content: 'Bonjour ! Je suis ComptaBot, votre assistant intelligent Comptalyze 🤖\n\nJe suis spécialisé dans les micro-entreprises et je peux vous aider sur :\n• Les cotisations URSSAF et leur optimisation\n• Les déclarations et démarches administratives\n• L\'analyse de vos chiffres d\'affaires\n• Les conseils fiscaux personnalisés\n\nPosez-moi toutes vos questions sur votre micro-entreprise !',
         timestamp: new Date(),
       };
       setMessages([welcomeMessage]);
@@ -144,7 +144,7 @@ export default function FloatingAIAssistant({ user }: FloatingAIAssistantProps) 
     const welcomeMessage: Message = {
       id: 'welcome',
       role: 'assistant',
-      content: 'Bonjour ! Je suis votre assistant IA spécialisé dans les micro-entreprises et les cotisations URSSAF. Posez-moi toutes vos questions sur votre activité, vos cotisations, vos déclarations, ou tout autre sujet lié à votre micro-entreprise. Je peux analyser vos chiffres d\'affaires enregistrés pour vous donner des conseils personnalisés.',
+      content: 'Bonjour ! Je suis ComptaBot, votre assistant intelligent Comptalyze 🤖\n\nJe suis spécialisé dans les micro-entreprises et je peux vous aider sur :\n• Les cotisations URSSAF et leur optimisation\n• Les déclarations et démarches administratives\n• L\'analyse de vos chiffres d\'affaires\n• Les conseils fiscaux personnalisés\n\nPosez-moi toutes vos questions sur votre micro-entreprise !',
       timestamp: new Date(),
     };
     setMessages([welcomeMessage]);
@@ -171,7 +171,7 @@ export default function FloatingAIAssistant({ user }: FloatingAIAssistantProps) 
               top: 'auto',
               left: 'auto',
             }}
-            aria-label="Découvrir l'assistant IA Premium"
+            aria-label="Découvrir ComptaBot Premium"
           >
             <MessageCircle className="w-6 h-6" />
             <div className="absolute -top-2 -right-2">
@@ -202,7 +202,7 @@ export default function FloatingAIAssistant({ user }: FloatingAIAssistantProps) 
               <div className="flex items-center gap-3">
                 <Bot className="w-6 h-6 text-white" />
                 <div>
-                  <h3 className="font-semibold text-white">Assistant IA</h3>
+                  <h3 className="font-semibold text-white">ComptaBot</h3>
                   <PlanBadge plan="premium" size="sm" animated={false} />
                 </div>
               </div>
@@ -225,7 +225,7 @@ export default function FloatingAIAssistant({ user }: FloatingAIAssistantProps) 
                   </div>
                   <div className="flex-1 rounded-xl p-3" style={{ backgroundColor: '#23272f' }}>
                     <p className="text-gray-300 text-sm">
-                      Bonjour ! Je suis votre assistant IA spécialisé en micro-entreprise. Je peux vous aider à optimiser vos cotisations, prévoir vos revenus, et répondre à toutes vos questions fiscales.
+                      Bonjour ! Je suis ComptaBot, votre assistant intelligent Comptalyze. Je peux vous aider à optimiser vos cotisations, prévoir vos revenus, et répondre à toutes vos questions fiscales.
                     </p>
                   </div>
                 </div>
@@ -254,10 +254,10 @@ export default function FloatingAIAssistant({ user }: FloatingAIAssistantProps) 
               <div className="absolute inset-0 flex flex-col items-center justify-center p-6 bg-gradient-to-b from-transparent via-[#1a1d24]/90 to-[#1a1d24]">
                 <Sparkles className="w-16 h-16 mb-4" style={{ color: '#8B5CF6' }} />
                 <h3 className="text-2xl font-bold text-white mb-2 text-center">
-                  Assistant IA Premium
+                  ComptaBot Premium
                 </h3>
                 <p className="text-gray-300 text-center mb-4 text-sm">
-                  Obtenez des conseils personnalisés et des analyses en temps réel de votre activité
+                  Votre assistant intelligent pour optimiser votre micro-entreprise
                 </p>
                 <ul className="text-gray-300 text-sm space-y-2 mb-6">
                   <li className="flex items-center gap-2">
@@ -311,7 +311,7 @@ export default function FloatingAIAssistant({ user }: FloatingAIAssistantProps) 
             top: 'auto',
             left: 'auto',
           }}
-          aria-label="Ouvrir l'assistant IA"
+          aria-label="Ouvrir ComptaBot"
         >
           <MessageCircle className="w-6 h-6" />
         </button>
@@ -344,7 +344,7 @@ export default function FloatingAIAssistant({ user }: FloatingAIAssistantProps) 
               <div className="p-1.5 rounded-lg" style={{ backgroundColor: 'rgba(46, 108, 246, 0.2)' }}>
                 <Bot className="w-4 h-4" style={{ color: '#2E6CF6' }} />
               </div>
-              <span className="text-sm font-semibold text-white">Assistant IA</span>
+              <span className="text-sm font-semibold text-white">ComptaBot</span>
             </div>
             <div className="flex items-center gap-2">
               {!isMinimized && (

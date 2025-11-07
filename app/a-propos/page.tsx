@@ -216,10 +216,15 @@ export default function AboutPage() {
           <FadeIn delay={0.8} y={12}>
             <Card>
               <H2>Vos données, notre priorité</H2>
+              <p className="text-gray-300 text-base md:text-lg mb-3">
+                Données hébergées dans des régions UE chez Vercel; transferts encadrés par les Clauses Contractuelles Types (SCC).
+              </p>
               <p className="text-gray-300 text-base md:text-lg">
-                Hébergement en Europe, chiffrement en transit et au repos,
-                conformité RGPD. Vous pouvez exporter ou supprimer vos données à
+                Chiffrement en transit et au repos, conformité RGPD stricte. Vous pouvez exporter ou supprimer vos données à
                 tout moment.
+              </p>
+              <p className="text-sm text-gray-400 mt-3">
+                Pour toute question relative à vos données : <a href="mailto:dpo@comptalyze.com" className="text-[#00D084] hover:text-[#00c077] underline transition-colors">dpo@comptalyze.com</a>
               </p>
             </Card>
           </FadeIn>
