@@ -516,7 +516,7 @@ export default function LandingPage() {
           </motion.div>
 
           {/* Points clés sous la vidéo */}
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
             <FadeIn delay={0.3} y={8}>
               <div className="flex items-center gap-3 p-4 rounded-xl" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
                 <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: "rgba(0, 208, 132, 0.1)" }}>
@@ -721,7 +721,7 @@ export default function LandingPage() {
                 </p>
 
                 {/* Récentes améliorations */}
-                <div className="grid sm:grid-cols-3 gap-4 mt-8">
+                <div className="grid sm:grid-cols-3 gap-4 mt-8 max-w-3xl mx-auto">
                   <motion.div 
                     className="rounded-xl p-4"
                     style={{
@@ -895,7 +895,7 @@ export default function LandingPage() {
           </motion.div>
 
           {/* Bénéfices du chatbot */}
-          <div className="mt-12 grid gap-6 sm:grid-cols-3">
+          <div className="mt-12 grid gap-6 sm:grid-cols-3 max-w-4xl mx-auto">
             <FadeIn delay={0.6} y={12}>
               <div className="text-center">
                 <div 

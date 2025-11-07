@@ -5,6 +5,7 @@ import AnalyticsProvider from './components/AnalyticsProvider';
 import GoogleAnalytics from './components/GoogleAnalytics';
 import CookieConsent from './components/CookieConsent';
 import RouteProgressBar from './components/RouteProgressBar';
+import ChatbotWrapper from './components/ChatbotWrapper';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -187,6 +188,7 @@ export default function RootLayout({
         <RouteProgressBar />
         <GoogleAnalytics />
         <CookieConsent />
+        <ChatbotWrapper />
         <AnalyticsProvider>
           {children}
         </AnalyticsProvider>

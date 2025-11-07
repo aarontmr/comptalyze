@@ -29,9 +29,6 @@ import dynamic from 'next/dynamic';
 import QuickSettings from '@/app/components/QuickSettings';
 
 // Dynamic imports pour les composants lourds
-const FloatingAIAssistant = dynamic(() => import('@/app/components/FloatingAIAssistant'), {
-  ssr: false,
-});
 const OnboardingTutorial = dynamic(() => import('@/app/components/OnboardingTutorial'), {
   ssr: false,
 });
@@ -196,8 +193,7 @@ export default function DashboardLayout({
 
   return (
     <>
-      {/* ComptaBot flottant - EN DEHORS du layout pour éviter les conflits */}
-      <FloatingAIAssistant user={user} />
+      {/* Le nouveau Chatbot est maintenant global dans app/layout.tsx */}
       
       <div
         className="min-h-screen flex"

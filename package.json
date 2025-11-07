@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "cross-env NODE_OPTIONS=--max-old-space-size=4096 NEXT_PRIVATE_TURBOPACK=false next build",
+    "dev": "cross-env NODE_OPTIONS=--max-old-space-size=8192 next dev",
+    "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 NEXT_PRIVATE_TURBOPACK=false next build",
     "start": "next start",
     "lint": "eslint",
     "check-env": "node scripts/check-env.js",

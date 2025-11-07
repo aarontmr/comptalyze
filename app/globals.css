@@ -222,10 +222,6 @@ div[onclick] {
 }
 
 /* Prévenir le débordement horizontal */
-* {
-  max-width: 100%;
-}
-
 html,
 body {
   overflow-x: hidden;
@@ -237,6 +233,14 @@ body {
 main {
   overflow-x: hidden;
   width: 100%;
+}
+
+/* Éviter les débordements sur les images et médias */
+img,
+video,
+iframe {
+  max-width: 100%;
+  height: auto;
 }
 
 /* Optimisation des tableaux sur mobile */

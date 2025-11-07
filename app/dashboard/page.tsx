@@ -16,6 +16,7 @@ import PremiumAdvice from '@/app/components/PremiumAdvice';
 import { motion } from 'framer-motion';
 import UpgradeTeaser from '@/app/components/UpgradeTeaser';
 import TrialBanner from '@/app/components/TrialBanner';
+import { useUserPreferences } from '@/app/hooks/useUserPreferences';
 
 interface CARecord {
   amount_eur: number;
@@ -480,7 +481,7 @@ export default function DashboardOverview() {
         )}
 
         {/* Conseil IA (Premium) */}
-        {subscription.isPremium && user && (
+        {subscription.isPremium && user && preferences.showHelperTexts && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
