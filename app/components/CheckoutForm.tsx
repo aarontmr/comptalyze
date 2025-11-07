@@ -21,16 +21,28 @@ export default function CheckoutForm({ plan }: CheckoutFormProps) {
       return;
     }
 
+    // Montants en centimes pour Stripe
+    const amounts: Record<string, number> = {
+      'pro': 390,           // 3,90€
+      'pro_yearly': 3790,   // 37,90€
+      'premium': 790,       // 7,90€
+      'premium_yearly': 7590 // 75,90€
+    };
+
+    const amount = amounts[plan] || 390;
+
     const pr = stripe.paymentRequest({
       country: 'FR',
       currency: 'eur',
       total: {
-        label: `Abonnement Comptalyze ${plan}`,
-        amount: plan.includes("pro") ? (plan.includes("yearly") ? 3790 : 390) : (plan.includes("yearly") ? 7590 : 790),
+        label: `Comptalyze ${plan.includes('pro') ? 'Pro' : 'Premium'}`,
+        amount: amount,
       },
       requestPayerName: true,
       requestPayerEmail: true,
     });
+
+    console.log('🔍 Payment Request créé avec montant:', amount, 'centimes');
 
     // Vérifier si Apple Pay ou Google Pay est disponible
     pr.canMakePayment().then((result) => {
