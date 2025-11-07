@@ -110,6 +110,52 @@ a {
   transition: all 0.2s ease;
 }
 
+/* ========================================
+   CURSEUR POINTER SUR ÉLÉMENTS CLIQUABLES
+   ======================================== */
+
+/* Curseur main sur tous les éléments cliquables */
+button,
+a,
+[role="button"],
+[type="button"],
+[type="submit"],
+[type="reset"],
+label[for],
+select,
+input[type="checkbox"],
+input[type="radio"],
+.clickable,
+[onclick],
+[data-clickable] {
+  cursor: pointer !important;
+}
+
+/* Curseur interdit pour éléments désactivés */
+button:disabled,
+[disabled],
+.disabled {
+  cursor: not-allowed !important;
+}
+
+/* Curseur texte pour inputs de saisie */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+input[type="date"],
+textarea {
+  cursor: text !important;
+}
+
+/* Curseur par défaut pour les conteneurs */
+div[onclick] {
+  cursor: pointer !important;
+}
+
 /* Amélioration visuelle pendant le chargement */
 .page-transition-loading {
   pointer-events: none;
