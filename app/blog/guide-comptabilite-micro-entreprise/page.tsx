@@ -64,7 +64,7 @@ export default function ArticlePage() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-green-400 font-bold">•</span>
-                  <span><strong>Ouvrir un compte bancaire dédié</strong> : Si CA annuel > 10 000€ pendant 2 ans consécutifs</span>
+                  <span><strong>Ouvrir un compte bancaire dédié</strong> : Si CA annuel &gt; 10 000€ pendant 2 ans consécutifs</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-green-400 font-bold">•</span>
