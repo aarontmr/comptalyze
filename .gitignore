@@ -37,10 +37,7 @@ yarn-error.log*
 next-env.d.ts
 
 # Demo generation temporary files
-public/hero-demo.mp4
-public/hero-demo.gif
 public/palette.png
-public/hero-demo-poster.jpg
 *.backup
 demo-log.txt
 
