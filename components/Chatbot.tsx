@@ -370,7 +370,7 @@ export default function Chatbot({ user }: ChatbotProps) {
               exit={{ scale: 0, opacity: 0 }}
               transition={{ type: "spring", stiffness: 260, damping: 20 }}
               onClick={() => setIsOpen(true)}
-              className="fixed bottom-6 right-4 z-[9999] w-16 h-16 flex items-center justify-center rounded-full text-white shadow-2xl transition-all duration-300 hover:scale-110 cursor-pointer group"
+              className="fixed bottom-20 sm:bottom-6 right-4 z-[9999] w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-full text-white shadow-2xl transition-all duration-300 hover:scale-110 cursor-pointer group"
               style={{
                 background: 'linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)',
                 boxShadow: '0 10px 40px rgba(46, 108, 246, 0.5)',
@@ -393,7 +393,7 @@ export default function Chatbot({ user }: ChatbotProps) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="fixed bottom-6 right-4 z-[9998] flex flex-col rounded-2xl shadow-2xl w-[380px] max-w-[calc(100vw-2rem)] h-[600px] max-h-[calc(100vh-3rem)]"
+              className="fixed bottom-0 sm:bottom-6 left-0 sm:left-auto right-0 sm:right-4 z-[9998] flex flex-col rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:w-[380px] sm:max-w-[calc(100vw-2rem)] h-[calc(100vh-70px)] sm:h-[600px] sm:max-h-[calc(100vh-3rem)]"
               style={{
                 backgroundColor: '#0E0F12',
                 border: '1px solid rgba(46, 108, 246, 0.3)',
@@ -441,7 +441,7 @@ export default function Chatbot({ user }: ChatbotProps) {
                       </div>
                     )}
                     <div
-                      className={`flex-1 rounded-2xl px-4 py-3 text-sm max-w-[85%] group relative ${
+                      className={`flex-1 rounded-2xl px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm max-w-[85%] group relative ${
                         message.role === 'user' 
                           ? 'bg-gradient-to-br from-[#2E6CF6] to-[#00D084] text-white' 
                           : 'bg-[#1A1D24] text-gray-200'
@@ -450,9 +450,11 @@ export default function Chatbot({ user }: ChatbotProps) {
                         boxShadow: message.role === 'user' 
                           ? '0 4px 12px rgba(46, 108, 246, 0.3)' 
                           : '0 2px 8px rgba(0, 0, 0, 0.3)',
+                        wordBreak: 'break-word',
+                        overflowWrap: 'break-word',
                       }}
                     >
-                      <div className="leading-relaxed whitespace-pre-wrap">
+                      <div className="leading-relaxed whitespace-pre-wrap break-words">
                         {renderMarkdown(message.content)}
                       </div>
                       {message.role === 'assistant' && (
@@ -477,15 +479,15 @@ export default function Chatbot({ user }: ChatbotProps) {
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="grid grid-cols-2 gap-2 pt-2"
+                    className="grid grid-cols-1 xs:grid-cols-2 gap-2 pt-2"
                   >
                     {quickActions.map((action, idx) => (
                       <button
                         key={idx}
                         onClick={() => handleQuickAction(action)}
-                        className="flex items-center gap-2 p-3 rounded-xl bg-[#1A1D24] hover:bg-[#23272F] transition-all text-left text-xs text-gray-300 hover:text-white border border-gray-800 hover:border-[#2E6CF6]/50"
+                        className="flex items-center gap-2 p-3 rounded-xl bg-[#1A1D24] hover:bg-[#23272F] transition-all text-left text-xs text-gray-300 hover:text-white border border-gray-800 hover:border-[#2E6CF6]/50 min-h-[44px]"
                       >
-                        <span className="text-[#2E6CF6]">{action.icon}</span>
+                        <span className="text-[#2E6CF6] flex-shrink-0">{action.icon}</span>
                         <span className="flex-1">{action.label}</span>
                       </button>
                     ))}
@@ -552,7 +554,8 @@ export default function Chatbot({ user }: ChatbotProps) {
                       placeholder="Pose ta question ici..."
                       rows={2}
                       disabled={loading || (plan === 'free' && messageCount >= monthlyLimit)}
-                      className="w-full px-4 py-3 pr-12 rounded-xl text-sm text-white placeholder-gray-500 resize-none transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#2E6CF6] bg-[#1A1D24] border border-gray-800 focus:border-[#2E6CF6]/50"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 pr-10 sm:pr-12 rounded-xl text-sm text-white placeholder-gray-500 resize-none transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#2E6CF6] bg-[#1A1D24] border border-gray-800 focus:border-[#2E6CF6]/50"
+                      style={{ fontSize: '16px' }}
                     />
                     {typeof window !== 'undefined' && 'webkitSpeechRecognition' in window && (
                       <button
@@ -572,7 +575,7 @@ export default function Chatbot({ user }: ChatbotProps) {
                   <button
                     onClick={() => sendMessage()}
                     disabled={loading || !input.trim() || (plan === 'free' && messageCount >= monthlyLimit)}
-                    className="px-5 py-3 rounded-xl text-white font-medium transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
+                    className="px-4 sm:px-5 py-2 sm:py-3 rounded-xl text-white font-medium transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center min-h-[44px] min-w-[44px]"
                     style={{
                       background: loading || !input.trim() || (plan === 'free' && messageCount >= monthlyLimit)
                         ? '#374151'
@@ -621,19 +624,19 @@ export default function Chatbot({ user }: ChatbotProps) {
       {/* Même code mais sans limitation de messages et avec fonctionnalités premium */}
       <AnimatePresence>
         {!isOpen && (
-          <motion.button
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 260, damping: 20 }}
-            onClick={() => setIsOpen(true)}
-            className="fixed bottom-6 right-4 z-[9999] w-16 h-16 flex items-center justify-center rounded-full text-white shadow-2xl transition-all duration-300 hover:scale-110 cursor-pointer group"
-            style={{
-              background: 'linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)',
-              boxShadow: '0 10px 40px rgba(46, 108, 246, 0.5)',
-            }}
-            aria-label="Ouvrir l'assistant Comptalyze"
-          >
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 260, damping: 20 }}
+              onClick={() => setIsOpen(true)}
+              className="fixed bottom-20 sm:bottom-6 right-4 z-[9999] w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-full text-white shadow-2xl transition-all duration-300 hover:scale-110 cursor-pointer group"
+              style={{
+                background: 'linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)',
+                boxShadow: '0 10px 40px rgba(46, 108, 246, 0.5)',
+              }}
+              aria-label="Ouvrir l'assistant Comptalyze"
+            >
             <MessageCircle className="w-7 h-7 group-hover:scale-110 transition-transform" />
           </motion.button>
         )}
@@ -646,8 +649,8 @@ export default function Chatbot({ user }: ChatbotProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className={`fixed bottom-6 right-4 z-[9998] flex flex-col rounded-2xl shadow-2xl transition-all duration-300 ${
-              isMinimized ? 'w-80 h-16' : 'w-[380px] max-w-[calc(100vw-2rem)] h-[600px] max-h-[calc(100vh-3rem)]'
+            className={`fixed bottom-0 sm:bottom-6 left-0 sm:left-auto right-0 sm:right-4 z-[9998] flex flex-col rounded-t-2xl sm:rounded-2xl shadow-2xl transition-all duration-300 ${
+              isMinimized ? 'w-full sm:w-80 h-16' : 'w-full sm:w-[380px] sm:max-w-[calc(100vw-2rem)] h-[calc(100vh-70px)] sm:h-[600px] sm:max-h-[calc(100vh-3rem)]'
             }`}
             style={{
               backgroundColor: '#0E0F12',
