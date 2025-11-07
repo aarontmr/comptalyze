@@ -65,7 +65,7 @@ Base de données : Supabase (PostgreSQL hébergé en Europe)
 
 ✅ **Ajout du contact DPO :**
 ```
-Pour toute question générale : contact@comptalyze.com
+Pour toute question générale : support@comptalyze.com
 Pour toute question RGPD : dpo@comptalyze.com
 ```
 
@@ -325,7 +325,7 @@ rel="noopener noreferrer"
 1. **Configurer l'email DPO**
    ```bash
    # Créer l'alias email
-   dpo@comptalyze.com → contact@comptalyze.com
+   dpo@comptalyze.com → support@comptalyze.com
    
    # Ou dédier une boîte mail
    # selon la taille et les besoins

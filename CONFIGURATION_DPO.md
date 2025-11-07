@@ -16,7 +16,7 @@ Le contact **dpo@comptalyze.com** a été ajouté sur toutes les pages légales 
 ### 2. **Mentions légales** (`/legal/mentions-legales`)
 ```
 Section "Contact et Délégué à la Protection des Données (DPO)"
-- Contact général : contact@comptalyze.com
+- Contact général : support@comptalyze.com
 - Contact RGPD : dpo@comptalyze.com
 ```
 
@@ -32,7 +32,7 @@ Section "Droits RGPD et contact DPO"
 
 ### Option 1 : Alias email (Recommandé pour démarrer)
 
-**Principe :** `dpo@comptalyze.com` redirige vers `contact@comptalyze.com`
+**Principe :** `dpo@comptalyze.com` redirige vers `support@comptalyze.com`
 
 #### Avec Gmail / Google Workspace
 
@@ -40,7 +40,7 @@ Section "Droits RGPD et contact DPO"
 2. **Groupes** → Créer un groupe
 3. **Nom** : DPO Comptalyze
 4. **Email** : `dpo@comptalyze.com`
-5. **Membres** : Ajoutez `contact@comptalyze.com`
+5. **Membres** : Ajoutez `support@comptalyze.com`
 6. **Paramètres** :
    - Type : Liste de diffusion
    - Qui peut publier : Externe (tout le monde)
@@ -51,7 +51,7 @@ Section "Droits RGPD et contact DPO"
 2. **Emails** → Alias / Redirections
 3. **Créer un alias** :
    ```
-   dpo@comptalyze.com → contact@comptalyze.com
+   dpo@comptalyze.com → support@comptalyze.com
    ```
 
 #### Avec Cloudflare Email Routing (Gratuit)
@@ -62,7 +62,7 @@ Section "Droits RGPD et contact DPO"
 4. **Destination addresses** → Ajoutez votre email de destination
 5. **Routing rules** → **Create address** :
    ```
-   dpo@comptalyze.com → contact@comptalyze.com
+   dpo@comptalyze.com → support@comptalyze.com
    ```
 
 ---

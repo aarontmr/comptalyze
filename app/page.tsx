@@ -766,7 +766,7 @@ export default function LandingPage() {
                 src="/chatbot-demo.svg"
                 alt="Interface du chatbot ComptaBot répondant à une question sur les charges déductibles"
                 width={800}
-                height={600}
+                height={535}
                 className="w-full h-auto"
                 priority={false}
               />
@@ -1354,9 +1354,9 @@ export default function LandingPage() {
             <Link href="/legal/mentions-legales" className="hover:text-white transition-colors">Mentions légales</Link>
             <Link href="/legal/cgv" className="hover:text-white transition-colors">CGV</Link>
             <Link href="/legal/politique-de-confidentialite" className="hover:text-white transition-colors">Politique de confidentialité</Link>
-            <Link href="mailto:contact@comptalyze.com" className="hover:text-white transition-colors">Contact</Link>
+            <Link href="mailto:support@comptalyze.com" className="hover:text-white transition-colors">Contact</Link>
           </div>
-          <div className="mt-6 text-sm text-gray-500">contact@comptalyze.com</div>
+          <div className="mt-6 text-sm text-gray-500">support@comptalyze.com</div>
           <div className="mt-1 text-xs text-gray-600">© 2025 Comptalyze. Tous droits réservés.</div>
         </div>
       </footer>

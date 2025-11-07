@@ -69,9 +69,15 @@ export default function FeedbackButton() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 hover:shadow-[0_0_30px_rgba(0,208,132,0.4)]"
+            className="flex items-center gap-2 px-4 py-3 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 hover:shadow-[0_0_30px_rgba(0,208,132,0.4)]"
             style={{
+              position: 'fixed',
+              bottom: '1.5rem',
+              right: '1.5rem',
+              zIndex: 50,
               background: 'linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)',
+              WebkitTransform: 'translateZ(0)',
+              transform: 'translateZ(0)',
             }}
             aria-label="Donner votre avis"
           >
@@ -103,7 +109,15 @@ export default function FeedbackButton() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               transition={{ type: 'spring', duration: 0.5 }}
-              className="fixed bottom-6 right-6 w-[calc(100vw-3rem)] sm:w-96 z-50"
+              className="w-[calc(100vw-3rem)] sm:w-96"
+              style={{
+                position: 'fixed',
+                bottom: '1.5rem',
+                right: '1.5rem',
+                zIndex: 50,
+                WebkitTransform: 'translateZ(0)',
+                transform: 'translateZ(0)',
+              }}
             >
               <div
                 className="rounded-2xl p-6 shadow-2xl relative"

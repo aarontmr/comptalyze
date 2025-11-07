@@ -184,7 +184,7 @@ RECAPTCHA_SECRET_KEY=your_recaptcha_secret_key_here
 
 **Créer l'alias :**
 ```bash
-dpo@comptalyze.com → contact@comptalyze.com
+dpo@comptalyze.com → support@comptalyze.com
 ```
 
 **Options :**
@@ -638,7 +638,7 @@ curl http://localhost:3000/data/testimonials.json
 
 ### Contacts utiles
 
-- **Technique** : contact@comptalyze.com
+- **Technique** : support@comptalyze.com
 - **RGPD** : dpo@comptalyze.com
 
 ---

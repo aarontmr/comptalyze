@@ -346,7 +346,7 @@ Session de développement exhaustive avec **8 objectifs majeurs** atteints et **
 
 - [ ] Alias `dpo@comptalyze.com` créé
   - Via Google Workspace, Cloudflare Email Routing, ou hébergeur
-- [ ] Redirection vers `contact@comptalyze.com` (ou boîte dédiée)
+- [ ] Redirection vers `support@comptalyze.com` (ou boîte dédiée)
 - [ ] Test envoi email à dpo@comptalyze.com
 
 ---

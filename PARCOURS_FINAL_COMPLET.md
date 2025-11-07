@@ -186,7 +186,7 @@ Toutes les sections sont maintenant organisées selon un parcours de conversion 
 #### 15. Footer
 - Copyright
 - Liens légaux : À propos, Mentions, Privacy, CGV
-- Contact : contact@comptalyze.com
+- Contact : support@comptalyze.com
 
 ---
 
