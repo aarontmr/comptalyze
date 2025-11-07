@@ -613,51 +613,39 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
               <label htmlFor="irMode" className="block text-sm font-medium text-gray-300 mb-2">
                 <span className="flex items-center gap-2">
                   Impôt sur le Revenu (IR)
-                  <div className="group relative">
-                    <Info className="w-4 h-4 text-gray-400 cursor-help" />
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-96 p-5 rounded-lg text-xs text-gray-300 bg-[#1a1d24] border border-[#00D084] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-xl">
-                      <p className="font-semibold text-white text-sm mb-3 flex items-center gap-2">
-                        💡 Qu&apos;est-ce que l&apos;Impôt sur le Revenu (IR) ?
+                  <button
+                    type="button"
+                    className="group relative inline-flex items-center justify-center"
+                    onClick={(e) => e.preventDefault()}
+                  >
+                    <Info className="w-4 h-4 text-gray-400 hover:text-[#00D084] cursor-help transition-colors" />
+                    <div className="absolute left-0 bottom-full mb-2 w-[280px] sm:w-80 p-4 rounded-lg text-xs text-gray-300 bg-[#1a1d24] border border-[#00D084] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none z-50 shadow-2xl">
+                      <p className="font-semibold text-white text-sm mb-2">
+                        💡 Qu&apos;est-ce que l&apos;IR ?
                       </p>
                       
-                      <p className="mb-3 text-gray-300 leading-relaxed">
-                        L&apos;<strong className="text-white">IR</strong> est un impôt prélevé sur vos <strong className="text-white">bénéfices</strong>, en plus des cotisations sociales URSSAF.
+                      <p className="mb-2 text-gray-300 text-xs">
+                        L&apos;<strong className="text-white">IR</strong> est un impôt sur vos <strong className="text-white">bénéfices</strong>, en plus des cotisations URSSAF.
                       </p>
 
-                      <div className="mb-3 p-3 rounded-lg bg-[#23272f] border border-gray-700">
-                        <p className="text-xs text-gray-400 mb-2"><strong className="text-gray-300">Exemple concret :</strong></p>
-                        <p className="text-xs text-gray-300">
-                          CA : 3 000€<br/>
-                          - Cotisations URSSAF : 636€<br/>
-                          = Net : 2 364€<br/>
-                          <span className="text-yellow-400">- IR : ~142€ (selon votre situation)</span><br/>
-                          <strong className="text-[#00D084]">= Net final : 2 222€</strong>
+                      <div className="mb-2 p-2 rounded bg-[#23272f] border border-gray-700">
+                        <p className="text-[10px] text-gray-400 mb-1"><strong>Exemple :</strong></p>
+                        <p className="text-[10px] text-gray-300 leading-relaxed">
+                          CA 3000€ - Cotis. 636€ = Net 2364€<br/>
+                          <span className="text-yellow-400">- IR ~142€</span> = <strong className="text-[#00D084]">Net final 2222€</strong>
                         </p>
                       </div>
 
-                      <p className="mb-2 text-gray-300">
-                        <strong className="text-white">3 options :</strong>
+                      <p className="mb-1 text-gray-300 text-xs">
+                        <strong>3 options :</strong>
                       </p>
-                      <ul className="space-y-2 ml-3 text-gray-400">
-                        <li className="flex gap-2">
-                          <span className="text-[#00D084]">•</span>
-                          <span><strong className="text-gray-300">Aucun :</strong> Voir uniquement les cotisations</span>
-                        </li>
-                        <li className="flex gap-2">
-                          <span className="text-blue-400">•</span>
-                          <span><strong className="text-gray-300">Versement libératoire :</strong> Taux fixe (1-2,2%) payé mensuellement</span>
-                        </li>
-                        <li className="flex gap-2">
-                          <span className="text-purple-400">•</span>
-                          <span><strong className="text-gray-300">Barème classique :</strong> Selon vos revenus totaux (famille, conjoint...)</span>
-                        </li>
+                      <ul className="space-y-1 text-[10px] text-gray-400">
+                        <li><span className="text-[#00D084]">•</span> <strong>Aucun :</strong> Juste cotisations</li>
+                        <li><span className="text-blue-400">•</span> <strong>Versement lib. :</strong> Taux fixe 1-2,2%</li>
+                        <li><span className="text-purple-400">•</span> <strong>Barème :</strong> Selon vos revenus</li>
                       </ul>
-
-                      <p className="mt-3 text-xs text-blue-400">
-                        💡 Choisissez le régime fiscal que vous utilisez réellement.
-                      </p>
                     </div>
-                  </div>
+                  </button>
                 </span>
               </label>
               <select
@@ -674,9 +662,6 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
                 <option value="vl">Versement libératoire (taux fixe)</option>
                 <option value="bareme">Barème classique (selon vos revenus)</option>
               </select>
-              <p className="mt-2 text-xs text-gray-500">
-                ℹ️ Passez votre souris sur l&apos;icône <Info className="inline w-3 h-3" /> pour comprendre chaque option
-              </p>
             </div>
 
             {/* Input taux de provision (si barème sélectionné) */}
