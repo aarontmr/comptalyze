@@ -72,3 +72,45 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Optimisations pour des transitions fluides */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Optimisation des performances pour les transitions */
+[data-transition] {
+  will-change: transform, opacity;
+}
+
+/* Smooth scroll global */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Optimisation du rendu pour les animations */
+@media (prefers-reduced-motion: no-preference) {
+  * {
+    scroll-behavior: smooth;
+  }
+  
+  /* Force l'accélération matérielle pour les transitions */
+  body,
+  #__next,
+  main {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+}
+
+/* Amélioration des transitions des liens */
+a {
+  transition: all 0.2s ease;
+}
+
+/* Amélioration visuelle pendant le chargement */
+.page-transition-loading {
+  pointer-events: none;
+}

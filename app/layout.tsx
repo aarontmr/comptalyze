@@ -4,6 +4,7 @@ import "./globals.css";
 import AnalyticsProvider from './components/AnalyticsProvider';
 import GoogleAnalytics from './components/GoogleAnalytics';
 import CookieConsent from './components/CookieConsent';
+import RouteProgressBar from './components/RouteProgressBar';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -175,7 +176,9 @@ export default function RootLayout({
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        style={{ transition: 'opacity 0.2s ease' }}
       >
+        <RouteProgressBar />
         <GoogleAnalytics />
         <CookieConsent />
         <AnalyticsProvider>
