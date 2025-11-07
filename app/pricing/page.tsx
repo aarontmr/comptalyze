@@ -65,17 +65,51 @@ export default function PricingPage() {
     }
   };
 
-  const handleCheckout = (plan: "pro" | "premium") => {
+  const handleCheckout = async (plan: "pro" | "premium") => {
     // Vérifier que l'utilisateur est connecté
     if (!user) {
       window.location.href = "/login";
       return;
     }
 
-    // Rediriger vers la page de checkout intégrée avec le cycle de facturation
-    const planWithCycle = billingCycle === "yearly" ? `${plan}_yearly` : plan;
-    // Utiliser une redirection relative au lieu d'une URL complète
-    window.location.href = `/checkout/${planWithCycle}`;
+    setLoading(plan);
+
+    try {
+      // Déterminer le plan avec cycle de facturation
+      const planWithCycle = billingCycle === "yearly" ? `${plan}_yearly` : plan;
+
+      // Obtenir le token de session
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        window.location.href = "/login";
+        return;
+      }
+
+      // Appeler l'API checkout pour créer une session Stripe Checkout hébergée
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ plan: planWithCycle }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || "Une erreur est survenue");
+        setLoading(null);
+        return;
+      }
+
+      // Rediriger vers Stripe Checkout (Apple Pay y sera disponible!)
+      window.location.href = data.url;
+    } catch (error) {
+      console.error("Erreur checkout:", error);
+      alert("Une erreur est survenue");
+      setLoading(null);
+    }
   };
 
   // Prix et économies - OFFRE DE LANCEMENT 🚀
