@@ -1022,106 +1022,227 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
         {loading ? (
           <p className="text-gray-400 text-center py-4">Chargement...</p>
         ) : records.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b" style={{ borderColor: '#2d3441' }}>
-                  <th className="text-left py-2 px-3 text-sm font-medium text-gray-400">Mois/Année</th>
-                  <th className="text-left py-2 px-3 text-sm font-medium text-gray-400">Activité</th>
-                  <th className="text-right py-2 px-3 text-sm font-medium text-gray-400">CA</th>
-                  <th className="text-right py-2 px-3 text-sm font-medium text-gray-400">Cotisations</th>
-                  <th className="text-right py-2 px-3 text-sm font-medium text-gray-400">Net</th>
-                  <th className="text-right py-2 px-3 text-sm font-medium text-gray-400">Croissance</th>
-                  <th className="text-center py-2 px-3 text-sm font-medium text-gray-400">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {records.map((record, index) => {
-                    const growthRate = calculateGrowthRate(index);
-                    const growthValue = growthRate ? parseFloat(growthRate) : null;
-                    const isPositive = growthValue !== null && growthValue > 0;
-                    const isNegative = growthValue !== null && growthValue < 0;
+          <>
+            {/* Version Desktop - Tableau */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b" style={{ borderColor: '#2d3441' }}>
+                    <th className="text-left py-2 px-3 text-sm font-medium text-gray-400">Mois/Année</th>
+                    <th className="text-left py-2 px-3 text-sm font-medium text-gray-400">Activité</th>
+                    <th className="text-right py-2 px-3 text-sm font-medium text-gray-400">CA</th>
+                    <th className="text-right py-2 px-3 text-sm font-medium text-gray-400">Cotisations</th>
+                    <th className="text-right py-2 px-3 text-sm font-medium text-gray-400">Net</th>
+                    <th className="text-right py-2 px-3 text-sm font-medium text-gray-400">Croissance</th>
+                    <th className="text-center py-2 px-3 text-sm font-medium text-gray-400">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {records.map((record, index) => {
+                      const growthRate = calculateGrowthRate(index);
+                      const growthValue = growthRate ? parseFloat(growthRate) : null;
+                      const isPositive = growthValue !== null && growthValue > 0;
+                      const isNegative = growthValue !== null && growthValue < 0;
 
-                  return (
-                    <tr
-                      key={record.id}
-                      style={{
-                        backgroundColor: index % 2 === 0 ? 'transparent' : 'rgba(45, 52, 65, 0.3)',
-                      }}
-                    >
-                      <td className="py-2 px-3 text-sm text-gray-300">
-                        {MONTHS[record.month - 1]} {record.year}
-                      </td>
-                      <td className="py-2 px-3 text-sm text-gray-300">{record.activity_type}</td>
-                      <td className="py-2 px-3 text-sm text-gray-300 text-right">
-                        {formatEuro(Number(record.amount_eur))} €
-                      </td>
-                      <td className="py-2 px-3 text-sm text-gray-300 text-right">
-                        {formatEuro(Number(record.computed_contrib_eur))} €
-                      </td>
-                      <td className="py-2 px-3 text-sm font-medium text-right" style={{ color: '#00D084' }}>
-                        {formatEuro(Number(record.computed_net_eur))} €
-                      </td>
-                      <td className="py-2 px-3 text-sm font-medium text-right">
-                        {growthRate === null ? (
-                          <span className="text-gray-500">-</span>
-                        ) : growthRate === '∞' ? (
-                          <span style={{ color: '#00D084' }}>+∞</span>
-                        ) : (
-                          <span
+                    return (
+                      <tr
+                        key={record.id}
+                        style={{
+                          backgroundColor: index % 2 === 0 ? 'transparent' : 'rgba(45, 52, 65, 0.3)',
+                        }}
+                      >
+                        <td className="py-2 px-3 text-sm text-gray-300">
+                          {MONTHS[record.month - 1]} {record.year}
+                        </td>
+                        <td className="py-2 px-3 text-sm text-gray-300">{record.activity_type}</td>
+                        <td className="py-2 px-3 text-sm text-gray-300 text-right">
+                          {formatEuro(Number(record.amount_eur))} €
+                        </td>
+                        <td className="py-2 px-3 text-sm text-gray-300 text-right">
+                          {formatEuro(Number(record.computed_contrib_eur))} €
+                        </td>
+                        <td className="py-2 px-3 text-sm font-medium text-right" style={{ color: '#00D084' }}>
+                          {formatEuro(Number(record.computed_net_eur))} €
+                        </td>
+                        <td className="py-2 px-3 text-sm font-medium text-right">
+                          {growthRate === null ? (
+                            <span className="text-gray-500">-</span>
+                          ) : growthRate === '∞' ? (
+                            <span style={{ color: '#00D084' }}>+∞</span>
+                          ) : (
+                            <span
+                              style={{
+                                color: isPositive ? '#00D084' : isNegative ? '#ef4444' : '#9ca3af',
+                              }}
+                            >
+                              {isPositive ? '+' : ''}{growthRate}%
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-2 px-3 text-center">
+                          <button
+                            onClick={() => deleteRecord(record.id)}
+                            disabled={deleting === record.id}
+                            className="inline-flex items-center justify-center p-2 rounded-lg transition-all duration-200 hover:bg-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
                             style={{
-                              color: isPositive ? '#00D084' : isNegative ? '#ef4444' : '#9ca3af',
+                              color: deleting === record.id ? '#9ca3af' : '#ef4444',
                             }}
+                            title="Supprimer cet enregistrement"
                           >
-                            {isPositive ? '+' : ''}{growthRate}%
-                          </span>
-                        )}
-                      </td>
-                      <td className="py-2 px-3 text-center">
-                        <button
-                          onClick={() => deleteRecord(record.id)}
-                          disabled={deleting === record.id}
-                          className="inline-flex items-center justify-center p-2 rounded-lg transition-all duration-200 hover:bg-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
-                          style={{
-                            color: deleting === record.id ? '#9ca3af' : '#ef4444',
-                          }}
-                          title="Supprimer cet enregistrement"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-              <tfoot>
-                <tr className="border-t" style={{ borderColor: '#2d3441' }}>
-                  <td colSpan={2} className="py-3 px-3 text-sm font-semibold text-white">
-                    CA Annuel (total)
-                  </td>
-                  <td className="py-3 px-3 text-sm font-semibold text-white text-right">
-                    {formatEuro(
-                      records.reduce((sum, record) => sum + Number(record.amount_eur), 0)
-                    )} €
-                  </td>
-                  <td className="py-3 px-3 text-sm font-semibold text-gray-400 text-right">
-                    {formatEuro(
-                      records.reduce((sum, record) => sum + Number(record.computed_contrib_eur), 0)
-                    )} €
-                  </td>
-                  <td className="py-3 px-3 text-sm font-semibold text-right" style={{ color: '#00D084' }}>
-                    {formatEuro(
-                      records.reduce((sum, record) => sum + Number(record.computed_net_eur), 0)
-                    )} €
-                  </td>
-                  <td className="py-3 px-3 text-sm font-semibold text-gray-500 text-right">
-                    -
-                  </td>
-                  <td className="py-3 px-3"></td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+                <tfoot>
+                  <tr className="border-t" style={{ borderColor: '#2d3441' }}>
+                    <td colSpan={2} className="py-3 px-3 text-sm font-semibold text-white">
+                      CA Annuel (total)
+                    </td>
+                    <td className="py-3 px-3 text-sm font-semibold text-white text-right">
+                      {formatEuro(
+                        records.reduce((sum, record) => sum + Number(record.amount_eur), 0)
+                      )} €
+                    </td>
+                    <td className="py-3 px-3 text-sm font-semibold text-gray-400 text-right">
+                      {formatEuro(
+                        records.reduce((sum, record) => sum + Number(record.computed_contrib_eur), 0)
+                      )} €
+                    </td>
+                    <td className="py-3 px-3 text-sm font-semibold text-right" style={{ color: '#00D084' }}>
+                      {formatEuro(
+                        records.reduce((sum, record) => sum + Number(record.computed_net_eur), 0)
+                      )} €
+                    </td>
+                    <td className="py-3 px-3 text-sm font-semibold text-gray-500 text-right">
+                      -
+                    </td>
+                    <td className="py-3 px-3"></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+            {/* Version Mobile - Cartes */}
+            <div className="md:hidden space-y-3">
+              {records.map((record, index) => {
+                const growthRate = calculateGrowthRate(index);
+                const growthValue = growthRate ? parseFloat(growthRate) : null;
+                const isPositive = growthValue !== null && growthValue > 0;
+                const isNegative = growthValue !== null && growthValue < 0;
+
+                return (
+                  <div
+                    key={record.id}
+                    className="p-4 rounded-lg"
+                    style={{
+                      backgroundColor: '#1a1d24',
+                      border: '1px solid #2d3441',
+                    }}
+                  >
+                    {/* En-tête avec date et action */}
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <p className="text-sm font-semibold text-white">
+                          {MONTHS[record.month - 1]} {record.year}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-0.5">{record.activity_type}</p>
+                      </div>
+                      <button
+                        onClick={() => deleteRecord(record.id)}
+                        disabled={deleting === record.id}
+                        className="inline-flex items-center justify-center p-2 rounded-lg transition-all duration-200 hover:bg-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                        style={{
+                          color: deleting === record.id ? '#9ca3af' : '#ef4444',
+                        }}
+                        title="Supprimer"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {/* Données principales */}
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-gray-400">CA</span>
+                        <span className="text-sm font-medium text-white">
+                          {formatEuro(Number(record.amount_eur))} €
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-gray-400">Cotisations</span>
+                        <span className="text-sm text-gray-300">
+                          {formatEuro(Number(record.computed_contrib_eur))} €
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center pt-1 border-t" style={{ borderColor: '#2d3441' }}>
+                        <span className="text-xs font-medium text-gray-300">Net</span>
+                        <span className="text-base font-semibold" style={{ color: '#00D084' }}>
+                          {formatEuro(Number(record.computed_net_eur))} €
+                        </span>
+                      </div>
+                      {growthRate !== null && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs text-gray-400">Croissance</span>
+                          {growthRate === '∞' ? (
+                            <span className="text-sm font-medium" style={{ color: '#00D084' }}>+∞</span>
+                          ) : (
+                            <span
+                              className="text-sm font-medium"
+                              style={{
+                                color: isPositive ? '#00D084' : isNegative ? '#ef4444' : '#9ca3af',
+                              }}
+                            >
+                              {isPositive ? '+' : ''}{growthRate}%
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* Total mobile */}
+              <div
+                className="p-4 rounded-lg"
+                style={{
+                  backgroundColor: '#23272f',
+                  border: '1px solid #00D084',
+                }}
+              >
+                <p className="text-sm font-semibold text-white mb-3">CA Annuel (total)</p>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-400">CA Total</span>
+                    <span className="text-sm font-semibold text-white">
+                      {formatEuro(
+                        records.reduce((sum, record) => sum + Number(record.amount_eur), 0)
+                      )} €
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-400">Cotisations Total</span>
+                    <span className="text-sm text-gray-300">
+                      {formatEuro(
+                        records.reduce((sum, record) => sum + Number(record.computed_contrib_eur), 0)
+                      )} €
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center pt-2 border-t" style={{ borderColor: '#2d3441' }}>
+                    <span className="text-xs font-medium text-gray-300">Net Total</span>
+                    <span className="text-base font-semibold" style={{ color: '#00D084' }}>
+                      {formatEuro(
+                        records.reduce((sum, record) => sum + Number(record.computed_net_eur), 0)
+                      )} €
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
         ) : (
           <p className="text-gray-400 text-center py-4">
             Aucun historique enregistré pour le moment.
