@@ -188,10 +188,10 @@ export default function TestimonialsSection() {
                 {/* Profil utilisateur */}
                 <div className="flex items-center gap-4 pt-6 border-t" style={{ borderColor: '#2d3441' }}>
                   <div
-                    className="relative w-14 h-14 rounded-full overflow-hidden flex-shrink-0 ring-2"
+                    className="relative w-14 h-14 rounded-full overflow-hidden flex-shrink-0"
                     style={{ 
                       backgroundColor: '#2d3441',
-                      ringColor: 'rgba(0, 208, 132, 0.3)'
+                      boxShadow: '0 0 0 2px rgba(0, 208, 132, 0.3)'
                     }}
                   >
                     {/* Avatar avec fallback */}
