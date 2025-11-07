@@ -1128,10 +1128,16 @@ export default function LandingPage() {
       <section className="relative px-4 py-12 sm:py-16 md:py-20">
         <div className="mx-auto max-w-5xl text-center">
           <FadeIn delay={0} y={8} duration={0.5}>
+            {/* Badge Offre de lancement */}
+            <div className="mb-6">
+              <span className="inline-flex items-center gap-2 text-sm px-5 py-2.5 rounded-full font-medium animate-pulse" style={{ backgroundColor: "rgba(0, 208, 132, 0.15)", color: "#00D084", border: "1px solid rgba(0, 208, 132, 0.3)" }}>
+                🚀 Offre de lancement exclusive - Jusqu'à -34% !
+              </span>
+            </div>
             <h2 className="text-3xl font-semibold sm:text-4xl">
               Des plans adaptés à votre activité
             </h2>
-            <p className="mt-3 text-gray-300">Commencez gratuitement, passez au Pro quand vous en avez besoin.</p>
+            <p className="mt-3 text-gray-300">Profitez de nos prix de lancement réduits pour nos premiers clients.</p>
           </FadeIn>
         </div>
 
@@ -1185,13 +1191,24 @@ export default function LandingPage() {
                   boxShadow: "0 0 40px rgba(46,108,246,0.18)",
                 }}
               >
-                <div className="absolute right-4 top-4 rounded-md px-2 py-1 text-xs font-medium" style={{ backgroundColor: "#2E6CF6" }}>
-                  Recommandé
+                <div className="absolute right-4 top-4 flex gap-2">
+                  <span className="rounded-md px-2 py-1 text-xs font-medium" style={{ backgroundColor: "#00D084", color: "#0e0f12" }}>
+                    🚀 Offre de lancement
+                  </span>
+                  <span className="rounded-md px-2 py-1 text-xs font-medium" style={{ backgroundColor: "#2E6CF6" }}>
+                    Recommandé
+                  </span>
                 </div>
                 <div className="mb-2 text-sm font-medium" style={{ color: "#60a5fa" }}>Pro</div>
                 <div className="mb-4">
-                  <span className="text-4xl font-bold">5,90 €</span>
+                  <div className="flex items-baseline gap-2 mb-1">
+                    <span className="text-4xl font-bold">3,90 €</span>
+                    <span className="text-xl text-gray-500 line-through">5,90 €</span>
+                  </div>
                   <span className="text-gray-400">/mois</span>
+                  <div className="mt-1 text-sm font-semibold" style={{ color: "#00D084" }}>
+                    💰 Économisez 2 € par mois !
+                  </div>
                 </div>
                 <div className="space-y-4 min-h-[280px]">
                   <div className="text-xs text-gray-500 mb-3">FONCTIONNALITÉS CLÉS</div>
@@ -1237,15 +1254,26 @@ export default function LandingPage() {
           <motion.div variants={fadeInVariant}>
             <ScaleOnHover>
               <div className="rounded-2xl p-6 relative" style={{ backgroundColor: "#14161b", border: "1px solid rgba(0,208,132,0.3)" }}>
-                <div className="absolute right-4 top-4 rounded-md px-2 py-1 text-xs font-medium" style={{ background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)" }}>
-                  Premium
+                <div className="absolute right-4 top-4 flex gap-2">
+                  <span className="rounded-md px-2 py-1 text-xs font-medium" style={{ backgroundColor: "#00D084", color: "#0e0f12" }}>
+                    🚀 Offre de lancement
+                  </span>
+                  <span className="rounded-md px-2 py-1 text-xs font-medium" style={{ background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)" }}>
+                    Premium
+                  </span>
                 </div>
                 <div className="mb-2 text-sm font-medium text-transparent bg-clip-text" style={{ backgroundImage: "linear-gradient(90deg, #00D084, #2E6CF6)" }}>
                   Premium
                 </div>
                 <div className="mb-4">
-                  <span className="text-4xl font-bold">9,90 €</span>
+                  <div className="flex items-baseline gap-2 mb-1">
+                    <span className="text-4xl font-bold">7,90 €</span>
+                    <span className="text-xl text-gray-500 line-through">9,90 €</span>
+                  </div>
                   <span className="text-gray-400">/mois</span>
+                  <div className="mt-1 text-sm font-semibold" style={{ color: "#00D084" }}>
+                    💰 Économisez 2 € par mois !
+                  </div>
                 </div>
                 <div className="space-y-4 min-h-[280px]">
                   <div className="text-xs text-gray-500 mb-3">TOUT PRO +</div>
