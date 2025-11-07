@@ -198,13 +198,19 @@ export default function DashboardLayout({
       >
       {/* Sidebar - Desktop */}
       <aside
-        className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 z-40"
-        style={{ backgroundColor: '#111216', borderRight: '1px solid rgba(45, 52, 65, 0.5)' }}
+        className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:top-0 lg:bottom-0 lg:left-0 z-40"
+        style={{ 
+          backgroundColor: '#111216', 
+          borderRight: '1px solid rgba(45, 52, 65, 0.5)',
+          height: '100vh',
+          maxHeight: '100vh',
+          overflowY: 'auto'
+        }}
         data-tutorial="navigation"
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full min-h-0">
           {/* Logo */}
-          <div className="flex flex-col items-center justify-center h-20 px-6 border-b border-gray-800">
+          <div className="flex flex-col items-center justify-center h-20 px-6 border-b border-gray-800 flex-shrink-0">
             <Link href="/dashboard" className="flex items-center">
               <Image
                 src={logo}
@@ -238,7 +244,7 @@ export default function DashboardLayout({
           </div>
 
           {/* Lien vers l'accueil */}
-          <div className="px-4 py-2 border-b border-gray-800">
+          <div className="px-4 py-2 border-b border-gray-800 flex-shrink-0">
             <Link
               href="/"
               className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition-all duration-200"
@@ -249,7 +255,7 @@ export default function DashboardLayout({
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+          <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto min-h-0">
             {filteredNavItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
@@ -326,7 +332,7 @@ export default function DashboardLayout({
           </nav>
 
           {/* User info & Sign out */}
-          <div className="px-4 py-4 border-t border-gray-800">
+          <div className="px-4 py-4 border-t border-gray-800 flex-shrink-0">
             <div className="mb-3 px-4 py-2 rounded-lg" style={{ backgroundColor: '#16181d' }}>
               <p className="text-xs text-gray-400 mb-1">Connecté en tant que</p>
               <p className="text-sm text-white font-medium truncate">{user?.email}</p>
@@ -357,14 +363,20 @@ export default function DashboardLayout({
 
       {/* Mobile sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out lg:hidden ${
+        className={`fixed top-0 bottom-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out lg:hidden ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
-        style={{ backgroundColor: '#111216', borderRight: '1px solid rgba(45, 52, 65, 0.5)' }}
+        style={{ 
+          backgroundColor: '#111216', 
+          borderRight: '1px solid rgba(45, 52, 65, 0.5)',
+          height: '100vh',
+          maxHeight: '100vh',
+          overflowY: 'auto'
+        }}
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full min-h-0">
           {/* Mobile header */}
-          <div className="flex items-center justify-between h-16 px-6 border-b border-gray-800">
+          <div className="flex items-center justify-between h-16 px-6 border-b border-gray-800 flex-shrink-0">
             <div className="flex flex-col">
               <Link href="/dashboard" className="flex items-center">
                 <Image
@@ -406,7 +418,7 @@ export default function DashboardLayout({
           </div>
 
           {/* Mobile - Lien vers l'accueil */}
-          <div className="px-4 py-2 border-b border-gray-800">
+          <div className="px-4 py-2 border-b border-gray-800 flex-shrink-0">
             <Link
               href="/"
               onClick={() => setSidebarOpen(false)}
@@ -418,7 +430,7 @@ export default function DashboardLayout({
           </div>
 
           {/* Mobile navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+          <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto min-h-0">
             {filteredNavItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
@@ -500,7 +512,7 @@ export default function DashboardLayout({
           </nav>
 
           {/* Mobile user info & Sign out */}
-          <div className="px-4 py-4 border-t border-gray-800">
+          <div className="px-4 py-4 border-t border-gray-800 flex-shrink-0">
             <div className="mb-3 px-4 py-2 rounded-lg" style={{ backgroundColor: '#16181d' }}>
               <p className="text-xs text-gray-400 mb-1">Connecté en tant que</p>
               <p className="text-sm text-white font-medium truncate">{user?.email}</p>
