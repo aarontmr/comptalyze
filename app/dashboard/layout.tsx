@@ -518,7 +518,49 @@ export default function DashboardLayout({
 
       {/* Main content */}
       <div className="flex-1 flex flex-col lg:pl-64">
-        {/* Desktop layout - keep existing */}
+        {/* Mobile Header avec burger */}
+        <header className="lg:hidden sticky top-0 z-30 flex items-center justify-between h-16 px-4 bg-[#111216] border-b border-gray-800">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="flex items-center justify-center w-10 h-10 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/50 transition-all duration-200 active:scale-95"
+          >
+            <Menu className="w-6 h-6" />
+          </button>
+          
+          <Link href="/dashboard" className="flex items-center">
+            <Image
+              src={logo}
+              alt="Comptalyze"
+              width={140}
+              height={35}
+              className="h-8 w-auto"
+              priority
+            />
+          </Link>
+
+          {/* Badge Essai Mobile Header */}
+          {subscription.isTrial && subscription.trialEndsAt && (() => {
+            const trialEnd = new Date(subscription.trialEndsAt);
+            const daysLeft = Math.ceil((trialEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+            return (
+              <div
+                className="px-2 py-1 rounded-full text-[10px] font-bold"
+                style={{
+                  background: daysLeft <= 1 
+                    ? 'linear-gradient(135deg, #F59E0B, #EF4444)'
+                    : subscription.isPremium
+                    ? 'linear-gradient(135deg, #8B5CF6, #3B82F6)'
+                    : 'linear-gradient(135deg, #00D084, #2E6CF6)',
+                  color: 'white',
+                }}
+              >
+                {daysLeft}j
+              </div>
+            );
+          })() || <div className="w-10" />}
+        </header>
+
+        {/* Desktop layout */}
         <div className="hidden lg:block">
           <main className="flex-1 overflow-y-auto">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -527,9 +569,13 @@ export default function DashboardLayout({
           </main>
         </div>
 
-        {/* Mobile layout - use MobileShell */}
+        {/* Mobile layout avec padding optimisé */}
         <div className="lg:hidden">
-          {children}
+          <main className="flex-1 overflow-y-auto">
+            <div className="px-4 py-6">
+              {children}
+            </div>
+          </main>
         </div>
       </div>
 
