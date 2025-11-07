@@ -34,6 +34,7 @@ interface Invoice {
 export default function DashboardOverview() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const { preferences } = useUserPreferences();
   const [stats, setStats] = useState({
     totalCA: 0,
     totalNet: 0,
