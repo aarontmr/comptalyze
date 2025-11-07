@@ -5,11 +5,7 @@
       "schedule": "0 0 2 * *"
     },
     {
-      "path": "/api/cron/check-trials",
-      "schedule": "0 2 * * *"
-    },
-    {
-      "path": "/api/cron/send-upgrade-emails",
+      "path": "/api/cron/daily-tasks",
       "schedule": "0 10 * * *"
     }
   ]

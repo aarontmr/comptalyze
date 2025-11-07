@@ -264,9 +264,9 @@ export default function AboutPage() {
                 Une question, une idée, un partenariat ? Écrivez-nous :{" "}
                 <a
                   className="underline hover:text-gray-100 text-[#00D084] transition-colors"
-                  href="mailto:contact@comptalyze.com"
+                  href="mailto:support@comptalyze.com"
                 >
-                  contact@comptalyze.com
+                  support@comptalyze.com
                 </a>
               </p>
             </Card>

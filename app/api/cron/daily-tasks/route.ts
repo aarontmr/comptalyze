@@ -15,6 +15,11 @@ const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 const resend = new Resend(process.env.RESEND_API_KEY);
 const CRON_SECRET = process.env.CRON_SECRET;
 
+/**
+ * Cron combiné pour tâches quotidiennes :
+ * 1. Vérifier les essais gratuits expirés
+ * 2. Envoyer les emails marketing J+3 avec code promo
+ */
 export async function GET(req: NextRequest) {
   try {
     // Vérifier le secret CRON
@@ -25,119 +30,142 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://comptalyze.com';
-    const fromEmail = process.env.COMPANY_FROM_EMAIL || 'Comptalyze <no-reply@comptalyze.com>';
+    const results = {
+      checkTrials: { processed: 0, deactivated: 0 },
+      upgradeEmails: { sent: 0, errors: 0 }
+    };
 
-    // Calculer la date d'il y a 3 jours (à minuit pour précision)
-    const threeDaysAgo = new Date();
-    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-    threeDaysAgo.setHours(0, 0, 0, 0);
-
-    const fourDaysAgo = new Date();
-    fourDaysAgo.setDate(fourDaysAgo.getDate() - 4);
-    fourDaysAgo.setHours(0, 0, 0, 0);
-
-    // Récupérer tous les utilisateurs créés il y a exactement 3 jours
-    const { data: { users }, error: usersError } = await supabaseAdmin.auth.admin.listUsers();
-
-    if (usersError) {
-      console.error('Erreur lors de la récupération des utilisateurs:', usersError);
-      return NextResponse.json({ error: 'Erreur lors de la récupération des utilisateurs' }, { status: 500 });
-    }
-
-    if (!users || users.length === 0) {
-      return NextResponse.json({ message: 'Aucun utilisateur trouvé' });
-    }
-
-    // Filtrer les utilisateurs créés il y a 3 jours et qui sont toujours gratuits
-    const targetUsers = users.filter(user => {
-      const createdAt = new Date(user.created_at);
-      // Utilisateur créé il y a 3 jours (entre 3 et 4 jours)
-      const isThreeDaysOld = createdAt >= fourDaysAgo && createdAt < threeDaysAgo;
-      // Utilisateur gratuit (pas de plan payant)
-      const isFree = !user.user_metadata?.stripe_customer_id && 
-                     !user.user_metadata?.is_pro && 
-                     !user.user_metadata?.is_premium &&
-                     !user.user_metadata?.premium_trial_started_at;
-      
-      return isThreeDaysOld && isFree && user.email;
-    });
-
-    if (targetUsers.length === 0) {
-      return NextResponse.json({ message: 'Aucun utilisateur éligible pour l\'email de 3 jours' });
-    }
-
-    let sentCount = 0;
-    let errorCount = 0;
-    const errors: string[] = [];
-
-    // Vérifier si la table marketing_emails existe, sinon créer en mémoire
-    const sentEmails = new Set<string>();
-
-    // Essayer de récupérer les emails déjà envoyés (si table existe)
+    // ==============================================
+    // TÂCHE 1 : Vérifier les essais gratuits expirés
+    // ==============================================
     try {
-      const { data: existingEmails } = await supabaseAdmin
-        .from('marketing_emails')
-        .select('user_id')
-        .eq('email_type', 'upgrade_day3');
+      const { data: { users }, error: usersError } = await supabaseAdmin.auth.admin.listUsers();
 
-      if (existingEmails) {
-        existingEmails.forEach(e => sentEmails.add(e.user_id));
+      if (usersError) {
+        console.error('Erreur lors de la récupération des utilisateurs:', usersError);
+      } else if (users) {
+        for (const user of users) {
+          const trialStartedAt = user.user_metadata?.premium_trial_started_at;
+          
+          if (trialStartedAt) {
+            const trialStart = new Date(trialStartedAt);
+            const now = new Date();
+            const daysSinceStart = Math.floor((now.getTime() - trialStart.getTime()) / (1000 * 60 * 60 * 24));
+
+            results.checkTrials.processed++;
+
+            // Si l'essai a plus de 3 jours, le désactiver
+            if (daysSinceStart > 3) {
+              await supabaseAdmin.auth.admin.updateUserById(user.id, {
+                user_metadata: {
+                  ...user.user_metadata,
+                  premium_trial_started_at: null,
+                }
+              });
+              results.checkTrials.deactivated++;
+            }
+          }
+        }
       }
-    } catch (e) {
-      // Table n'existe pas encore, pas grave
-      console.log('Table marketing_emails pas encore créée, sera créée plus tard');
+    } catch (error) {
+      console.error('Erreur dans check-trials:', error);
     }
 
-    for (const user of targetUsers) {
-      try {
-        // Vérifier si email déjà envoyé
-        if (sentEmails.has(user.id)) {
-          continue;
-        }
+    // ==============================================
+    // TÂCHE 2 : Envoyer emails marketing J+3
+    // ==============================================
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://comptalyze.com';
+      const fromEmail = process.env.COMPANY_FROM_EMAIL || 'Comptalyze <no-reply@comptalyze.com>';
 
-        const firstName = user.user_metadata?.first_name || user.email?.split('@')[0] || 'utilisateur';
+      // Calculer la date d'il y a 3 jours
+      const threeDaysAgo = new Date();
+      threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+      threeDaysAgo.setHours(0, 0, 0, 0);
 
-        // Envoyer l'email marketing
-        await resend.emails.send({
-          from: fromEmail,
-          to: user.email!,
-          subject: '🎁 Votre code exclusif -5% vous attend !',
-          html: generateUpgradeEmailHTML(firstName, baseUrl),
+      const fourDaysAgo = new Date();
+      fourDaysAgo.setDate(fourDaysAgo.getDate() - 4);
+      fourDaysAgo.setHours(0, 0, 0, 0);
+
+      // Récupérer tous les utilisateurs
+      const { data: { users: allUsers }, error: usersError } = await supabaseAdmin.auth.admin.listUsers();
+
+      if (!usersError && allUsers) {
+        // Filtrer les utilisateurs créés il y a 3 jours et gratuits
+        const targetUsers = allUsers.filter(user => {
+          const createdAt = new Date(user.created_at);
+          const isThreeDaysOld = createdAt >= fourDaysAgo && createdAt < threeDaysAgo;
+          const isFree = !user.user_metadata?.stripe_customer_id && 
+                         !user.user_metadata?.is_pro && 
+                         !user.user_metadata?.is_premium &&
+                         !user.user_metadata?.premium_trial_started_at;
+          
+          return isThreeDaysOld && isFree && user.email;
         });
 
-        // Marquer comme envoyé (si table existe)
+        // Vérifier les emails déjà envoyés
+        const sentEmails = new Set<string>();
         try {
-          await supabaseAdmin
+          const { data: existingEmails } = await supabaseAdmin
             .from('marketing_emails')
-            .insert({
-              user_id: user.id,
-              email_type: 'upgrade_day3',
-              sent_at: new Date().toISOString(),
-              email_content: 'upgrade_day3_promo'
-            });
+            .select('user_id')
+            .eq('email_type', 'upgrade_day3');
+
+          if (existingEmails) {
+            existingEmails.forEach((e: any) => sentEmails.add(e.user_id));
+          }
         } catch (e) {
-          // Ignorer si table n'existe pas
+          // Table n'existe pas encore
         }
 
-        sentCount++;
-      } catch (error: any) {
-        console.error(`Erreur pour l'utilisateur ${user.id}:`, error);
-        errorCount++;
-        errors.push(`${user.email}: ${error.message}`);
+        // Envoyer les emails
+        for (const user of targetUsers) {
+          if (sentEmails.has(user.id)) {
+            continue;
+          }
+
+          try {
+            const firstName = user.user_metadata?.first_name || user.email?.split('@')[0] || 'utilisateur';
+
+            await resend.emails.send({
+              from: fromEmail,
+              to: user.email!,
+              subject: '🎁 Votre code exclusif -5% vous attend !',
+              html: generateUpgradeEmailHTML(firstName, baseUrl),
+            });
+
+            // Marquer comme envoyé
+            try {
+              await supabaseAdmin
+                .from('marketing_emails')
+                .insert({
+                  user_id: user.id,
+                  email_type: 'upgrade_day3',
+                  sent_at: new Date().toISOString(),
+                  email_content: 'upgrade_day3_promo'
+                });
+            } catch (e) {
+              // Ignorer si table n'existe pas
+            }
+
+            results.upgradeEmails.sent++;
+          } catch (error) {
+            console.error(`Erreur email pour ${user.email}:`, error);
+            results.upgradeEmails.errors++;
+          }
+        }
       }
+    } catch (error) {
+      console.error('Erreur dans send-upgrade-emails:', error);
     }
 
     return NextResponse.json({
       success: true,
-      sentCount,
-      errorCount,
-      targetUsersCount: targetUsers.length,
-      errors: errors.length > 0 ? errors : undefined,
+      results
     });
 
   } catch (error: any) {
-    console.error('Erreur dans le cron send-upgrade-emails:', error);
+    console.error('Erreur dans daily-tasks:', error);
     return NextResponse.json({ error: error.message || 'Erreur interne' }, { status: 500 });
   }
 }
@@ -182,7 +210,7 @@ function generateUpgradeEmailHTML(firstName: string, baseUrl: string): string {
           LAUNCH5
         </div>
         <p style="color: #666; font-size: 14px; margin: 10px 0 0 0;">
-          Valable jusqu'au 31 janvier 2025
+          Cumulable avec l'offre de lancement !
         </p>
       </div>
 
@@ -242,14 +270,14 @@ function generateUpgradeEmailHTML(firstName: string, baseUrl: string): string {
 
       <!-- Prix avec promo -->
       <div style="background-color: #f8f9fa; border-radius: 12px; padding: 25px; margin: 30px 0; text-align: center;">
-        <p style="color: #666; font-size: 14px; margin: 0 0 10px 0;">Plan Pro - Offre de lancement</p>
+        <p style="color: #666; font-size: 14px; margin: 0 0 10px 0;">Plan Pro - Offre de lancement + LAUNCH5</p>
         <div style="margin: 15px 0;">
-          <span style="color: #999; font-size: 24px; text-decoration: line-through; margin-right: 10px;">3,90 €</span>
+          <span style="color: #999; font-size: 20px; text-decoration: line-through; margin-right: 10px;">5,90 €</span>
           <span style="color: #00D084; font-size: 36px; font-weight: 700;">3,71 €</span>
           <span style="color: #666; font-size: 18px;">/mois</span>
         </div>
         <p style="color: #00D084; font-size: 14px; font-weight: 600; margin: 5px 0 0 0;">
-          Avec le code LAUNCH5 : -5% soit 2,28€ d'économie supplémentaire !
+          -34% offre lancement + -5% code LAUNCH5 = 2,19€ d'économie !
         </p>
       </div>
 
@@ -277,14 +305,14 @@ function generateUpgradeEmailHTML(firstName: string, baseUrl: string): string {
           </li>
         </ul>
         <div style="text-align: center; margin-top: 20px;">
-          <p style="color: #666; font-size: 14px; margin: 0 0 10px 0;">Plan Premium - Offre de lancement</p>
+          <p style="color: #666; font-size: 14px; margin: 0 0 10px 0;">Plan Premium - Offre de lancement + LAUNCH5</p>
           <div>
-            <span style="color: #999; font-size: 20px; text-decoration: line-through; margin-right: 8px;">7,90 €</span>
+            <span style="color: #999; font-size: 20px; text-decoration: line-through; margin-right: 8px;">9,90 €</span>
             <span style="color: #2E6CF6; font-size: 32px; font-weight: 700;">7,51 €</span>
             <span style="color: #666; font-size: 16px;">/mois</span>
           </div>
           <p style="color: #2E6CF6; font-size: 13px; font-weight: 600; margin: 5px 0 0 0;">
-            Avec LAUNCH5 : -5% supplémentaire
+            Économie totale : 2,39€/mois !
           </p>
         </div>
       </div>
@@ -305,21 +333,27 @@ function generateUpgradeEmailHTML(firstName: string, baseUrl: string): string {
         </div>
       </div>
 
-      <!-- CTA Principal -->
-      <div style="text-align: center; margin: 40px 0;">
-        <a href="${baseUrl}/pricing" style="display: inline-block; background: linear-gradient(135deg, #00D084 0%, #2E6CF6 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 10px; font-size: 18px; font-weight: 600; box-shadow: 0 4px 15px rgba(46,108,246,0.3);">
-          Découvrir les plans
-        </a>
-        <p style="color: #999; font-size: 13px; margin: 15px 0 0 0;">
-          Sans engagement • Annulable à tout moment
-        </p>
-      </div>
-
-      <!-- Rappel du code -->
-      <div style="background-color: #fffbeb; border: 1px solid #fbbf24; border-radius: 8px; padding: 15px; text-align: center; margin: 30px 0;">
-        <p style="color: #92400e; font-size: 14px; margin: 0;">
-          💡 <strong>N'oubliez pas !</strong> Utilisez le code <strong style="background-color: #fef3c7; padding: 4px 8px; border-radius: 4px;">LAUNCH5</strong> lors du paiement pour -5% supplémentaire
-        </p>
+      <!-- Stats -->
+      <div style="background-color: #f8f9fa; border-radius: 10px; padding: 25px; margin: 30px 0;">
+        <div style="text-align: center;">
+          <p style="color: #666; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 15px 0; font-weight: 600;">
+            Ils nous font déjà confiance
+          </p>
+          <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
+            <div>
+              <div style="color: #00D084; font-size: 28px; font-weight: 700;">847+</div>
+              <div style="color: #666; font-size: 13px;">utilisateurs</div>
+            </div>
+            <div>
+              <div style="color: #2E6CF6; font-size: 28px; font-weight: 700;">4.9/5</div>
+              <div style="color: #666; font-size: 13px;">note moyenne</div>
+            </div>
+            <div>
+              <div style="color: #8B5CF6; font-size: 28px; font-weight: 700;">2547h</div>
+              <div style="color: #666; font-size: 13px;">économisées</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Section pourquoi upgrader -->
@@ -355,27 +389,21 @@ function generateUpgradeEmailHTML(firstName: string, baseUrl: string): string {
         </div>
       </div>
 
-      <!-- Stats rapides -->
-      <div style="background-color: #f8f9fa; border-radius: 10px; padding: 25px; margin: 30px 0;">
-        <div style="text-align: center;">
-          <p style="color: #666; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 15px 0; font-weight: 600;">
-            Ils nous font déjà confiance
-          </p>
-          <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
-            <div>
-              <div style="color: #00D084; font-size: 28px; font-weight: 700;">847+</div>
-              <div style="color: #666; font-size: 13px;">utilisateurs</div>
-            </div>
-            <div>
-              <div style="color: #2E6CF6; font-size: 28px; font-weight: 700;">4.9/5</div>
-              <div style="color: #666; font-size: 13px;">note moyenne</div>
-            </div>
-            <div>
-              <div style="color: #8B5CF6; font-size: 28px; font-weight: 700;">2547h</div>
-              <div style="color: #666; font-size: 13px;">économisées</div>
-            </div>
-          </div>
-        </div>
+      <!-- CTA Principal -->
+      <div style="text-align: center; margin: 40px 0;">
+        <a href="${baseUrl}/pricing" style="display: inline-block; background: linear-gradient(135deg, #00D084 0%, #2E6CF6 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 10px; font-size: 18px; font-weight: 600; box-shadow: 0 4px 15px rgba(46,108,246,0.3);">
+          Découvrir les plans
+        </a>
+        <p style="color: #999; font-size: 13px; margin: 15px 0 0 0;">
+          Sans engagement • Annulable à tout moment
+        </p>
+      </div>
+
+      <!-- Rappel du code -->
+      <div style="background-color: #fffbeb; border: 1px solid #fbbf24; border-radius: 8px; padding: 15px; text-align: center; margin: 30px 0;">
+        <p style="color: #92400e; font-size: 14px; margin: 0;">
+          💡 <strong>N'oubliez pas !</strong> Utilisez le code <strong style="background-color: #fef3c7; padding: 4px 8px; border-radius: 4px;">LAUNCH5</strong> lors du paiement pour -5% supplémentaire
+        </p>
       </div>
 
       <!-- CTA Secondaire -->

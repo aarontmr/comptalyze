@@ -8,10 +8,12 @@ Cette automatisation envoie un **email marketing** 3 jours après l'inscription 
 
 ## ✅ CE QUI A ÉTÉ CRÉÉ
 
-### **1. Cron Job automatique** 
-- **Fichier** : `app/api/cron/send-upgrade-emails/route.ts`
+### **1. Cron Job quotidien combiné** 
+- **Fichier** : `app/api/cron/daily-tasks/route.ts`
 - **Exécution** : Tous les jours à **10h du matin**
-- **Cible** : Utilisateurs gratuits inscrits il y a exactement 3 jours
+- **Tâche 1** : Vérifier essais gratuits expirés
+- **Tâche 2** : Envoyer emails marketing J+3 avec code promo
+- **Avantage** : Un seul cron pour rester dans la limite gratuite Vercel (2 crons max)
 
 ### **2. Migration SQL**
 - **Fichier** : `supabase_migration_marketing_emails.sql`
@@ -19,7 +21,9 @@ Cette automatisation envoie un **email marketing** 3 jours après l'inscription 
 
 ### **3. Configuration Vercel**
 - **Fichier** : `vercel.json` mis à jour
-- **Cron** : Ajouté à la liste des tâches automatiques
+- **Crons** : 2 crons au total (limite gratuite Vercel)
+  - `send-reminders` : Le 2 du mois à 00h
+  - `daily-tasks` : Tous les jours à 10h
 
 ### **4. Checkout Stripe activé pour codes promo**
 - **Fichier** : `app/api/checkout/route.ts`
@@ -120,13 +124,14 @@ Le déploiement Vercel se fera automatiquement.
 
 ## 📅 PLANIFICATION DES CRONS
 
-Après déploiement, vous aurez **3 crons automatiques** :
+Après déploiement, vous aurez **2 crons automatiques** (limite gratuite Vercel) :
 
-| Cron | Horaire | Fréquence | Action |
-|------|---------|-----------|--------|
-| **send-upgrade-emails** | 10h | Quotidien | Email marketing J+3 avec code -5% |
-| **send-reminders** | 00h | Le 2 du mois | Rappels URSSAF (Premium) |
-| **check-trials** | 02h | Quotidien | Vérification essais expirés |
+| Cron | Horaire | Fréquence | Actions |
+|------|---------|-----------|---------|
+| **daily-tasks** | 10h | Quotidien | 1. Email marketing J+3 avec code -5%<br>2. Vérification essais expirés |
+| **send-reminders** | 00h | Le 2 du mois | Rappels URSSAF mensuels (Premium) |
+
+**Note** : `daily-tasks` combine 2 tâches en 1 cron pour respecter la limite Vercel.
 
 ---
 
@@ -194,7 +199,7 @@ Box jaune avec rappel du code LAUNCH5
 Une fois déployé sur Vercel :
 
 ```bash
-curl -X GET "https://comptalyze.com/api/cron/send-upgrade-emails" \
+curl -X GET "https://comptalyze.com/api/cron/daily-tasks" \
   -H "Authorization: Bearer VOTRE_CRON_SECRET"
 ```
 
@@ -202,9 +207,16 @@ curl -X GET "https://comptalyze.com/api/cron/send-upgrade-emails" \
 ```json
 {
   "success": true,
-  "sentCount": 2,
-  "errorCount": 0,
-  "targetUsersCount": 2
+  "results": {
+    "checkTrials": {
+      "processed": 5,
+      "deactivated": 2
+    },
+    "upgradeEmails": {
+      "sent": 3,
+      "errors": 0
+    }
+  }
 }
 ```
 
@@ -230,7 +242,7 @@ WHERE email = 'test-marketing@votreemail.com';
 
 #### **C. Déclencher le cron**
 ```bash
-curl -X GET "https://comptalyze.com/api/cron/send-upgrade-emails" \
+curl -X GET "https://comptalyze.com/api/cron/daily-tasks" \
   -H "Authorization: Bearer VOTRE_CRON_SECRET"
 ```
 
@@ -415,7 +427,7 @@ Vérifiez quotidiennement :
 ### **Logs Vercel**
 
 ```bash
-vercel logs --filter=/api/cron/send-upgrade-emails
+vercel logs --filter=/api/cron/daily-tasks
 ```
 
 ---

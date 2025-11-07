@@ -23,7 +23,7 @@ export default function Page() {
         <p>
           Le site <strong>Comptalyze</strong> est édité par <strong>Micro-entreprise Noraa</strong>,
           SIRET <strong>992 132 167 00014</strong>, dont l’adresse est <strong>72 Rue Charlot, 75003 Paris, France</strong>.
-          Courriel public : <a href="mailto:contact@comptalyze.com">contact@comptalyze.com</a>.
+          Courriel public : <a href="mailto:support@comptalyze.com">support@comptalyze.com</a>.
           Régime de TVA : <strong>Non applicable – art. 293 B du CGI</strong>.
         </p>
       </section>
@@ -92,7 +92,7 @@ export default function Page() {
       <section>
         <h2>Contact et Délégué à la Protection des Données (DPO)</h2>
         <p>
-          Pour toute question générale : <a href="mailto:contact@comptalyze.com" className="text-[#00D084] hover:text-[#00c077] underline">contact@comptalyze.com</a>
+          Pour toute question générale : <a href="mailto:support@comptalyze.com" className="text-[#00D084] hover:text-[#00c077] underline">support@comptalyze.com</a>
         </p>
         <p className="mt-2">
           Pour toute question relative à la protection de vos données personnelles (RGPD) : 
