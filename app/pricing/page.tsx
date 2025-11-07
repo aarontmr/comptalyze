@@ -92,7 +92,10 @@ export default function PricingPage() {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ plan: planWithCycle }),
+        body: JSON.stringify({ 
+          plan: planWithCycle,
+          userId: user.id 
+        }),
       });
 
       const data = await res.json();

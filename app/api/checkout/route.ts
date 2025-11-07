@@ -34,14 +34,16 @@ export async function POST(req: Request) {
     }
 
     // Vérifier que le plan est valide
-    const validPlans = ["pro", "premium"];
+    const validPlans = ["pro", "premium", "pro_yearly", "premium_yearly"];
     if (!validPlans.includes(plan)) {
-      return NextResponse.json({ error: `Plan invalide: ${plan}. Les plans valides sont: pro, premium` }, { status: 400 });
+      return NextResponse.json({ error: `Plan invalide: ${plan}. Les plans valides sont: pro, premium, pro_yearly, premium_yearly` }, { status: 400 });
     }
 
     const prices: Record<string, string> = {
       pro: process.env.STRIPE_PRICE_PRO || "",
       premium: process.env.STRIPE_PRICE_PREMIUM || "",
+      pro_yearly: process.env.STRIPE_PRICE_PRO_YEARLY || "",
+      premium_yearly: process.env.STRIPE_PRICE_PREMIUM_YEARLY || "",
     };
 
     // Vérifier que le Price ID n'est pas vide et a le bon format

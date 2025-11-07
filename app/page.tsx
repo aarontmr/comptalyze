@@ -82,7 +82,10 @@ export default function LandingPage() {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ plan }),
+        body: JSON.stringify({ 
+          plan,
+          userId: user.id 
+        }),
       });
 
       const data = await res.json();
