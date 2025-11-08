@@ -5,7 +5,7 @@ import { getArticleBySlug, getAllArticleSlugs, extractHeadings, getAllArticles }
 import TableOfContents from '@/app/components/TableOfContents';
 import Breadcrumbs from '@/app/components/Breadcrumbs';
 import RelatedArticles from '@/app/components/RelatedArticles';
-import { articleJsonLd, faqJsonLd, breadcrumbJsonLd, JsonLd } from '@/lib/seo/jsonld';
+import { articleJsonLd, faqJsonLd, breadcrumbJsonLd, JsonLd } from '@/lib/seo/jsonld.tsx';
 import { getRelatedArticleSlugs } from '@/lib/seo/related-articles';
 
 interface PageProps {

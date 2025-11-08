@@ -12,7 +12,14 @@
     "demo:record": "node scripts/render-preview.mjs",
     "demo:optimize": "node scripts/optimize-gif.mjs",
     "demo:build": "npm run demo:record && npm run demo:optimize",
-    "demo:fromRaw": "node scripts/trim-and-gif.mjs"
+    "demo:fromRaw": "node scripts/trim-and-gif.mjs",
+    "seed:stripe": "node scripts/seed-stripe.mjs",
+    "seed:db": "node scripts/seed-db.mjs",
+    "seed:db:clean": "node scripts/seed-db.mjs --clean",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:integration": "jest --testPathPattern=tests/integration",
+    "test:all": "npm run test:integration && npm run test:e2e"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",
