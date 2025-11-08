@@ -249,6 +249,14 @@ iframe {
   body {
     overflow-x: hidden;
   }
+  
+  /* Bouton chatbot toujours visible */
+  .chatbot-float-button {
+    position: fixed !important;
+    bottom: 8rem !important; /* 128px = bottom-32 */
+    right: 1rem !important;
+    z-index: 9999 !important;
+  }
 }
 
 /* Optimisation des tableaux sur mobile */
