@@ -32,6 +32,10 @@ export async function GET(request: NextRequest) {
 
     const { access_token, refresh_token, stripe_user_id } = response;
 
+    if (!access_token) {
+      throw new Error('Access token manquant dans la réponse Stripe');
+    }
+
     // Chiffrer et sauvegarder les tokens
     const encryptedAccessToken = encrypt(access_token);
     const encryptedRefreshToken = refresh_token ? encrypt(refresh_token) : null;
