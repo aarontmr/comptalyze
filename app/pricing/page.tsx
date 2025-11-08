@@ -230,7 +230,7 @@ export default function PricingPage() {
                 <span className="text-gray-400 text-lg">/mois</span>
               </div>
             </div>
-            <div className="flex-1 mb-8">
+            <div className="mb-8">
               <div className="text-xs font-bold text-gray-400 mb-5 uppercase tracking-wider">Pour découvrir</div>
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2 text-gray-300">
@@ -303,7 +303,7 @@ export default function PricingPage() {
                 </>
               )}
             </div>
-            <div className="flex-1 mb-8">
+            <div className="mb-8">
               <div className="text-xs font-bold text-gray-400 mb-5 uppercase tracking-wider">Gestion complète</div>
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2 text-gray-200">
