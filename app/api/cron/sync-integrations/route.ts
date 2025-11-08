@@ -159,7 +159,7 @@ async function syncStripe(integration: any) {
     throw new Error('STRIPE_SECRET_KEY non configurée');
   }
 
-  const stripe = new Stripe(stripeSecretKey, { apiVersion: '2024-11-20.acacia' });
+  const stripe = new Stripe(stripeSecretKey, { apiVersion: '2025-10-29.clover' });
 
   // Récupérer les paiements des 30 derniers jours
   const thirtyDaysAgo = Math.floor(Date.now() / 1000) - (30 * 24 * 60 * 60);

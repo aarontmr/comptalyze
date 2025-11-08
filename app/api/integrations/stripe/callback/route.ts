@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
       throw new Error('STRIPE_SECRET_KEY non configurée');
     }
 
-    const stripe = new Stripe(stripeSecretKey, { apiVersion: '2024-11-20.acacia' });
+    const stripe = new Stripe(stripeSecretKey, { apiVersion: '2025-10-29.clover' });
 
     const response = await stripe.oauth.token({
       grant_type: 'authorization_code',
