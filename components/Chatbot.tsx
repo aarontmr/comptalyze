@@ -395,6 +395,7 @@ export default function Chatbot({ user }: ChatbotProps) {
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
               className="fixed bottom-0 sm:bottom-6 left-0 sm:left-auto right-0 sm:right-4 z-[9998] flex flex-col rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:w-[380px] sm:max-w-[calc(100vw-2rem)] h-[calc(100vh-70px)] sm:h-[600px] sm:max-h-[calc(100vh-3rem)]"
               style={{
+                position: 'fixed',
                 backgroundColor: '#0E0F12',
                 border: '1px solid rgba(46, 108, 246, 0.3)',
                 backdropFilter: 'blur(20px)',
@@ -653,6 +654,7 @@ export default function Chatbot({ user }: ChatbotProps) {
               isMinimized ? 'w-full sm:w-80 h-16' : 'w-full sm:w-[380px] sm:max-w-[calc(100vw-2rem)] h-[calc(100vh-70px)] sm:h-[600px] sm:max-h-[calc(100vh-3rem)]'
             }`}
             style={{
+              position: 'fixed',
               backgroundColor: '#0E0F12',
               border: '1px solid rgba(46, 108, 246, 0.3)',
               backdropFilter: 'blur(20px)',

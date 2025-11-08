@@ -185,11 +185,13 @@ export default function FloatingAIAssistant({ user }: FloatingAIAssistantProps) 
           <div
             className="fixed z-50 flex flex-col rounded-xl shadow-2xl w-80 sm:w-96 max-w-[calc(100vw-2rem)] h-[500px] sm:h-[600px] max-h-[calc(100vh-12rem)] sm:max-h-[calc(100vh-8rem)]"
             style={{
+              position: 'fixed',
               backgroundColor: '#1a1d24',
               border: '1px solid #2d3441',
               bottom: '24px',
               right: '16px',
               top: 'auto',
+              left: 'auto',
             }}
           >
             {/* Header */}
@@ -324,12 +326,14 @@ export default function FloatingAIAssistant({ user }: FloatingAIAssistantProps) 
             isMinimized ? 'w-72 sm:w-80 h-16' : 'w-80 sm:w-96 max-w-[calc(100vw-2rem)] h-[500px] sm:h-[600px] max-h-[calc(100vh-12rem)] sm:max-h-[calc(100vh-8rem)]'
           }`}
           style={{
+            position: 'fixed',
             backgroundColor: '#16181d',
             border: '1px solid rgba(45, 52, 65, 0.5)',
             boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
             bottom: '24px',
             right: '16px',
             top: 'auto',
+            left: 'auto',
           }}
         >
           {/* Header */}

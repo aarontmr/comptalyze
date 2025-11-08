@@ -9,7 +9,7 @@
   body {
     overflow-x: hidden !important;
     width: 100vw;
-    position: relative;
+    /* position: relative retiré pour permettre au chatbot fixed de fonctionner */
   }
   
   main {

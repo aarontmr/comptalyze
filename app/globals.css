@@ -98,12 +98,10 @@ html {
   }
   
   /* Force l'accélération matérielle pour les transitions */
-  body,
+  /* Note: transform retiré du body pour permettre position:fixed de fonctionner correctement */
   #__next,
   main {
-    transform: translateZ(0);
     backface-visibility: hidden;
-    perspective: 1000px;
   }
 }
 
@@ -226,7 +224,7 @@ html,
 body {
   overflow-x: hidden;
   width: 100%;
-  position: relative;
+  /* position: relative retiré pour permettre aux éléments fixed (chatbot) de fonctionner */
 }
 
 /* Conteneur principal sans débordement */
