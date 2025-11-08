@@ -10,8 +10,9 @@ import Skeleton from '@/components/ui/Skeleton';
 import SectionTitle from '@/components/ui/SectionTitle';
 import BadgePlan from '@/components/ui/BadgePlan';
 import EmailReminderToggle from '@/app/components/EmailReminderToggle';
+import MonthlyRecapEmailToggle from '@/app/components/MonthlyRecapEmailToggle';
 import Link from 'next/link';
-import { User as UserIcon, Mail, CreditCard, Bell, AlertTriangle, XCircle, LogOut, Shield, Trash2, FileText } from 'lucide-react';
+import { User as UserIcon, Mail, CreditCard, Bell, AlertTriangle, XCircle, LogOut, Shield, Trash2, FileText, RefreshCw, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function ComptePage() {
@@ -258,6 +259,47 @@ export default function ComptePage() {
         </Card>
       </div>
 
+      {/* Intégrations (Premium) */}
+      {subscription.isPremium && user && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="mb-6"
+        >
+          <Card>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-white">Intégrations</h2>
+              <Link
+                href="/dashboard/compte/integrations"
+                className="text-sm text-[#2E6CF6] hover:text-[#00D084] transition-colors flex items-center gap-1"
+              >
+                <span>Gérer</span>
+                <ExternalLink className="w-4 h-4" />
+              </Link>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(0, 208, 132, 0.1)' }}>
+                <RefreshCw className="w-6 h-6" style={{ color: '#00D084' }} />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-base font-semibold text-white mb-2">Shopify / Stripe</h3>
+                <p className="text-sm text-gray-400 mb-3">
+                  Synchronisez automatiquement votre CA chaque fin de mois
+                </p>
+                <Link
+                  href="/dashboard/compte/integrations"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white font-medium transition-all hover:scale-105 text-sm"
+                  style={{ background: 'linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)' }}
+                >
+                  <span>Configurer les intégrations</span>
+                </Link>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
+      )}
+
       {/* Préférences email (Premium) */}
       {subscription.isPremium && user && (
         <motion.div
@@ -267,14 +309,32 @@ export default function ComptePage() {
           className="mb-6"
         >
           <Card>
-            <h2 className="text-lg font-semibold text-white mb-4">Préférences</h2>
-            <div className="flex items-start gap-3">
-              <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(0, 208, 132, 0.1)' }}>
-                <Bell className="w-6 h-6" style={{ color: '#00D084' }} />
+            <h2 className="text-lg font-semibold text-white mb-4">Préférences Email</h2>
+            
+            <div className="space-y-4">
+              {/* Rappel mensuel existant */}
+              <div className="flex items-start gap-3 pb-4 border-b" style={{ borderColor: '#1f232b' }}>
+                <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(0, 208, 132, 0.1)' }}>
+                  <Bell className="w-6 h-6" style={{ color: '#00D084' }} />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-base font-semibold text-white mb-2">Rappel mensuel déclaration</h3>
+                  <EmailReminderToggle userId={user.id} isPremium={true} />
+                </div>
               </div>
-              <div className="flex-1">
-                <h3 className="text-base font-semibold text-white mb-2">Rappel mensuel</h3>
-                <EmailReminderToggle userId={user.id} isPremium={true} />
+
+              {/* NOUVEAU : Email récap CA mensuel */}
+              <div className="flex items-start gap-3">
+                <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(46, 108, 246, 0.1)' }}>
+                  <Mail className="w-6 h-6" style={{ color: '#2E6CF6' }} />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-base font-semibold text-white mb-2">Récapitulatif CA mensuel</h3>
+                  <p className="text-sm text-gray-400 mb-3">
+                    Recevez un email chaque fin de mois avec votre CA importé depuis Shopify/Stripe
+                  </p>
+                  <MonthlyRecapEmailToggle userId={user.id} />
+                </div>
               </div>
             </div>
           </Card>

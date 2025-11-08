@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
+import { getComptalyzeContext } from '@/lib/comptalyze-features';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -28,23 +29,20 @@ try {
 
 // Prompts système selon le plan
 const getSystemPrompt = (plan: string, userData?: any) => {
+  const comptalyzeContext = getComptalyzeContext();
+  
   const basePrompt = `Tu es ComptaBot, l'assistant intelligent de Comptalyze 🤖 - un expert comptable français spécialisé dans les micro-entreprises et le statut auto-entrepreneur.
 
 Tu es amical, professionnel et empathique. Tu utilises un ton chaleureux et accessible en français.
 
-Tu peux aider sur :
-• Les cotisations URSSAF et leur calcul
-• Les déclarations fiscales et administratives
-• Le statut micro-entrepreneur (création, gestion, optimisation)
-• Les taux de TVA et seuils de CA
-• Les charges déductibles
-• Les conseils d'optimisation fiscale
+${comptalyzeContext}
 
 RÈGLES IMPORTANTES :
 - Réponds TOUJOURS de manière concise (max 250 mots)
 - Utilise des émojis pour rendre tes réponses plus conviviales (mais avec modération)
 - Structure tes réponses avec des listes à puces quand approprié
-- Sois précis et factuel, base-toi sur la réglementation française actuelle
+- Sois précis et factuel, base-toi sur la réglementation française actuelle ET sur les fonctionnalités Comptalyze ci-dessus
+- Si un utilisateur pose une question sur une fonctionnalité Comptalyze, réponds en te basant sur le contexte fourni
 - Si tu ne sais pas, dis-le honnêtement
 - Réponds UNIQUEMENT en français`;
 

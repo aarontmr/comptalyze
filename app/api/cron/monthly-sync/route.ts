@@ -124,14 +124,28 @@ export async function POST(request: NextRequest) {
             console.log(`✅ CA enregistré pour user ${userData.userId}: ${totalCA}€`);
           }
 
-          // Envoyer l'email de notification
+          // Envoyer l'email de notification (si préférence activée)
           if (userData.email) {
-            await sendMonthlyRecapEmail({
-              email: userData.email,
-              month: monthLabel,
-              totalCA,
-              details,
-            });
+            // Vérifier la préférence email
+            const { data: preferences } = await supabase
+              .from('user_preferences')
+              .select('monthly_recap_email')
+              .eq('user_id', userData.userId)
+              .single();
+
+            const emailEnabled = preferences?.monthly_recap_email ?? true; // Par défaut activé
+
+            if (emailEnabled) {
+              await sendMonthlyRecapEmail({
+                email: userData.email,
+                month: monthLabel,
+                totalCA,
+                details,
+              });
+              console.log(`📧 Email envoyé à ${userData.email}`);
+            } else {
+              console.log(`📧 Email désactivé pour ${userData.email}`);
+            }
           }
 
           totalUsers++;
