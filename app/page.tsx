@@ -1313,30 +1313,48 @@ export default function LandingPage() {
                 </div>
                 <div className="space-y-4 min-h-[280px]">
                   <div className="text-xs text-gray-500 mb-3">TOUT PRO +</div>
+                  
+                  {/* ROI Highlight */}
+                  <div className="mb-4 p-3 rounded-lg" style={{ background: "linear-gradient(135deg, rgba(0, 208, 132, 0.15), rgba(46, 108, 246, 0.15))", border: "1px solid rgba(0, 208, 132, 0.3)" }}>
+                    <div className="text-xs font-bold text-white mb-1">💰 VALEUR RÉELLE : 3 000€/an</div>
+                    <div className="text-xs text-gray-300">120h économisées × 25€/h = <span className="text-[#00D084]">Rentabilisé dès le 1er mois</span></div>
+                  </div>
+                  
                   <ul className="space-y-2.5 text-sm">
                     <li className="flex items-start gap-2 text-gray-200">
                       <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                      <span><strong>Assistant IA</strong> personnalisé</span>
+                      <div>
+                        <strong>Import auto Shopify/Stripe</strong>
+                        <div className="text-xs text-gray-400">CA mensuel synchronisé + email récap</div>
+                      </div>
                     </li>
                     <li className="flex items-start gap-2 text-gray-200">
                       <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                      <span><strong>Calendrier fiscal</strong> intelligent</span>
+                      <div>
+                        <strong>ComptaBot IA personnalisé</strong>
+                        <div className="text-xs text-gray-400">Expert-comptable 24/7 (valeur : 100€/h)</div>
+                      </div>
                     </li>
                     <li className="flex items-start gap-2 text-gray-200">
                       <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                      <span>Rappels automatiques URSSAF</span>
+                      <div>
+                        <strong>Pré-remplissage URSSAF</strong>
+                        <div className="text-xs text-gray-400">Fini la saisie manuelle (gain : 15 min/déclaration)</div>
+                      </div>
                     </li>
                     <li className="flex items-start gap-2 text-gray-200">
                       <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                      <span>Pré-remplissage URSSAF</span>
+                      <div>
+                        <strong>Alertes fiscales intelligentes</strong>
+                        <div className="text-xs text-gray-400">Seuils, échéances, CFE... Zéro pénalité</div>
+                      </div>
                     </li>
                     <li className="flex items-start gap-2 text-gray-200">
                       <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                      <span>Analytics avancés</span>
-                    </li>
-                    <li className="flex items-start gap-2 text-gray-200">
-                      <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                      <span><strong>Intégrations Shopify/Stripe</strong> + Sync auto CA</span>
+                      <div>
+                        <strong>Analytics avancés</strong>
+                        <div className="text-xs text-gray-400">Optimisations fiscales = économies 1000€+/an</div>
+                      </div>
                     </li>
                   </ul>
                 </div>
@@ -1355,6 +1373,205 @@ export default function LandingPage() {
             </ScaleOnHover>
           </motion.div>
         </Stagger>
+      </section>
+
+      {/* AUTOMATISATION SHOPIFY/STRIPE - ROI SECTION */}
+      <section className="relative px-4 py-12 sm:py-16 md:py-20">
+        <div className="mx-auto max-w-6xl">
+          <FadeIn delay={0} y={12}>
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" 
+                style={{
+                  backgroundColor: "rgba(0, 208, 132, 0.1)",
+                  border: "1px solid rgba(0, 208, 132, 0.3)"
+                }}
+              >
+                <Zap className="w-4 h-4" style={{ color: "#00D084" }} />
+                <span className="text-sm font-semibold" style={{ color: "#00D084" }}>Premium Feature</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+                Import Automatique Shopify / Stripe
+              </h2>
+              <p className="text-lg text-gray-400 max-w-3xl mx-auto">
+                <strong className="text-white">Fini la saisie manuelle.</strong> Votre CA est importé, agrégé et envoyé par email chaque fin de mois. 
+                <span className="text-[#00D084]"> Économisez 10h/mois.</span>
+              </p>
+            </div>
+          </FadeIn>
+
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
+            {/* Comment ça marche */}
+            <FadeIn delay={0.2} y={12}>
+              <div className="rounded-2xl p-8" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
+                <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #00D084, #2E6CF6)" }}>
+                    <span className="text-white font-bold">1</span>
+                  </div>
+                  Comment ça marche ?
+                </h3>
+                <ul className="space-y-4 text-gray-300">
+                  <li className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: "rgba(0, 208, 132, 0.2)" }}>
+                      <Check className="w-4 h-4" style={{ color: "#00D084" }} />
+                    </div>
+                    <div>
+                      <strong className="text-white">Connectez en 1 clic</strong>
+                      <div className="text-sm text-gray-400 mt-1">OAuth sécurisé Shopify/Stripe. Vos tokens sont chiffrés (AES-256).</div>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: "rgba(0, 208, 132, 0.2)" }}>
+                      <Check className="w-4 h-4" style={{ color: "#00D084" }} />
+                    </div>
+                    <div>
+                      <strong className="text-white">Sync automatique</strong>
+                      <div className="text-sm text-gray-400 mt-1">Dernier jour du mois à 23h : le système récupère toutes vos transactions.</div>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: "rgba(0, 208, 132, 0.2)" }}>
+                      <Check className="w-4 h-4" style={{ color: "#00D084" }} />
+                    </div>
+                    <div>
+                      <strong className="text-white">Enregistrement + Email</strong>
+                      <div className="text-sm text-gray-400 mt-1">CA total calculé, enregistré dans Comptalyze + email récap envoyé.</div>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: "rgba(0, 208, 132, 0.2)" }}>
+                      <Check className="w-4 h-4" style={{ color: "#00D084" }} />
+                    </div>
+                    <div>
+                      <strong className="text-white">Pré-remplissage URSSAF</strong>
+                      <div className="text-sm text-gray-400 mt-1">Vos déclarations sont pré-remplies. Vous gagnez 15 min à chaque fois.</div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </FadeIn>
+
+            {/* ROI Calculator */}
+            <FadeIn delay={0.4} y={12}>
+              <div className="rounded-2xl p-8" style={{ background: "linear-gradient(135deg, rgba(0, 208, 132, 0.1), rgba(46, 108, 246, 0.1))", border: "1px solid rgba(0, 208, 132, 0.3)" }}>
+                <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #00D084, #2E6CF6)" }}>
+                    <span className="text-white">💰</span>
+                  </div>
+                  Calcul du ROI
+                </h3>
+                <div className="space-y-6">
+                  <div>
+                    <div className="flex justify-between items-baseline mb-2">
+                      <span className="text-gray-300">Saisie manuelle CA</span>
+                      <span className="text-white font-bold">10 min/mois</span>
+                    </div>
+                    <div className="flex justify-between items-baseline mb-2">
+                      <span className="text-gray-300">Déclarations URSSAF</span>
+                      <span className="text-white font-bold">15 min/mois</span>
+                    </div>
+                    <div className="flex justify-between items-baseline mb-2">
+                      <span className="text-gray-300">Vérifications/exports</span>
+                      <span className="text-white font-bold">5 min/mois</span>
+                    </div>
+                    <div className="h-px my-4" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)" }} />
+                    <div className="flex justify-between items-baseline mb-4">
+                      <span className="text-lg font-semibold text-white">Total économisé</span>
+                      <span className="text-2xl font-bold text-[#00D084]">30 min/mois</span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-xl" style={{ backgroundColor: "rgba(0, 208, 132, 0.1)" }}>
+                    <div className="text-sm text-gray-300 mb-2">Sur 1 an :</div>
+                    <div className="text-3xl font-bold text-white mb-1">6 heures économisées</div>
+                    <div className="text-sm text-gray-400">
+                      Valeur : <span className="text-white font-semibold">150€</span> (à 25€/h)
+                    </div>
+                  </div>
+
+                  <div className="text-center pt-4">
+                    <div className="text-sm text-gray-400 mb-2">Prix Premium : 7,90€/mois</div>
+                    <div className="text-2xl font-bold" style={{ background: "linear-gradient(135deg, #00D084, #2E6CF6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                      Rentabilisé en 2 semaines
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </FadeIn>
+          </div>
+
+          {/* Email Preview */}
+          <FadeIn delay={0.6} y={12}>
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold mb-4">Email mensuel automatique</h3>
+              <p className="text-gray-400 mb-8">Chaque fin de mois, recevez un récap de votre CA importé</p>
+            </div>
+            <div className="max-w-2xl mx-auto">
+              <div className="rounded-2xl overflow-hidden shadow-2xl" style={{ border: "1px solid #1f232b" }}>
+                {/* Email Header */}
+                <div className="p-6 text-center" style={{ background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)" }}>
+                  <h4 className="text-2xl font-bold text-white mb-1">✅ CA Importé !</h4>
+                  <p className="text-white/90">janvier 2025</p>
+                </div>
+                {/* Email Body */}
+                <div className="p-6 sm:p-8" style={{ backgroundColor: "#14161b" }}>
+                  <p className="text-gray-300 mb-4">Bonjour ! 👋</p>
+                  <p className="text-gray-300 mb-6">Votre chiffre d'affaires du mois de <strong className="text-white">janvier 2025</strong> a été importé automatiquement.</p>
+                  
+                  <div className="p-6 rounded-xl mb-6 text-center" style={{ background: "linear-gradient(135deg, rgba(0, 208, 132, 0.1), rgba(46, 108, 246, 0.1))", border: "1px solid rgba(0, 208, 132, 0.3)" }}>
+                    <div className="text-sm text-gray-400 mb-2 uppercase tracking-wide">CA Total</div>
+                    <div className="text-4xl font-bold" style={{ background: "linear-gradient(135deg, #00D084, #2E6CF6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                      4 700 €
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <div className="text-sm font-semibold text-white mb-3">Détails par source</div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between p-3 rounded-lg" style={{ backgroundColor: "#1a1d24" }}>
+                        <span className="text-gray-300">🛒 Shopify</span>
+                        <span className="font-semibold text-white">3 500 €</span>
+                      </div>
+                      <div className="flex justify-between p-3 rounded-lg" style={{ backgroundColor: "#1a1d24" }}>
+                        <span className="text-gray-300">💳 Stripe</span>
+                        <span className="font-semibold text-white">1 200 €</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="text-center">
+                    <button className="px-6 py-3 rounded-lg text-white font-semibold" style={{ background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)" }}>
+                      Voir mon dashboard
+                    </button>
+                  </div>
+
+                  <div className="mt-6 pt-6 border-t text-sm text-gray-400 text-center" style={{ borderColor: "#1f232b" }}>
+                    💡 <strong>Astuce :</strong> Ces données sont déjà pré-remplies dans votre simulateur URSSAF !
+                  </div>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+
+          {/* CTA Final */}
+          <FadeIn delay={0.8} y={12}>
+            <div className="text-center mt-12">
+              <Link
+                href="/signup?plan=premium"
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-white font-semibold text-lg transition-all hover:scale-105"
+                style={{
+                  background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                  boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
+                }}
+              >
+                <Sparkles className="w-5 h-5" />
+                Essayer Premium gratuitement (3 jours)
+              </Link>
+              <p className="text-sm text-gray-400 mt-4">
+                Sans engagement • Annulation en 1 clic
+              </p>
+            </div>
+          </FadeIn>
+        </div>
       </section>
 
       {/* BEFORE/AFTER COMPARISON */}

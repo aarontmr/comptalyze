@@ -413,39 +413,72 @@ export default function PricingPage() {
             <div className="flex-1 mb-8">
               <div className="text-xs font-bold text-gray-500 mb-5 uppercase tracking-wider">Tout Pro +</div>
               
-              <div className="text-xs font-semibold text-gray-400 mb-3 uppercase tracking-wider">Intelligence Artificielle</div>
+              {/* ROI Box */}
+              <div className="mb-5 p-4 rounded-xl" style={{ background: "linear-gradient(135deg, rgba(0, 208, 132, 0.1), rgba(46, 108, 246, 0.1))", border: "1px solid rgba(0, 208, 132, 0.3)" }}>
+                <div className="text-xs font-bold text-white mb-2">💰 ÉCONOMISEZ 120H/AN</div>
+                <div className="text-xs text-gray-300">
+                  Valeur : <span className="text-white font-bold">3 000€/an</span> pour seulement <span className="text-[#00D084] font-bold">94,80€/an</span>
+                </div>
+              </div>
+              
+              <div className="text-xs font-semibold text-gray-400 mb-3 uppercase tracking-wider">🤖 Automatisation Totale</div>
               <ul className="space-y-3 text-sm mb-5">
                 <li className="flex items-start gap-2 text-gray-200">
                   <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                  <span><strong>Assistant IA personnalisé</strong> (ComptaBot)</span>
+                  <div>
+                    <strong>Import automatique Shopify/Stripe</strong>
+                    <div className="text-xs text-gray-400 mt-0.5">CA mensuel importé + email récap. Économie : 10h/mois</div>
+                  </div>
                 </li>
                 <li className="flex items-start gap-2 text-gray-200">
                   <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                  <span>Pré-remplissage automatique URSSAF</span>
+                  <div>
+                    <strong>Pré-remplissage URSSAF en 1 clic</strong>
+                    <div className="text-xs text-gray-400 mt-0.5">Plus de saisie manuelle. Économie : 15 min/déclaration</div>
+                  </div>
+                </li>
+                <li className="flex items-start gap-2 text-gray-200">
+                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                  <div>
+                    <strong>Calendrier fiscal intelligent</strong>
+                    <div className="text-xs text-gray-400 mt-0.5">Rappels auto. Plus jamais de retard ni de pénalités</div>
+                  </div>
                 </li>
               </ul>
               
-              <div className="text-xs font-semibold text-gray-400 mb-3 uppercase tracking-wider">Analytics & Alertes</div>
+              <div className="text-xs font-semibold text-gray-400 mb-3 uppercase tracking-wider">🧠 Intelligence Artificielle</div>
               <ul className="space-y-3 text-sm mb-5">
                 <li className="flex items-start gap-2 text-gray-200">
                   <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                  <span>Analytics avancés & alertes seuils</span>
+                  <div>
+                    <strong>ComptaBot personnalisé</strong>
+                    <div className="text-xs text-gray-400 mt-0.5">Expert-comptable IA 24/7. Équivaut à 100€/h de conseil</div>
+                  </div>
                 </li>
                 <li className="flex items-start gap-2 text-gray-200">
                   <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                  <span>Export comptable Excel (journal enrichi)</span>
+                  <div>
+                    <strong>Optimisations fiscales sur-mesure</strong>
+                    <div className="text-xs text-gray-400 mt-0.5">ACRE, IR, déductions... Peut vous faire économiser 1000€+/an</div>
+                  </div>
                 </li>
               </ul>
               
-              <div className="text-xs font-semibold text-gray-400 mb-3 uppercase tracking-wider">Automatisations</div>
+              <div className="text-xs font-semibold text-gray-400 mb-3 uppercase tracking-wider">📊 Analytics Pro</div>
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2 text-gray-200">
                   <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                  <span>Rappels automatiques & calendrier fiscal</span>
+                  <div>
+                    <strong>Tableaux de bord avancés + alertes</strong>
+                    <div className="text-xs text-gray-400 mt-0.5">Anticipez vos seuils TVA, CFE, plafonds CA</div>
+                  </div>
                 </li>
                 <li className="flex items-start gap-2 text-gray-200">
                   <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                  <span><strong>Intégrations Shopify/Stripe</strong> + Sync auto CA</span>
+                  <div>
+                    <strong>Export comptable professionnel</strong>
+                    <div className="text-xs text-gray-400 mt-0.5">Compatible expert-comptable. Économie : 200€/an de saisie</div>
+                  </div>
                 </li>
               </ul>
             </div>
