@@ -10,6 +10,10 @@ export interface ArticleMetadata {
   date: string;
   keywords?: string[];
   author?: string;
+  faq?: Array<{
+    question: string;
+    answer: string;
+  }>;
 }
 
 export interface Article {

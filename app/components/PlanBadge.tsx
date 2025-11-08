@@ -4,7 +4,7 @@ import { Sparkles, Zap, Crown } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface PlanBadgeProps {
-  plan: 'pro' | 'premium';
+  plan: 'free' | 'pro' | 'premium';
   size?: 'sm' | 'md' | 'lg';
   animated?: boolean;
   showIcon?: boolean;
@@ -17,6 +17,7 @@ export default function PlanBadge({
   showIcon = true 
 }: PlanBadgeProps) {
   const isPremium = plan === 'premium';
+  const isFree = plan === 'free';
   
   const sizeClasses = {
     sm: 'px-2 py-1 text-xs',
@@ -34,23 +35,29 @@ export default function PlanBadge({
     <div
       className={`inline-flex items-center gap-1.5 rounded-full font-semibold ${sizeClasses[size]}`}
       style={{
-        background: isPremium 
+        background: isFree
+          ? '#6b7280'
+          : isPremium 
           ? 'linear-gradient(135deg, #8B5CF6, #3B82F6)'
           : 'linear-gradient(135deg, #00D084, #2E6CF6)',
-        boxShadow: isPremium
+        boxShadow: isFree
+          ? '0 2px 12px rgba(107, 114, 128, 0.3)'
+          : isPremium
           ? '0 2px 12px rgba(139, 92, 246, 0.3)'
           : '0 2px 12px rgba(0, 208, 132, 0.3)',
       }}
     >
       {showIcon && (
-        isPremium ? (
+        isFree ? (
+          <Crown className={`${iconSizes[size]} text-white opacity-60`} />
+        ) : isPremium ? (
           <Sparkles className={`${iconSizes[size]} text-white`} />
         ) : (
           <Zap className={`${iconSizes[size]} text-white`} />
         )
       )}
       <span className="text-white">
-        {isPremium ? 'Premium' : 'Pro'}
+        {isFree ? 'Free' : isPremium ? 'Premium' : 'Pro'}
       </span>
     </div>
   );

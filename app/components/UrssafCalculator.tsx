@@ -472,8 +472,9 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
         </div>
       )}
 
-      {/* Bannière de plan pour les utilisateurs gratuits */}
-      {!isPro && (
+      {/* Bannière de plan */}
+      {!isPro && !isPremium ? (
+        /* Utilisateurs Free */
         <div
           className="mb-6 p-4 rounded-xl"
           style={{ backgroundColor: '#1b2d1b', border: '1px solid #10b981' }}
@@ -481,11 +482,11 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <p className="text-sm font-medium text-green-400 mb-1">
-                  Plan Gratuit • {records.length} / {FREE_PLAN_LIMIT} enregistrements utilisés
+                  Plan Free • {records.length} / {FREE_PLAN_LIMIT} enregistrements utilisés
                 </p>
                 <p className="text-xs text-gray-400 mb-3">
                   Vous avez {remainingCalculations} enregistrement{remainingCalculations !== 1 ? 's' : ''} restant{remainingCalculations !== 1 ? 's' : ''}.
-                  {records.length > 0 && ' Passez au plan Pro pour des enregistrements illimités !'}
+                  {records.length > 0 && ' Passez à Pro pour des enregistrements illimités !'}
                 </p>
               </div>
               <Link
@@ -496,14 +497,43 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
                   boxShadow: '0 4px 15px rgba(46,108,246,0.3)',
                 }}
               >
-                Passer au Pro
+                Passer à Pro
               </Link>
           </div>
         </div>
-      )}
-
-      {/* Bannière pour les utilisateurs Pro/Premium */}
-      {isPro && (
+      ) : subscription.isTrial ? (
+        /* Utilisateurs en essai gratuit Premium */
+        <div
+          className="mb-6 p-4 rounded-xl"
+          style={{ backgroundColor: 'rgba(139, 92, 246, 0.1)', border: '1px solid rgba(139, 92, 246, 0.3)' }}
+        >
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <p className="text-sm font-medium text-purple-400 mb-1">
+                🎉 Essai Premium • Enregistrements illimités
+              </p>
+              <p className="text-xs text-gray-400">
+                {(() => {
+                  const trialEnd = subscription.trialEndsAt ? new Date(subscription.trialEndsAt) : null;
+                  const daysLeft = trialEnd ? Math.ceil((trialEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : 0;
+                  return `${daysLeft} jour${daysLeft > 1 ? 's' : ''} restant${daysLeft > 1 ? 's' : ''} • Profitez de toutes les fonctionnalités Premium !`;
+                })()}
+              </p>
+            </div>
+            <Link
+              href="/pricing"
+              className="ml-4 px-4 py-2 rounded-lg text-white text-sm font-medium transition-all duration-300 transform hover:scale-[1.02] whitespace-nowrap"
+              style={{
+                background: 'linear-gradient(135deg, #8B5CF6 0%, #3B82F6 100%)',
+                boxShadow: '0 4px 15px rgba(139, 92, 246, 0.3)',
+              }}
+            >
+              S'abonner
+            </Link>
+          </div>
+        </div>
+      ) : (
+        /* Utilisateurs Pro/Premium payants */
         <div
           className="mb-6 p-4 rounded-xl"
           style={{ backgroundColor: '#1b2d1b', border: '1px solid #10b981' }}

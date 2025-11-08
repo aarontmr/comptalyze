@@ -997,7 +997,7 @@ export default function PricingPage() {
                 <span style={{ color: "#00D084" }}>•</span>
                 Une carte bancaire est-elle requise pour commencer ?
               </div>
-              <p className="text-base text-gray-400 pl-5">Non pour le plan Gratuit. Les plans payants nécessitent un paiement sécurisé via Stripe.</p>
+              <p className="text-base text-gray-400 pl-5">Non pour le plan Free. Les plans payants nécessitent un paiement sécurisé via Stripe.</p>
             </div>
             <div className="px-8 py-6 hover:bg-gray-900/30 transition-colors">
               <div className="font-bold text-lg mb-2 flex items-center gap-2">
@@ -1009,7 +1009,7 @@ export default function PricingPage() {
             <div className="px-8 py-6 hover:bg-gray-900/30 transition-colors">
               <div className="font-bold text-lg mb-2 flex items-center gap-2">
                 <span style={{ color: "#00D084" }}>•</span>
-                Puis-je passer de Gratuit à Pro plus tard ?
+                Puis-je passer de Free à Pro plus tard ?
               </div>
               <p className="text-base text-gray-400 pl-5">Bien sûr, vous pouvez upgrader en un clic depuis cette page à tout moment.</p>
             </div>

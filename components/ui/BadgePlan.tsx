@@ -5,7 +5,7 @@ interface BadgePlanProps {
 
 export default function BadgePlan({ plan, className = '' }: BadgePlanProps) {
   const labels = {
-    free: 'Gratuit',
+    free: 'Free',
     pro: 'Pro',
     premium: 'Premium',
   };

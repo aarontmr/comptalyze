@@ -5,6 +5,8 @@ import { getArticleBySlug, getAllArticleSlugs, extractHeadings, getAllArticles }
 import TableOfContents from '@/app/components/TableOfContents';
 import Breadcrumbs from '@/app/components/Breadcrumbs';
 import RelatedArticles from '@/app/components/RelatedArticles';
+import { articleJsonLd, faqJsonLd, breadcrumbJsonLd, JsonLd } from '@/lib/seo/jsonld';
+import { getRelatedArticleSlugs } from '@/lib/seo/related-articles';
 
 interface PageProps {
   params: Promise<{
@@ -29,7 +31,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  const canonicalUrl = `https://comptalyze.com/blog/${slug}`;
+  const canonicalUrl = `https://www.comptalyze.com/blog/${slug}`;
 
   return {
     title: `${article.metadata.title} | Comptalyze`,
@@ -87,19 +89,12 @@ export default async function BlogArticlePage({ params }: PageProps) {
 
   const headings = extractHeadings(article.content);
   
-  // Get related articles (same category, exclude current)
+  // Get related articles using SEO mapping
   const allArticles = getAllArticles();
-  const relatedArticles = allArticles
-    .filter(a => a.slug !== slug && a.metadata.category === article.metadata.category)
-    .slice(0, 2);
-  
-  // If less than 2 in same category, add other articles
-  if (relatedArticles.length < 2) {
-    const otherArticles = allArticles
-      .filter(a => a.slug !== slug && !relatedArticles.find(r => r.slug === a.slug))
-      .slice(0, 2 - relatedArticles.length);
-    relatedArticles.push(...otherArticles);
-  }
+  const relatedSlugs = getRelatedArticleSlugs(slug, 3);
+  const relatedArticles = relatedSlugs
+    .map(relatedSlug => allArticles.find(a => a.slug === relatedSlug))
+    .filter((a): a is typeof allArticles[0] => a !== undefined);
 
   // Import dynamically the MDX content
   let MDXContent;
@@ -109,80 +104,35 @@ export default async function BlogArticlePage({ params }: PageProps) {
     notFound();
   }
 
-  // Structured data for SEO
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
+  // Extract FAQ from article metadata (we'll add this to article frontmatter)
+  const faqItems = (article.metadata as { faq?: Array<{ question: string; answer: string }> }).faq || [];
+  
+  // Generate JSON-LD structured data
+  const articleStructuredData = articleJsonLd({
     headline: article.metadata.title,
     description: article.metadata.description,
-    author: {
-      '@type': 'Organization',
-      name: article.metadata.author || 'Comptalyze',
-      url: 'https://comptalyze.com',
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: 'Comptalyze',
-      logo: {
-        '@type': 'ImageObject',
-        url: 'https://comptalyze.com/logo.png',
-      },
-    },
     datePublished: article.metadata.date,
     dateModified: article.metadata.date,
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `https://comptalyze.com/blog/${slug}`,
-    },
-    keywords: article.metadata.keywords?.join(', '),
-    articleSection: article.metadata.category,
-  };
+    authorName: article.metadata.author || 'Comptalyze',
+    slug,
+    keywords: article.metadata.keywords,
+    category: article.metadata.category,
+  });
 
-  // FAQ structured data if this is the URSSAF article
-  const faqStructuredData = slug === 'declaration-urssaf-micro-entrepreneur-2025' ? {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: [
-      {
-        '@type': 'Question',
-        name: 'Dois-je déclarer les acomptes ou le CA total ?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Vous déclarez le chiffre d\'affaires encaissé, c\'est-à-dire les sommes effectivement reçues, y compris les acomptes.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'Peut-on modifier une déclaration après validation ?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Non, une fois validée, la déclaration ne peut plus être modifiée. En cas d\'erreur, contactez votre URSSAF pour régulariser.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'Les cotisations sont-elles déductibles ?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Non, en micro-entreprise les cotisations sociales ne sont pas déductibles. L\'abattement forfaitaire appliqué couvre toutes vos charges.',
-        },
-      },
-    ],
-  } : null;
+  const faqStructuredData = faqItems.length > 0 ? faqJsonLd(faqItems) : null;
+  
+  const breadcrumbStructuredData = breadcrumbJsonLd([
+    { name: 'Accueil', url: 'https://www.comptalyze.com' },
+    { name: 'Blog', url: 'https://www.comptalyze.com/blog' },
+    { name: article.metadata.title, url: `https://www.comptalyze.com/blog/${slug}` },
+  ]);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#0e0f12' }}>
-      {/* Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
-      {faqStructuredData && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}
-        />
-      )}
+      {/* Structured Data JSON-LD */}
+      <JsonLd data={articleStructuredData} />
+      <JsonLd data={faqStructuredData} />
+      <JsonLd data={breadcrumbStructuredData} />
       {/* Header */}
       <header className="border-b" style={{ borderColor: '#1f232b' }}>
         <div className="max-w-7xl mx-auto px-4 py-6">
