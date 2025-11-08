@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import "./mobile-optimizations.css";
 import AnalyticsProvider from './components/AnalyticsProvider';
 import GoogleAnalytics from './components/GoogleAnalytics';
 import CookieConsent from './components/CookieConsent';
@@ -103,6 +104,8 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <head>
+        {/* Viewport optimisé mobile */}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
         {/* Préchargement des ressources critiques */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

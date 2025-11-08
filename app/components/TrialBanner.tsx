@@ -82,14 +82,14 @@ export default function TrialBanner({ trialEndsAt, plan }: TrialBannerProps) {
         />
       </div>
 
-      <div className="relative p-6">
-        <div className="flex items-start justify-between gap-4">
+      <div className="relative p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row items-start sm:justify-between gap-4">
           {/* Icône et titre */}
-          <div className="flex items-start gap-4 flex-1">
+          <div className="flex items-start gap-3 sm:gap-4 flex-1 w-full sm:w-auto">
             <motion.div
               animate={isUrgent ? { scale: [1, 1.1, 1] } : {}}
               transition={{ duration: 1, repeat: Infinity }}
-              className="p-3 rounded-xl flex-shrink-0"
+              className="p-2.5 sm:p-3 rounded-xl flex-shrink-0"
               style={{
                 background: isPremium
                   ? 'linear-gradient(135deg, #8B5CF6, #3B82F6)'
@@ -100,15 +100,15 @@ export default function TrialBanner({ trialEndsAt, plan }: TrialBannerProps) {
               }}
             >
               {isUrgent ? (
-                <Clock className="w-6 h-6 text-white" />
+                <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               ) : (
-                <Sparkles className="w-6 h-6 text-white" />
+                <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               )}
             </motion.div>
 
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <h3 className="text-xl font-bold text-white">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                <h3 className="text-lg sm:text-xl font-bold text-white">
                   Essai gratuit {isPremium ? 'Premium' : 'Pro'}
                 </h3>
                 <span
@@ -125,20 +125,20 @@ export default function TrialBanner({ trialEndsAt, plan }: TrialBannerProps) {
               </div>
 
               {/* Compte à rebours */}
-              <div className="flex items-center gap-3 mb-3">
-                <Clock className="w-5 h-5 text-gray-300" />
-                <div>
+              <div className="flex items-start gap-2 sm:gap-3 mb-3">
+                <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-gray-300 flex-shrink-0 mt-1" />
+                <div className="min-w-0 flex-1">
                   {totalDays > 0 ? (
-                    <p className={`text-lg font-semibold ${isUrgent ? 'text-yellow-400' : 'text-white'}`}>
+                    <p className={`text-base sm:text-lg font-semibold ${isUrgent ? 'text-yellow-400' : 'text-white'} break-words`}>
                       {totalDays} jour{totalDays > 1 ? 's' : ''} restant{totalDays > 1 ? 's' : ''}
                       {timeLeft.hours > 0 && ` et ${timeLeft.hours}h`}
                     </p>
                   ) : (
-                    <p className="text-lg font-semibold text-yellow-400">
+                    <p className="text-base sm:text-lg font-semibold text-yellow-400 break-words">
                       Expire aujourd'hui ! ({timeLeft.hours}h {timeLeft.minutes}min restantes)
                     </p>
                   )}
-                  <p className="text-sm text-gray-400">
+                  <p className="text-xs sm:text-sm text-gray-400 break-words">
                     Expire le {new Date(trialEndsAt).toLocaleDateString('fr-FR', {
                       day: 'numeric',
                       month: 'long',
@@ -189,38 +189,38 @@ export default function TrialBanner({ trialEndsAt, plan }: TrialBannerProps) {
               )}
 
               {/* Avantages */}
-              <p className="text-sm text-gray-300 mb-4">
+              <p className="text-xs sm:text-sm text-gray-300 mb-3">
                 Profitez de toutes les fonctionnalités {isPremium ? 'Premium' : 'Pro'} gratuitement pendant votre essai :
               </p>
-              <ul className="text-sm text-gray-300 space-y-2 mb-4">
+              <ul className="text-xs sm:text-sm text-gray-300 space-y-1.5 sm:space-y-2 mb-4">
                 {isPremium ? (
                   <>
                     <li className="flex items-center gap-2">
-                      <Zap className="w-4 h-4 text-purple-400" />
-                      ComptaBot - Assistant IA
+                      <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-400 flex-shrink-0" />
+                      <span className="break-words">ComptaBot - Assistant IA</span>
                     </li>
                     <li className="flex items-center gap-2">
-                      <Zap className="w-4 h-4 text-purple-400" />
-                      Rappels URSSAF automatiques
+                      <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-400 flex-shrink-0" />
+                      <span className="break-words">Rappels URSSAF automatiques</span>
                     </li>
                     <li className="flex items-center gap-2">
-                      <Zap className="w-4 h-4 text-purple-400" />
-                      Statistiques avancées
+                      <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-400 flex-shrink-0" />
+                      <span className="break-words">Statistiques avancées</span>
                     </li>
                   </>
                 ) : (
                   <>
                     <li className="flex items-center gap-2">
-                      <Zap className="w-4 h-4 text-green-400" />
-                      Factures illimitées
+                      <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-400 flex-shrink-0" />
+                      <span className="break-words">Factures illimitées</span>
                     </li>
                     <li className="flex items-center gap-2">
-                      <Zap className="w-4 h-4 text-green-400" />
-                      Export comptable
+                      <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-400 flex-shrink-0" />
+                      <span className="break-words">Export comptable</span>
                     </li>
                     <li className="flex items-center gap-2">
-                      <Zap className="w-4 h-4 text-green-400" />
-                      Calculs illimités
+                      <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-400 flex-shrink-0" />
+                      <span className="break-words">Calculs illimités</span>
                     </li>
                   </>
                 )}
@@ -229,10 +229,10 @@ export default function TrialBanner({ trialEndsAt, plan }: TrialBannerProps) {
           </div>
 
           {/* CTA */}
-          <div className="flex-shrink-0">
+          <div className="w-full sm:w-auto sm:flex-shrink-0 mt-4 sm:mt-0">
             <Link
               href="/pricing"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white font-semibold transition-all hover:scale-105 hover:shadow-xl cursor-pointer whitespace-nowrap"
+              className="flex sm:inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-white font-semibold transition-all hover:scale-105 hover:shadow-xl cursor-pointer w-full sm:w-auto text-center min-h-[48px]"
               style={{
                 background: isPremium
                   ? 'linear-gradient(135deg, #8B5CF6, #3B82F6)'
@@ -243,7 +243,7 @@ export default function TrialBanner({ trialEndsAt, plan }: TrialBannerProps) {
               }}
             >
               <Sparkles className="w-5 h-5" />
-              S'abonner maintenant
+              <span>S'abonner maintenant</span>
             </Link>
           </div>
         </div>
