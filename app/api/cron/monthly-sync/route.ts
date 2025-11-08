@@ -128,7 +128,7 @@ export async function POST(request: NextRequest) {
           if (userData.email) {
             // Vérifier la préférence email
             const { data: preferences } = await supabase
-              .from('user_preferences')
+              .from('email_preferences')
               .select('monthly_recap_email')
               .eq('user_id', userData.userId)
               .single();

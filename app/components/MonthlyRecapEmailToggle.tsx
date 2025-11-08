@@ -19,7 +19,7 @@ export default function MonthlyRecapEmailToggle({ userId }: MonthlyRecapEmailTog
   const loadPreference = async () => {
     try {
       const { data, error } = await supabase
-        .from('user_preferences')
+        .from('email_preferences')
         .select('monthly_recap_email')
         .eq('user_id', userId)
         .single();
@@ -42,7 +42,7 @@ export default function MonthlyRecapEmailToggle({ userId }: MonthlyRecapEmailTog
 
     try {
       const { error } = await supabase
-        .from('user_preferences')
+        .from('email_preferences')
         .upsert({
           user_id: userId,
           monthly_recap_email: newValue,
@@ -51,12 +51,17 @@ export default function MonthlyRecapEmailToggle({ userId }: MonthlyRecapEmailTog
           onConflict: 'user_id'
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Erreur sauvegarde préférence:', error);
+        throw error;
+      }
 
       setEnabled(newValue);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur sauvegarde préférence:', error);
-      alert('Une erreur est survenue');
+      alert(`Une erreur est survenue : ${error.message}`);
+      // Revert au cas où
+      setEnabled(!newValue);
     } finally {
       setSaving(false);
     }
