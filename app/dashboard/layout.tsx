@@ -262,10 +262,18 @@ export default function DashboardLayout({
             {filteredNavItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
+              // Ajouter data-tutorial basé sur le href pour le tutoriel
+              let dataTutorial = '';
+              if (item.href === '/dashboard/tva') dataTutorial = 'tva';
+              else if (item.href === '/dashboard/charges') dataTutorial = 'charges';
+              else if (item.href === '/dashboard/export') dataTutorial = 'export';
+              else if (item.href === '/dashboard/calendrier-fiscal') dataTutorial = 'calendrier';
+              
               return (
                 <Link
                   key={item.href}
                   href={item.href}
+                  data-tutorial={dataTutorial || undefined}
                   className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                     isActive
                       ? 'text-white'
@@ -443,11 +451,19 @@ export default function DashboardLayout({
             {filteredNavItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
+              // Ajouter data-tutorial basé sur le href pour le tutoriel
+              let dataTutorial = '';
+              if (item.href === '/dashboard/tva') dataTutorial = 'tva';
+              else if (item.href === '/dashboard/charges') dataTutorial = 'charges';
+              else if (item.href === '/dashboard/export') dataTutorial = 'export';
+              else if (item.href === '/dashboard/calendrier-fiscal') dataTutorial = 'calendrier';
+              
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   onClick={() => setSidebarOpen(false)}
+                  data-tutorial={dataTutorial || undefined}
                   className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                     isActive
                       ? 'text-white'

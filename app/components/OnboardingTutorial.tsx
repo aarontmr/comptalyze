@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/supabaseClient";
 import { getUserSubscription } from "@/lib/subscriptionUtils";
 import { User } from "@supabase/supabase-js";
-import { X, ChevronRight, ChevronLeft, CheckCircle, Calculator, FileText, BarChart3, LayoutDashboard, TrendingUp, DollarSign, PieChart } from "lucide-react";
+import { X, ChevronRight, ChevronLeft, CheckCircle, Calculator, FileText, BarChart3, LayoutDashboard, TrendingUp, DollarSign, PieChart, Percent, Receipt, Download, Calendar as CalendarIcon, Bot } from "lucide-react";
 
 interface TutorialStep {
   id: string;
@@ -101,23 +101,73 @@ export default function OnboardingTutorial({ user, onComplete }: OnboardingTutor
       position: "right",
     },
     {
+      id: "tva",
+      title: "Simulateur TVA (Pro)",
+      description:
+        "Si vous êtes assujetti à la TVA, utilisez notre simulateur pour calculer facilement votre TVA collectée et déductible selon votre régime fiscal.",
+      icon: Percent,
+      targetSelector: "[data-tutorial='tva']",
+      position: "right",
+      requiresPro: true,
+    },
+    {
+      id: "charges",
+      title: "Gestion des Charges (Pro)",
+      description:
+        "Enregistrez et suivez toutes vos charges professionnelles pour optimiser votre comptabilité et réduire vos impôts.",
+      icon: Receipt,
+      targetSelector: "[data-tutorial='charges']",
+      position: "right",
+      requiresPro: true,
+    },
+    {
       id: "invoices",
       title: "Gestion des factures (Pro/Premium)",
       description:
-        "Si vous avez un abonnement Pro ou Premium, vous pouvez créer, gérer et envoyer des factures directement depuis Comptalyze. Exportez-les en PDF et envoyez-les par email.",
+        "Créez, gérez et envoyez des factures professionnelles directement depuis Comptalyze. Exportez-les en PDF et envoyez-les par email en un clic.",
       icon: FileText,
       targetSelector: "[data-tutorial='invoices']",
       position: "right",
       requiresPro: true,
     },
     {
+      id: "export",
+      title: "Export Comptable (Pro)",
+      description:
+        "Exportez toutes vos données comptables au format CSV ou PDF pour votre comptable ou vos archives. Simplifiez votre gestion administrative !",
+      icon: Download,
+      targetSelector: "[data-tutorial='export']",
+      position: "right",
+      requiresPro: true,
+    },
+    {
+      id: "calendrier",
+      title: "Calendrier Fiscal (Premium)",
+      description:
+        "Ne manquez plus jamais une échéance ! Le calendrier fiscal vous rappelle toutes vos obligations : déclarations URSSAF, TVA, impôts sur le revenu.",
+      icon: CalendarIcon,
+      targetSelector: "[data-tutorial='calendrier']",
+      position: "right",
+      requiresPremium: true,
+    },
+    {
       id: "statistics",
       title: "Statistiques avancées (Premium)",
       description:
-        "Les utilisateurs Premium ont accès à des graphiques détaillés et des analyses avancées pour suivre l'évolution de leur activité dans le temps.",
+        "Accédez à des graphiques détaillés et des analyses avancées pour suivre l'évolution de votre activité dans le temps. Prenez les meilleures décisions pour votre entreprise.",
       icon: BarChart3,
       targetSelector: "[data-tutorial='statistics']",
       position: "right",
+      requiresPremium: true,
+    },
+    {
+      id: "chatbot",
+      title: "ComptaBot - Votre Assistant IA (Premium)",
+      description:
+        "Posez toutes vos questions à ComptaBot, votre assistant intelligent disponible 24/7. Il vous aide à optimiser vos cotisations, comprendre vos obligations fiscales et bien plus !",
+      icon: Bot,
+      targetSelector: ".chatbot-float-button",
+      position: "left",
       requiresPremium: true,
     },
     {
@@ -133,19 +183,24 @@ export default function OnboardingTutorial({ user, onComplete }: OnboardingTutor
       id: "complete",
       title: "C'est parti ! 🚀",
       description:
-        "Vous êtes maintenant prêt à utiliser Comptalyze. N'hésitez pas à explorer toutes les fonctionnalités. Si vous avez besoin d'aide, consultez la page À propos ou contactez-nous.",
+        "Vous êtes maintenant prêt à utiliser Comptalyze. N'hésitez pas à explorer toutes les fonctionnalités. Si vous avez besoin d'aide, notre équipe support est là pour vous !",
       icon: CheckCircle,
       position: "center",
     },
   ];
 
-  // Filtrer les étapes selon le plan de l'utilisateur
+  // Filtrer les étapes selon le plan de l'utilisateur ET valider que les selectors existent
   // Les étapes avec requiresPremium sont affichées uniquement aux utilisateurs Premium
   // Les étapes avec requiresPro sont affichées aux utilisateurs Pro ET Premium
   // Les autres étapes sont affichées à tous les utilisateurs (gratuit, pro, premium)
   const steps = allSteps.filter((step) => {
+    // Filtrer selon le plan
     if (step.requiresPremium && !subscription.isPremium) return false;
     if (step.requiresPro && !subscription.isPro && !subscription.isPremium) return false;
+    
+    // Si l'étape a un targetSelector, vérifier qu'il existe (après un délai pour le DOM)
+    // On ne vérifie pas ici car le DOM n'est peut-être pas encore chargé
+    // La vérification se fera dans useEffect
     return true;
   });
 
@@ -167,12 +222,22 @@ export default function OnboardingTutorial({ user, onComplete }: OnboardingTutor
     const updatePositions = () => {
       const element = document.querySelector(targetSelector) as HTMLElement;
       if (!element) {
-        // Si l'élément n'existe pas (ex: pas Pro/Premium), passer à l'étape suivante
-        console.warn(`Élément tutoriel non trouvé: ${targetSelector}`);
+        // Si l'élément n'existe pas, passer automatiquement à l'étape suivante après un délai
+        console.warn(`Élément tutoriel non trouvé: ${targetSelector}. Passage à l'étape suivante.`);
         setTargetElement(null);
         setElementPosition(null);
         setTooltipPosition(null);
-        return;
+        
+        // Attendre un peu pour laisser le temps au DOM de se charger, sinon passer à l'étape suivante
+        const retryTimeout = setTimeout(() => {
+          const retryElement = document.querySelector(targetSelector) as HTMLElement;
+          if (!retryElement && currentStep < steps.length - 1) {
+            // Si toujours pas trouvé, passer à l'étape suivante automatiquement
+            setCurrentStep(prev => prev + 1);
+          }
+        }, 2000);
+        
+        return () => clearTimeout(retryTimeout);
       }
 
       // Ajouter un z-index élevé à l'élément pour qu'il reste visible
@@ -195,45 +260,53 @@ export default function OnboardingTutorial({ user, onComplete }: OnboardingTutor
 
       setElementPosition(position);
 
-      // Calculer la position de la tooltip
-      const tooltipWidth = 400; // Largeur approximative de la tooltip
+      // Calculer la position de la tooltip avec responsive
+      const isMobile = window.innerWidth < 640;
+      const tooltipWidth = isMobile ? window.innerWidth - 32 : 400; // Responsive width
       const tooltipHeight = 250; // Hauteur approximative
-      const gap = 20; // Espace entre l'élément et la tooltip
+      const gap = isMobile ? 10 : 20; // Espacement réduit sur mobile
 
       let top = 0;
       let left = 0;
 
-      switch (step.position) {
-        case "top":
-          top = position.top - tooltipHeight - gap;
-          left = position.left + position.width / 2;
-          break;
-        case "bottom":
-          top = position.top + position.height + gap;
-          left = position.left + position.width / 2;
-          break;
-        case "left":
-          top = position.top + position.height / 2;
-          left = position.left - tooltipWidth - gap;
-          break;
-        case "right":
-          top = position.top + position.height / 2;
-          left = position.left + position.width + gap;
-          break;
-        default:
-          top = position.top + position.height / 2;
-          left = position.left + position.width + gap;
-      }
+      // Sur mobile, afficher au centre pour éviter les problèmes de positionnement
+      if (isMobile) {
+        top = window.innerHeight / 2 + scrollY;
+        left = window.innerWidth / 2;
+      } else {
+        // Desktop: positionnement normal
+        switch (step.position) {
+          case "top":
+            top = position.top - tooltipHeight - gap;
+            left = position.left + position.width / 2;
+            break;
+          case "bottom":
+            top = position.top + position.height + gap;
+            left = position.left + position.width / 2;
+            break;
+          case "left":
+            top = position.top + position.height / 2;
+            left = position.left - tooltipWidth - gap;
+            break;
+          case "right":
+            top = position.top + position.height / 2;
+            left = position.left + position.width + gap;
+            break;
+          default:
+            top = position.top + position.height / 2;
+            left = position.left + position.width + gap;
+        }
 
-      // Ajuster pour éviter de sortir de l'écran
-      const padding = 20;
-      if (left < padding) left = padding;
-      if (left + tooltipWidth > window.innerWidth - padding) {
-        left = window.innerWidth - tooltipWidth - padding;
-      }
-      if (top < padding) top = padding;
-      if (top + tooltipHeight > window.innerHeight + scrollY - padding) {
-        top = window.innerHeight + scrollY - tooltipHeight - padding;
+        // Ajuster pour éviter de sortir de l'écran
+        const padding = 20;
+        if (left < padding) left = padding;
+        if (left + tooltipWidth > window.innerWidth - padding) {
+          left = window.innerWidth - tooltipWidth - padding;
+        }
+        if (top < padding) top = padding;
+        if (top + tooltipHeight > window.innerHeight + scrollY - padding) {
+          top = window.innerHeight + scrollY - tooltipHeight - padding;
+        }
       }
 
       setTooltipPosition({ top, left });
@@ -375,10 +448,10 @@ export default function OnboardingTutorial({ user, onComplete }: OnboardingTutor
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed max-w-md"
+            className="fixed w-[calc(100vw-2rem)] sm:w-96 max-w-md"
             style={{
               zIndex: 10001,
-              ...(isCenter
+              ...(isCenter || (typeof window !== 'undefined' && window.innerWidth < 640 && step.targetSelector)
                 ? {
                     top: "50%",
                     left: "50%",
