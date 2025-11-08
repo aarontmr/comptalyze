@@ -71,6 +71,21 @@ ${userData ? `\n\nDONNÉES UTILISATEUR :\n${JSON.stringify(userData, null, 2)}` 
 // Fonction pour récupérer les données utilisateur (pour Premium uniquement)
 async function getUserData(userId: string) {
   try {
+    // Récupérer les données d'onboarding
+    const { data: onboardingData } = await supabaseAdmin
+      .from('user_onboarding_data')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+
+    // Récupérer les intégrations
+    const { data: integrations } = await supabaseAdmin
+      .from('integration_tokens')
+      .select('provider, is_active, last_sync_at')
+      .eq('user_id', userId)
+      .eq('is_active', true);
+
+    // Récupérer les records CA
     const { data: records } = await supabaseAdmin
       .from('ca_records')
       .select('*')
@@ -98,6 +113,22 @@ async function getUserData(userId: string) {
     const avgCA = totalCA / records.length;
     const tauxCotisation = totalCA > 0 ? ((totalContrib / totalCA) * 100).toFixed(1) : '0';
 
+    // Contexte fiscal
+    let fiscalContext = {};
+    if (onboardingData) {
+      fiscalContext = {
+        regimeIR: onboardingData.ir_mode === 'versement_liberatoire' 
+          ? `Versement Libératoire (${onboardingData.ir_rate}%)`
+          : 'Barème Progressif',
+        acre: onboardingData.has_acre
+          ? `Oui - Année ${onboardingData.acre_year} (création: ${onboardingData.company_creation_date})`
+          : 'Non',
+      };
+    }
+
+    // Intégrations actives
+    const activeIntegrations = integrations?.map(i => i.provider) || [];
+
     return {
       enregistrements: summary.slice(0, 3), // Derniers 3 mois
       stats: {
@@ -106,6 +137,10 @@ async function getUserData(userId: string) {
         cotisationsTotal: totalContrib.toFixed(2),
         tauxMoyen: tauxCotisation,
       },
+      contexteFiscal: fiscalContext,
+      integrations: activeIntegrations.length > 0 
+        ? `Connecté à: ${activeIntegrations.join(', ')}`
+        : 'Aucune intégration',
     };
   } catch (error) {
     console.error('Erreur récupération données utilisateur:', error);
