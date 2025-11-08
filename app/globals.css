@@ -250,10 +250,10 @@ iframe {
     overflow-x: hidden;
   }
   
-  /* Bouton chatbot toujours visible */
+  /* Bouton chatbot toujours visible - positionné au-dessus de la navigation */
   .chatbot-float-button {
     position: fixed !important;
-    bottom: 8rem !important; /* 128px = bottom-32 */
+    bottom: 5rem !important; /* 80px = bottom-20, juste au-dessus de la navigation (60px) */
     right: 1rem !important;
     z-index: 9999 !important;
   }

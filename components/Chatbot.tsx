@@ -370,9 +370,8 @@ export default function Chatbot({ user }: ChatbotProps) {
               exit={{ scale: 0, opacity: 0 }}
               transition={{ type: "spring", stiffness: 260, damping: 20 }}
               onClick={() => setIsOpen(true)}
-              className="fixed bottom-32 sm:bottom-6 right-4 z-[9999] w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-full text-white shadow-2xl transition-all duration-300 hover:scale-110 cursor-pointer group"
+              className="chatbot-float-button fixed bottom-20 sm:bottom-6 right-4 z-[9999] w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-full text-white shadow-2xl transition-all duration-300 hover:scale-110 cursor-pointer group"
               style={{
-                position: 'fixed',
                 background: 'linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)',
                 boxShadow: '0 10px 40px rgba(46, 108, 246, 0.5)',
               }}
@@ -631,9 +630,8 @@ export default function Chatbot({ user }: ChatbotProps) {
               exit={{ scale: 0, opacity: 0 }}
               transition={{ type: "spring", stiffness: 260, damping: 20 }}
               onClick={() => setIsOpen(true)}
-              className="fixed bottom-32 sm:bottom-6 right-4 z-[9999] w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-full text-white shadow-2xl transition-all duration-300 hover:scale-110 cursor-pointer group"
+              className="chatbot-float-button fixed bottom-20 sm:bottom-6 right-4 z-[9999] w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-full text-white shadow-2xl transition-all duration-300 hover:scale-110 cursor-pointer group"
               style={{
-                position: 'fixed',
                 background: 'linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)',
                 boxShadow: '0 10px 40px rgba(46, 108, 246, 0.5)',
               }}
