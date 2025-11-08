@@ -220,7 +220,7 @@ export default function PricingPage() {
 
       {/* Pricing Cards Section */}
       <section className="px-4 pb-16">
-        <div className="mx-auto mt-0 grid max-w-6xl gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mx-auto mt-0 grid max-w-6xl gap-8 sm:grid-cols-2 lg:grid-cols-3" style={{ gridAutoRows: 'auto', alignItems: 'start' }}>
           {/* Gratuit */}
           <div className="rounded-2xl p-8 flex flex-col transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
             <div className="mb-3 text-sm font-semibold text-gray-400 uppercase tracking-wide">Gratuit</div>
