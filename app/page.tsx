@@ -6,7 +6,7 @@ import logo from "@/public/logo.png";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { LayoutDashboard, LogIn, UserPlus, Shield, TrendingUp, Percent, BarChart3, FileText, Calculator, Lock, Info, Check, Menu, X, Sparkles } from "lucide-react";
+import { LayoutDashboard, LogIn, UserPlus, Shield, TrendingUp, Percent, BarChart3, FileText, Calculator, Lock, Info, Check, Menu, X, Sparkles, Zap } from "lucide-react";
 import { FadeIn, Stagger, ScaleOnHover, fadeInVariant } from "@/app/components/anim/Motion";
 import Counter from "@/app/components/anim/Counter";
 import GradientBlob from "@/app/components/anim/GradientBlob";
