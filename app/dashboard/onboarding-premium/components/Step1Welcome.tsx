@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Sparkles, Check, Zap, TrendingUp, Bot } from 'lucide-react';
+import { Sparkles, Check, Zap, TrendingUp, Bot, ArrowRight } from 'lucide-react';
 
 interface Step1WelcomeProps {
   onNext: () => void;
