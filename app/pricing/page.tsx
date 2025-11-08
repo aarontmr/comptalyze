@@ -40,6 +40,8 @@ export default function PricingPage() {
 
     try {
       setTrialLoading(true);
+      console.log('🚀 Démarrage de l\'essai pour:', user.id);
+      
       const res = await fetch("/api/start-trial", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -47,20 +49,24 @@ export default function PricingPage() {
       });
 
       const data = await res.json();
+      console.log('📦 Réponse API:', data);
 
       if (!res.ok) {
+        console.error('❌ Erreur API:', data.error);
         showError(data.error || "Une erreur est survenue");
         setTrialLoading(false);
         return;
       }
 
+      console.log('✅ Essai activé avec succès');
       success("🎉 Votre essai gratuit de 3 jours a commencé ! Profitez de toutes les fonctionnalités Premium.");
       setTimeout(() => {
+        console.log('🔄 Rechargement de la page...');
         window.location.reload();
       }, 1500);
     } catch (error) {
-      console.error("Erreur lors du démarrage de l'essai:", error);
-      showError("Une erreur est survenue lors du démarrage de l'essai.");
+      console.error("❌ Erreur lors du démarrage de l'essai:", error);
+      showError("Une erreur est survenue lors du démarrage de l'essai. Vérifiez la console pour plus de détails.");
       setTrialLoading(false);
     }
   };
