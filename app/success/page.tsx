@@ -71,6 +71,34 @@ function SuccessContent() {
       } else {
         console.log('⏳ Abonnement pas encore actif, retry dans 2s...');
         
+        // Après 3 tentatives (6 secondes), essayer de forcer la synchronisation avec Stripe
+        if (currentRetry === 3) {
+          console.log('🔄 Tentative de synchronisation manuelle avec Stripe...');
+          try {
+            const syncRes = await fetch('/api/sync-stripe-subscription', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ userId: user.id }),
+            });
+
+            const syncData = await syncRes.json();
+            
+            if (syncRes.ok) {
+              console.log('✅ Synchronisation manuelle réussie!');
+              // Forcer un nouveau check immédiatement
+              setTimeout(() => {
+                setRetryCount(currentRetry + 1);
+                checkSubscriptionStatus(currentRetry + 1);
+              }, 1000);
+              return;
+            } else {
+              console.warn('⚠️ Synchronisation manuelle échouée:', syncData.error);
+            }
+          } catch (syncError) {
+            console.error('❌ Erreur synchronisation:', syncError);
+          }
+        }
+        
         // Retry jusqu'à 10 fois (20 secondes total)
         if (currentRetry < 10) {
           setTimeout(() => {
@@ -79,7 +107,7 @@ function SuccessContent() {
           }, 2000);
         } else {
           console.warn('⚠️ Délai d\'attente dépassé (20s). Le webhook Stripe peut prendre plus de temps.');
-          console.warn('💡 Allez dans votre dashboard, l\'abonnement devrait apparaître sous peu.');
+          console.warn('💡 Tentez une synchronisation manuelle ou allez dans votre dashboard.');
           setCheckingSubscription(false);
         }
       }
@@ -218,25 +246,72 @@ function SuccessContent() {
                 }}
               >
                 <div className="text-center">
-                  <p className="text-sm text-yellow-400 mb-3">
-                    ⏳ L'activation prend plus de temps que prévu...
+                  <p className="text-sm text-yellow-400 mb-1 font-semibold">
+                    ⚠️ L'activation prend plus de temps que prévu
                   </p>
-                  <button
-                    onClick={() => {
-                      setCheckingSubscription(true);
-                      setRetryCount(0);
-                      checkSubscriptionStatus();
-                    }}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white transition-all hover:scale-105"
-                    style={{
-                      background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                    }}
-                  >
-                    <RefreshCw className="w-4 h-4" />
-                    Vérifier maintenant
-                  </button>
-                  <p className="text-xs text-gray-500 mt-2">
-                    Le webhook Stripe peut prendre quelques secondes. Votre paiement est confirmé !
+                  <p className="text-xs text-gray-400 mb-4">
+                    Le webhook Stripe n'a pas encore activé votre abonnement. Votre paiement est confirmé !
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    <button
+                      onClick={async () => {
+                        setCheckingSubscription(true);
+                        setRetryCount(0);
+                        
+                        // Forcer la synchronisation avec Stripe
+                        try {
+                          const { data: { user } } = await supabase.auth.getUser();
+                          if (user) {
+                            const syncRes = await fetch('/api/sync-stripe-subscription', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ userId: user.id }),
+                            });
+                            
+                            if (syncRes.ok) {
+                              console.log('✅ Synchronisation forcée réussie');
+                              // Re-check immédiatement
+                              setTimeout(() => checkSubscriptionStatus(0), 500);
+                            } else {
+                              const data = await syncRes.json();
+                              console.error('❌ Erreur sync:', data.error);
+                              alert('Erreur: ' + data.error);
+                              setCheckingSubscription(false);
+                            }
+                          }
+                        } catch (err) {
+                          console.error('❌ Erreur:', err);
+                          setCheckingSubscription(false);
+                        }
+                      }}
+                      className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold text-white transition-all hover:scale-105"
+                      style={{
+                        background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                        boxShadow: "0 4px 15px rgba(46,108,246,0.3)",
+                      }}
+                    >
+                      <RefreshCw className="w-5 h-5" />
+                      Forcer la synchronisation avec Stripe
+                    </button>
+                    <button
+                      onClick={() => {
+                        setCheckingSubscription(true);
+                        setRetryCount(0);
+                        checkSubscriptionStatus();
+                      }}
+                      className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105"
+                      style={{
+                        border: "1px solid rgba(46,108,246,0.5)",
+                        backgroundColor: "transparent",
+                        color: "#60a5fa",
+                      }}
+                    >
+                      <RefreshCw className="w-4 h-4" />
+                      Vérifier à nouveau
+                    </button>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-3">
+                    💡 Si le problème persiste, contactez le support avec votre session_id
                   </p>
                 </div>
               </div>
