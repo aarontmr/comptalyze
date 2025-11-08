@@ -371,7 +371,7 @@ export default function DashboardLayout({
 
       {/* Mobile sidebar */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out lg:hidden ${
+        className={`fixed top-0 bottom-0 left-0 z-50 w-[280px] max-w-[85vw] transform transition-transform duration-300 ease-in-out lg:hidden ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
         style={{ 
@@ -379,7 +379,8 @@ export default function DashboardLayout({
           borderRight: '1px solid rgba(45, 52, 65, 0.5)',
           height: '100vh',
           maxHeight: '100vh',
-          overflowY: 'auto'
+          overflowY: 'auto',
+          overflowX: 'hidden',
         }}
       >
         <div className="flex flex-col h-full min-h-0">
@@ -426,14 +427,14 @@ export default function DashboardLayout({
           </div>
 
           {/* Mobile - Lien vers l'accueil */}
-          <div className="px-4 py-2 border-b border-gray-800 flex-shrink-0">
+          <div className="px-4 py-3 border-b border-gray-800 flex-shrink-0">
             <Link
               href="/"
               onClick={() => setSidebarOpen(false)}
-              className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition-all duration-200"
+              className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition-all duration-200 min-h-[44px]"
             >
-              <Home className="w-5 h-5" />
-              <span>Accueil</span>
+              <Home className="w-5 h-5 flex-shrink-0" />
+              <span className="leading-none">Accueil</span>
             </Link>
           </div>
 
