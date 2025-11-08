@@ -79,7 +79,7 @@ export default function Step3ACRE({ data, onUpdate, onNext, onBack }: Step3ACREP
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => handleACREToggle(true)}
-            className={`p-4 rounded-xl font-semibold transition-all min-h-[48px] ${
+            className={`p-3 sm:p-4 rounded-xl font-semibold transition-all min-h-[48px] text-sm sm:text-base ${
               hasACRE
                 ? 'ring-2 ring-[#00D084] text-white'
                 : 'ring-1 ring-gray-800 text-gray-400 hover:ring-gray-700'
@@ -95,7 +95,7 @@ export default function Step3ACRE({ data, onUpdate, onNext, onBack }: Step3ACREP
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => handleACREToggle(false)}
-            className={`p-4 rounded-xl font-semibold transition-all min-h-[48px] ${
+            className={`p-3 sm:p-4 rounded-xl font-semibold transition-all min-h-[48px] text-sm sm:text-base ${
               !hasACRE
                 ? 'ring-2 ring-[#2E6CF6] text-white'
                 : 'ring-1 ring-gray-800 text-gray-400 hover:ring-gray-700'
@@ -128,7 +128,7 @@ export default function Step3ACRE({ data, onUpdate, onNext, onBack }: Step3ACREP
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleYearSelect(year)}
-                  className={`p-4 rounded-xl font-semibold transition-all min-h-[48px] ${
+                  className={`p-3 sm:p-4 rounded-xl font-semibold transition-all min-h-[48px] text-sm sm:text-base ${
                     acreYear === year
                       ? 'ring-2 ring-[#00D084] text-white'
                       : 'ring-1 ring-gray-800 text-gray-400 hover:ring-gray-700'

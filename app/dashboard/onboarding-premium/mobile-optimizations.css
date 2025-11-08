@@ -1,0 +1,71 @@
+/* Optimisations Mobile pour Onboarding Premium */
+
+@media (max-width: 640px) {
+  /* Stepper plus compact sur mobile */
+  .onboarding-stepper {
+    padding: 0 0.5rem;
+  }
+
+  /* Cartes de sélection tactiles */
+  .onboarding-option-card {
+    min-height: 120px;
+    touch-action: manipulation;
+  }
+
+  /* Tooltips en pleine largeur sur mobile */
+  .onboarding-tooltip {
+    left: 0 !important;
+    right: 0 !important;
+    margin: 0 1rem;
+    max-width: calc(100vw - 2rem);
+  }
+
+  /* Inputs anti-zoom iOS */
+  .onboarding-input {
+    font-size: 16px !important;
+    -webkit-appearance: none;
+  }
+
+  /* Boutons touch-friendly */
+  .onboarding-button {
+    min-height: 48px;
+    padding: 0.75rem 1rem;
+  }
+
+  /* Grilles responsive */
+  .onboarding-grid-3 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Textes plus petits sur très petits écrans */
+  .onboarding-description {
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+}
+
+@media (max-width: 400px) {
+  /* Très petits écrans (iPhone SE, etc.) */
+  .onboarding-title {
+    font-size: 1.5rem !important;
+  }
+
+  .onboarding-card {
+    padding: 1rem !important;
+  }
+}
+
+/* Touch targets conformes (44px minimum) */
+button.onboarding-action,
+a.onboarding-action {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Prevent text selection on buttons */
+.onboarding-button,
+.onboarding-option-card {
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+

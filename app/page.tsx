@@ -1399,11 +1399,11 @@ export default function LandingPage() {
             </div>
           </FadeIn>
 
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-8 mb-12">
             {/* Comment ça marche */}
             <FadeIn delay={0.2} y={12}>
-              <div className="rounded-2xl p-8" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
-                <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+              <div className="rounded-2xl p-5 sm:p-6 lg:p-8" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
+                <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #00D084, #2E6CF6)" }}>
                     <span className="text-white font-bold">1</span>
                   </div>
@@ -1452,8 +1452,8 @@ export default function LandingPage() {
 
             {/* ROI Calculator */}
             <FadeIn delay={0.4} y={12}>
-              <div className="rounded-2xl p-8" style={{ background: "linear-gradient(135deg, rgba(0, 208, 132, 0.1), rgba(46, 108, 246, 0.1))", border: "1px solid rgba(0, 208, 132, 0.3)" }}>
-                <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+              <div className="rounded-2xl p-5 sm:p-6 lg:p-8" style={{ background: "linear-gradient(135deg, rgba(0, 208, 132, 0.1), rgba(46, 108, 246, 0.1))", border: "1px solid rgba(0, 208, 132, 0.3)" }}>
+                <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #00D084, #2E6CF6)" }}>
                     <span className="text-white">💰</span>
                   </div>
@@ -1501,31 +1501,31 @@ export default function LandingPage() {
 
           {/* Email Preview */}
           <FadeIn delay={0.6} y={12}>
-            <div className="text-center mb-8">
-              <h3 className="text-2xl font-bold mb-4">Email mensuel automatique</h3>
-              <p className="text-gray-400 mb-8">Chaque fin de mois, recevez un récap de votre CA importé</p>
+            <div className="text-center mb-6 sm:mb-8">
+              <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 px-4">Email mensuel automatique</h3>
+              <p className="text-sm sm:text-base text-gray-400 mb-6 sm:mb-8 px-4">Chaque fin de mois, recevez un récap de votre CA importé</p>
             </div>
             <div className="max-w-2xl mx-auto">
               <div className="rounded-2xl overflow-hidden shadow-2xl" style={{ border: "1px solid #1f232b" }}>
                 {/* Email Header */}
-                <div className="p-6 text-center" style={{ background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)" }}>
-                  <h4 className="text-2xl font-bold text-white mb-1">✅ CA Importé !</h4>
-                  <p className="text-white/90">janvier 2025</p>
+                <div className="p-4 sm:p-6 text-center" style={{ background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)" }}>
+                  <h4 className="text-xl sm:text-2xl font-bold text-white mb-1">✅ CA Importé !</h4>
+                  <p className="text-sm sm:text-base text-white/90">janvier 2025</p>
                 </div>
                 {/* Email Body */}
-                <div className="p-6 sm:p-8" style={{ backgroundColor: "#14161b" }}>
-                  <p className="text-gray-300 mb-4">Bonjour ! 👋</p>
-                  <p className="text-gray-300 mb-6">Votre chiffre d'affaires du mois de <strong className="text-white">janvier 2025</strong> a été importé automatiquement.</p>
+                <div className="p-4 sm:p-6 lg:p-8" style={{ backgroundColor: "#14161b" }}>
+                  <p className="text-sm sm:text-base text-gray-300 mb-3 sm:mb-4">Bonjour ! 👋</p>
+                  <p className="text-sm sm:text-base text-gray-300 mb-4 sm:mb-6">Votre chiffre d'affaires du mois de <strong className="text-white">janvier 2025</strong> a été importé automatiquement.</p>
                   
-                  <div className="p-6 rounded-xl mb-6 text-center" style={{ background: "linear-gradient(135deg, rgba(0, 208, 132, 0.1), rgba(46, 108, 246, 0.1))", border: "1px solid rgba(0, 208, 132, 0.3)" }}>
-                    <div className="text-sm text-gray-400 mb-2 uppercase tracking-wide">CA Total</div>
-                    <div className="text-4xl font-bold" style={{ background: "linear-gradient(135deg, #00D084, #2E6CF6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                  <div className="p-4 sm:p-6 rounded-xl mb-4 sm:mb-6 text-center" style={{ background: "linear-gradient(135deg, rgba(0, 208, 132, 0.1), rgba(46, 108, 246, 0.1))", border: "1px solid rgba(0, 208, 132, 0.3)" }}>
+                    <div className="text-xs sm:text-sm text-gray-400 mb-2 uppercase tracking-wide">CA Total</div>
+                    <div className="text-3xl sm:text-4xl font-bold" style={{ background: "linear-gradient(135deg, #00D084, #2E6CF6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
                       4 700 €
                     </div>
                   </div>
 
-                  <div className="mb-6">
-                    <div className="text-sm font-semibold text-white mb-3">Détails par source</div>
+                  <div className="mb-4 sm:mb-6">
+                    <div className="text-sm font-semibold text-white mb-2 sm:mb-3">Détails par source</div>
                     <div className="space-y-2">
                       <div className="flex justify-between p-3 rounded-lg" style={{ backgroundColor: "#1a1d24" }}>
                         <span className="text-gray-300">🛒 Shopify</span>
@@ -1539,12 +1539,12 @@ export default function LandingPage() {
                   </div>
 
                   <div className="text-center">
-                    <button className="px-6 py-3 rounded-lg text-white font-semibold" style={{ background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)" }}>
+                    <button className="px-6 py-3 rounded-lg text-white font-semibold text-sm sm:text-base min-h-[48px]" style={{ background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)" }}>
                       Voir mon dashboard
                     </button>
                   </div>
 
-                  <div className="mt-6 pt-6 border-t text-sm text-gray-400 text-center" style={{ borderColor: "#1f232b" }}>
+                  <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t text-xs sm:text-sm text-gray-400 text-center" style={{ borderColor: "#1f232b" }}>
                     💡 <strong>Astuce :</strong> Ces données sont déjà pré-remplies dans votre simulateur URSSAF !
                   </div>
                 </div>

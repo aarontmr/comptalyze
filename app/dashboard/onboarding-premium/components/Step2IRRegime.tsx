@@ -62,7 +62,7 @@ export default function Step2IRRegime({ data, onUpdate, onNext, onBack }: Step2I
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => handleSelect('versement_liberatoire')}
-          className={`relative p-6 rounded-xl text-left transition-all ${
+          className={`relative p-4 sm:p-6 rounded-xl text-left transition-all ${
             selected === 'versement_liberatoire'
               ? 'ring-2 ring-[#2E6CF6]'
               : 'ring-1 ring-gray-800 hover:ring-gray-700'
@@ -122,7 +122,7 @@ export default function Step2IRRegime({ data, onUpdate, onNext, onBack }: Step2I
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => handleSelect('bareme')}
-          className={`relative p-6 rounded-xl text-left transition-all ${
+          className={`relative p-4 sm:p-6 rounded-xl text-left transition-all ${
             selected === 'bareme'
               ? 'ring-2 ring-[#2E6CF6]'
               : 'ring-1 ring-gray-800 hover:ring-gray-700'
@@ -182,7 +182,7 @@ export default function Step2IRRegime({ data, onUpdate, onNext, onBack }: Step2I
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => handleSelect('non_soumis')}
-          className={`relative p-6 rounded-xl text-left transition-all ${
+          className={`relative p-4 sm:p-6 rounded-xl text-left transition-all ${
             selected === 'non_soumis'
               ? 'ring-2 ring-[#00D084]'
               : 'ring-1 ring-gray-800 hover:ring-gray-700'
