@@ -174,7 +174,7 @@ export default function LoginPage() {
                 Adresse email
               </label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none z-10" />
                 <input
                   id="email"
                   type="email"
@@ -182,11 +182,14 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   placeholder="votre@email.com"
-                  className="w-full pl-12 pr-4 py-3 rounded-lg text-white placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                  className="w-full pl-12 pr-4 py-3 rounded-lg text-white placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 relative z-0"
                   style={{ 
                     backgroundColor: '#0e0f12',
-                    border: '1px solid #2d3441'
+                    border: '1px solid #2d3441',
+                    fontSize: '16px',
+                    WebkitAppearance: 'none',
                   }}
+                  autoComplete="email"
                 />
               </div>
             </div>
@@ -196,7 +199,7 @@ export default function LoginPage() {
                 Mot de passe
               </label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none z-10" />
                 <input
                   id="password"
                   type="password"
@@ -204,11 +207,14 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   placeholder="••••••••"
-                  className="w-full pl-12 pr-4 py-3 rounded-lg text-white placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                  className="w-full pl-12 pr-4 py-3 rounded-lg text-white placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 relative z-0"
                   style={{ 
                     backgroundColor: '#0e0f12',
-                    border: '1px solid #2d3441'
+                    border: '1px solid #2d3441',
+                    fontSize: '16px',
+                    WebkitAppearance: 'none',
                   }}
+                  autoComplete="current-password"
                 />
               </div>
             </div>
