@@ -46,6 +46,12 @@ export default function ChatbotWrapper() {
     return null;
   }
 
+  // Ne rendre le chatbot que si l'utilisateur est connecté
+  // (pour éviter d'épuiser les 30 messages gratuits sur la landing page)
+  if (!user) {
+    return null;
+  }
+
   return <Chatbot user={user} />;
 }
 
