@@ -224,14 +224,14 @@ export default function PricingPage() {
           {/* Gratuit */}
           <div className="rounded-2xl p-8 flex flex-col transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
             <div className="mb-3 text-sm font-semibold text-gray-400 uppercase tracking-wide">Gratuit</div>
-            <div className="mb-8">
+            <div className="mb-6">
               <div className="flex items-baseline gap-2">
                 <span className="text-5xl font-bold">0 €</span>
                 <span className="text-gray-400 text-lg">/mois</span>
               </div>
             </div>
-            <div className="mb-8">
-              <div className="text-xs font-bold text-gray-400 mb-5 uppercase tracking-wider">Pour découvrir</div>
+            <div className="flex-1">
+              <div className="text-xs font-bold text-gray-400 mb-4 uppercase tracking-wider">Pour découvrir</div>
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2 text-gray-300">
                   <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
@@ -249,7 +249,7 @@ export default function PricingPage() {
             </div>
             <Link
               href="/signup?plan=free"
-              className="mt-auto inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm transition-all duration-300 hover:scale-[1.05] hover:shadow-lg cursor-pointer hover:bg-gray-800/50 active:scale-95"
+              className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm transition-all duration-300 hover:scale-[1.05] hover:shadow-lg cursor-pointer hover:bg-gray-800/50 active:scale-95"
               style={{ border: "1px solid #2b2f36", backgroundColor: "#0e0f12" }}
             >
               Essayer gratuitement
@@ -274,7 +274,7 @@ export default function PricingPage() {
               </span>
             </div>
             <div className="mb-3 text-sm font-bold uppercase tracking-wide" style={{ color: "#60a5fa" }}>Pro</div>
-            <div className="mb-8">
+            <div className="mb-6">
               {billingCycle === "monthly" ? (
                 <>
                   <div className="flex items-baseline gap-3 mb-2">
@@ -303,8 +303,8 @@ export default function PricingPage() {
                 </>
               )}
             </div>
-            <div className="mb-8">
-              <div className="text-xs font-bold text-gray-400 mb-5 uppercase tracking-wider">Gestion complète</div>
+            <div className="flex-1">
+              <div className="text-xs font-bold text-gray-400 mb-4 uppercase tracking-wider">Gestion complète</div>
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2 text-gray-200">
                   <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
@@ -381,7 +381,7 @@ export default function PricingPage() {
             <div className="mb-3 text-sm font-bold uppercase tracking-wide text-transparent bg-clip-text" style={{ backgroundImage: "linear-gradient(90deg, #00D084, #2E6CF6)" }}>
               Premium
             </div>
-            <div className="mb-8">
+            <div className="mb-6">
               {billingCycle === "monthly" ? (
                 <>
                   <div className="flex items-baseline gap-3 mb-2">
@@ -410,8 +410,8 @@ export default function PricingPage() {
                 </>
               )}
             </div>
-            <div className="flex-1 mb-8">
-              <div className="text-xs font-bold text-gray-500 mb-5 uppercase tracking-wider">Tout Pro +</div>
+            <div className="flex-1">
+              <div className="text-xs font-bold text-gray-500 mb-4 uppercase tracking-wider">Tout Pro +</div>
               
               {/* ROI Box */}
               <div className="mb-5 p-4 rounded-xl" style={{ background: "linear-gradient(135deg, rgba(0, 208, 132, 0.1), rgba(46, 108, 246, 0.1))", border: "1px solid rgba(0, 208, 132, 0.3)" }}>
