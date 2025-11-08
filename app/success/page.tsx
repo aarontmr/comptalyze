@@ -4,8 +4,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { Check, ArrowRight, Sparkles } from "lucide-react";
+import { Check, ArrowRight, Sparkles, RefreshCw } from "lucide-react";
 import logo from "@/public/logo.png";
+import { supabase } from "@/lib/supabaseClient";
+import { getUserSubscription } from "@/lib/subscriptionUtils";
 
 function SuccessContent() {
   const searchParams = useSearchParams();
@@ -13,6 +15,9 @@ function SuccessContent() {
   const paymentIntent = searchParams.get("payment_intent");
   const [loading, setLoading] = useState(true);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [subscriptionActive, setSubscriptionActive] = useState(false);
+  const [checkingSubscription, setCheckingSubscription] = useState(true);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     // Vérifier que nous avons bien un identifiant de paiement
@@ -22,10 +27,67 @@ function SuccessContent() {
       
       // Animation de confettis
       setTimeout(() => setShowConfetti(false), 3000);
+
+      // Vérifier l'activation de l'abonnement
+      checkSubscriptionStatus();
     } else {
       setLoading(false);
+      setCheckingSubscription(false);
     }
   }, [sessionId, paymentIntent]);
+
+  const checkSubscriptionStatus = async (currentRetry: number = 0) => {
+    console.log(`🔍 Vérification du statut de l'abonnement (tentative ${currentRetry + 1}/10)...`);
+    
+    try {
+      // Forcer le refresh de la session Supabase
+      const { data: { session }, error: sessionError } = await supabase.auth.refreshSession();
+      
+      if (sessionError) {
+        console.error('❌ Erreur refresh session:', sessionError);
+      } else {
+        console.log('✅ Session rafraîchie');
+      }
+
+      // Récupérer l'utilisateur avec les métadonnées à jour
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError || !user) {
+        console.error('❌ Erreur récupération utilisateur:', userError);
+        setCheckingSubscription(false);
+        return;
+      }
+
+      console.log('👤 Utilisateur récupéré:', user.id);
+      console.log('📋 Métadonnées:', user.user_metadata);
+
+      const subscription = getUserSubscription(user);
+      console.log('📊 Abonnement détecté:', subscription);
+
+      if (subscription.isPro || subscription.isPremium) {
+        console.log('✅ Abonnement actif détecté!');
+        setSubscriptionActive(true);
+        setCheckingSubscription(false);
+      } else {
+        console.log('⏳ Abonnement pas encore actif, retry dans 2s...');
+        
+        // Retry jusqu'à 10 fois (20 secondes total)
+        if (currentRetry < 10) {
+          setTimeout(() => {
+            setRetryCount(currentRetry + 1);
+            checkSubscriptionStatus(currentRetry + 1);
+          }, 2000);
+        } else {
+          console.warn('⚠️ Délai d\'attente dépassé (20s). Le webhook Stripe peut prendre plus de temps.');
+          console.warn('💡 Allez dans votre dashboard, l\'abonnement devrait apparaître sous peu.');
+          setCheckingSubscription(false);
+        }
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors de la vérification:', error);
+      setCheckingSubscription(false);
+    }
+  };
 
   return (
     <main
@@ -112,6 +174,74 @@ function SuccessContent() {
               </p>
             </div>
 
+            {/* Statut de l'abonnement */}
+            {checkingSubscription && (
+              <div 
+                className="rounded-xl p-6 mb-6"
+                style={{
+                  backgroundColor: "#14161b",
+                  border: "1px solid rgba(46, 108, 246, 0.3)",
+                }}
+              >
+                <div className="flex items-center justify-center gap-3">
+                  <RefreshCw className="w-5 h-5 text-blue-400 animate-spin" />
+                  <span className="text-sm text-gray-300">
+                    Activation de votre abonnement en cours... ({retryCount + 1}/10)
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {!checkingSubscription && subscriptionActive && (
+              <div 
+                className="rounded-xl p-6 mb-6"
+                style={{
+                  backgroundColor: "rgba(0, 208, 132, 0.1)",
+                  border: "1px solid rgba(0, 208, 132, 0.3)",
+                }}
+              >
+                <div className="flex items-center justify-center gap-3">
+                  <Check className="w-5 h-5 text-green-400" />
+                  <span className="text-sm font-semibold text-green-400">
+                    Abonnement activé avec succès !
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {!checkingSubscription && !subscriptionActive && (
+              <div 
+                className="rounded-xl p-6 mb-6"
+                style={{
+                  backgroundColor: "rgba(239, 68, 68, 0.1)",
+                  border: "1px solid rgba(239, 68, 68, 0.3)",
+                }}
+              >
+                <div className="text-center">
+                  <p className="text-sm text-yellow-400 mb-3">
+                    ⏳ L'activation prend plus de temps que prévu...
+                  </p>
+                  <button
+                    onClick={() => {
+                      setCheckingSubscription(true);
+                      setRetryCount(0);
+                      checkSubscriptionStatus();
+                    }}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white transition-all hover:scale-105"
+                    style={{
+                      background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                    }}
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                    Vérifier maintenant
+                  </button>
+                  <p className="text-xs text-gray-500 mt-2">
+                    Le webhook Stripe peut prendre quelques secondes. Votre paiement est confirmé !
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Cartes d'informations */}
             <div className="grid sm:grid-cols-3 gap-4 mt-8">
               <div 
@@ -123,7 +253,9 @@ function SuccessContent() {
               >
                 <div className="text-2xl mb-2">✨</div>
                 <div className="text-sm font-semibold text-white mb-1">Accès immédiat</div>
-                <div className="text-xs text-gray-400">Profitez de toutes les fonctionnalités</div>
+                <div className="text-xs text-gray-400">
+                  {subscriptionActive ? "Actif maintenant !" : "Activation en cours..."}
+                </div>
               </div>
 
               <div 

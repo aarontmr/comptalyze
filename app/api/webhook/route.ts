@@ -15,7 +15,10 @@ export async function POST(request: NextRequest) {
   const body = await request.text();
   const signature = request.headers.get('stripe-signature');
 
+  console.log('🎯 Webhook Stripe reçu');
+
   if (!signature) {
+    console.error('❌ Signature manquante');
     return NextResponse.json({ error: 'Signature manquante' }, { status: 400 });
   }
 
@@ -23,16 +26,32 @@ export async function POST(request: NextRequest) {
 
   try {
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+    console.log('✅ Signature vérifiée - Type:', event.type);
   } catch (err: any) {
-    console.error('Webhook signature verification failed:', err.message);
+    console.error('❌ Webhook signature verification failed:', err.message);
     return NextResponse.json({ error: 'Signature invalide' }, { status: 400 });
   }
 
   try {
     if (event.type === 'checkout.session.completed') {
+      console.log('💳 checkout.session.completed reçu');
       const session = event.data.object as Stripe.Checkout.Session;
       const userId = session.client_reference_id || session.metadata?.userId;
       const plan = session.metadata?.plan || 'pro'; // Par défaut "pro" si non spécifié
+
+      console.log('📋 Session details:', {
+        userId,
+        plan,
+        sessionId: session.id,
+        customer: session.customer,
+        subscription: session.subscription,
+        metadata: session.metadata
+      });
+
+      if (!userId) {
+        console.error('❌ UserId manquant dans la session Stripe');
+        return NextResponse.json({ error: 'UserId manquant' }, { status: 400 });
+      }
 
       if (userId) {
         // Récupérer l'abonnement créé pour obtenir le subscription_id
@@ -53,16 +72,25 @@ export async function POST(request: NextRequest) {
         }
         
         // Récupérer les données utilisateur actuelles
-        const { data: userData } = await supabaseAdmin.auth.admin.getUserById(userId);
+        console.log('👤 Récupération des données utilisateur...');
+        const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(userId);
+        
+        if (userError) {
+          console.error('❌ Erreur récupération utilisateur:', userError);
+          return NextResponse.json({ error: 'Utilisateur non trouvé' }, { status: 404 });
+        }
         
         if (userData?.user) {
+          console.log('✅ Utilisateur trouvé:', userData.user.email);
+          
           // Déterminer le price_id depuis le plan
           const priceId = plan === 'premium' 
             ? (process.env.NEXT_PUBLIC_STRIPE_PRICE_PREMIUM || process.env.STRIPE_PRICE_PREMIUM)
             : (process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO || process.env.STRIPE_PRICE_PRO);
 
+          console.log('💾 Mise à jour de la table subscriptions...');
           // Créer ou mettre à jour l'enregistrement dans la table subscriptions
-          await supabaseAdmin
+          const { error: subError } = await supabaseAdmin
             .from('subscriptions')
             .upsert({
               user_id: userId,
@@ -75,8 +103,14 @@ export async function POST(request: NextRequest) {
               onConflict: 'user_id',
             });
 
+          if (subError) {
+            console.error('❌ Erreur mise à jour subscriptions:', subError);
+          } else {
+            console.log('✅ Table subscriptions mise à jour');
+          }
+
           // Mettre à jour les métadonnées avec le plan et le statut (pour compatibilité)
-          await supabaseAdmin.auth.admin.updateUserById(userId, {
+          const metadataUpdate = {
             user_metadata: { 
               ...userData.user.user_metadata,
               subscription_plan: plan, // "pro" ou "premium"
@@ -86,7 +120,16 @@ export async function POST(request: NextRequest) {
               stripe_subscription_id: subscriptionId,
               subscription_status: 'active',
             },
-          });
+          };
+
+          console.log('💾 Mise à jour des métadonnées utilisateur:', metadataUpdate);
+          const { error: metaError } = await supabaseAdmin.auth.admin.updateUserById(userId, metadataUpdate);
+
+          if (metaError) {
+            console.error('❌ Erreur mise à jour métadonnées:', metaError);
+          } else {
+            console.log('✅ Métadonnées mises à jour avec succès');
+          }
 
           // Track upgrade completed dans analytics_events
           try {
@@ -106,7 +149,9 @@ export async function POST(request: NextRequest) {
             console.error('Erreur lors du tracking de l\'événement upgrade_completed:', err);
           }
           
-          console.log(`✅ Utilisateur ${userId} mis à jour avec le plan ${plan}`);
+          console.log(`✅✅✅ Utilisateur ${userId} mis à jour avec le plan ${plan} - SUCCÈS COMPLET`);
+        } else {
+          console.error('❌ Utilisateur non trouvé dans la réponse');
         }
       }
     }
