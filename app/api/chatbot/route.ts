@@ -116,10 +116,17 @@ async function getUserData(userId: string) {
     // Contexte fiscal
     let fiscalContext = {};
     if (onboardingData) {
+      let regimeIR = 'Non renseigné';
+      if (onboardingData.ir_mode === 'versement_liberatoire') {
+        regimeIR = `Versement Libératoire (${onboardingData.ir_rate}%)`;
+      } else if (onboardingData.ir_mode === 'bareme') {
+        regimeIR = 'Barème Progressif';
+      } else if (onboardingData.ir_mode === 'non_soumis') {
+        regimeIR = 'Pas encore soumis à l\'IR';
+      }
+      
       fiscalContext = {
-        regimeIR: onboardingData.ir_mode === 'versement_liberatoire' 
-          ? `Versement Libératoire (${onboardingData.ir_rate}%)`
-          : 'Barème Progressif',
+        regimeIR,
         acre: onboardingData.has_acre
           ? `Oui - Année ${onboardingData.acre_year} (création: ${onboardingData.company_creation_date})`
           : 'Non',

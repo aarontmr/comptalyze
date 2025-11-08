@@ -172,7 +172,7 @@ export default function FaqSection() {
               Vous avez d&apos;autres questions ?
             </p>
             <a
-              href="mailto:contact@comptalyze.com"
+              href="mailto:support@comptalyze.com"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-medium text-white transition-all duration-300 hover:scale-[1.05] hover:brightness-110 hover:shadow-xl"
               style={{
                 background: 'linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)',
@@ -187,6 +187,8 @@ export default function FaqSection() {
     </>
   );
 }
+
+
 
 
 

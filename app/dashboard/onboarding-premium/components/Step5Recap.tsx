@@ -60,6 +60,8 @@ export default function Step5Recap({ data, userId, onBack }: Step5RecapProps) {
       return `Versement Libératoire (${data.ir_rate}%)`;
     } else if (data.ir_mode === 'bareme') {
       return 'Barème Progressif';
+    } else if (data.ir_mode === 'non_soumis') {
+      return 'Pas encore soumis à l\'IR';
     }
     return 'Non renseigné';
   };

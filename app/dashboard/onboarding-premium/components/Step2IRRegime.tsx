@@ -13,10 +13,10 @@ interface Step2IRRegimeProps {
 }
 
 export default function Step2IRRegime({ data, onUpdate, onNext, onBack }: Step2IRRegimeProps) {
-  const [selected, setSelected] = useState<'versement_liberatoire' | 'bareme' | null>(data.ir_mode);
+  const [selected, setSelected] = useState<'versement_liberatoire' | 'bareme' | 'non_soumis' | null>(data.ir_mode);
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
 
-  const handleSelect = (mode: 'versement_liberatoire' | 'bareme') => {
+  const handleSelect = (mode: 'versement_liberatoire' | 'bareme' | 'non_soumis') => {
     setSelected(mode);
     
     // Calculer le taux VL si applicable (simplifié, sera affiné plus tard)
@@ -30,7 +30,7 @@ export default function Step2IRRegime({ data, onUpdate, onNext, onBack }: Step2I
 
   const handleNext = () => {
     if (!selected) {
-      alert('Veuillez sélectionner un régime fiscal');
+      alert('Veuillez sélectionner votre situation fiscale');
       return;
     }
     onNext();
@@ -56,7 +56,7 @@ export default function Step2IRRegime({ data, onUpdate, onNext, onBack }: Step2I
         </p>
       </div>
 
-      <div className="grid sm:grid-cols-2 gap-4 mb-6">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         {/* Option 1 : Versement Libératoire */}
         <motion.button
           whileHover={{ scale: 1.02 }}
@@ -172,6 +172,66 @@ export default function Step2IRRegime({ data, onUpdate, onNext, onBack }: Step2I
             <div className="mt-3 p-3 rounded-lg text-xs" style={{ backgroundColor: 'rgba(46, 108, 246, 0.1)', border: '1px solid rgba(46, 108, 246, 0.3)' }}>
               <p className="text-gray-300">
                 Le barème progressif applique les tranches d'imposition classiques à votre revenu. Vous déclarez une fois par an avec votre déclaration de revenus. Peut être plus avantageux si revenus faibles.
+              </p>
+            </div>
+          )}
+        </motion.button>
+
+        {/* Option 3 : Pas encore soumis à l'IR */}
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => handleSelect('non_soumis')}
+          className={`relative p-6 rounded-xl text-left transition-all ${
+            selected === 'non_soumis'
+              ? 'ring-2 ring-[#00D084]'
+              : 'ring-1 ring-gray-800 hover:ring-gray-700'
+          }`}
+          style={{
+            backgroundColor: selected === 'non_soumis' ? 'rgba(0, 208, 132, 0.1)' : '#1a1d24',
+          }}
+        >
+          {selected === 'non_soumis' && (
+            <div className="absolute top-3 right-3 w-6 h-6 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #00D084, #2E6CF6)' }}>
+              <span className="text-white text-xs">✓</span>
+            </div>
+          )}
+          
+          <div className="mb-3">
+            <h3 className="text-base sm:text-lg font-semibold text-white mb-1">Pas encore soumis</h3>
+            <p className="text-xs text-gray-400">Début d'activité ou revenus faibles</p>
+          </div>
+          
+          <div className="space-y-2 text-xs sm:text-sm text-gray-300">
+            <div className="flex items-center gap-2">
+              <span className="text-[#00D084]">✓</span>
+              <span>Revenus en dessous des seuils</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[#00D084]">✓</span>
+              <span>Première année d'activité</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[#00D084]">✓</span>
+              <span>Vous choisirez plus tard</span>
+            </div>
+          </div>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowTooltip(showTooltip === 'non_soumis' ? null : 'non_soumis');
+            }}
+            className="mt-3 flex items-center gap-1 text-xs text-[#2E6CF6] hover:text-[#00D084] transition-colors"
+          >
+            <HelpCircle className="w-4 h-4" />
+            <span>En savoir plus</span>
+          </button>
+
+          {showTooltip === 'non_soumis' && (
+            <div className="mt-3 p-3 rounded-lg text-xs" style={{ backgroundColor: 'rgba(0, 208, 132, 0.1)', border: '1px solid rgba(0, 208, 132, 0.3)' }}>
+              <p className="text-gray-300">
+                Si vous venez de démarrer votre activité ou si vos revenus sont faibles, vous n'êtes peut-être pas encore concerné par l'impôt sur le revenu. Vous pourrez mettre à jour ce paramètre plus tard dans les réglages.
               </p>
             </div>
           )}

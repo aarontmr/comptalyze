@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS public.user_onboarding_data (
   user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   
   -- Régime fiscal
-  ir_mode TEXT CHECK (ir_mode IN ('versement_liberatoire', 'bareme', null)),
+  ir_mode TEXT CHECK (ir_mode IN ('versement_liberatoire', 'bareme', 'non_soumis', null)),
   ir_rate NUMERIC(5,2), -- Taux VL si applicable (1%, 1.7%, 2.2%)
   
   -- ACRE

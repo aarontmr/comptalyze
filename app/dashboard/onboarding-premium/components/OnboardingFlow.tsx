@@ -15,7 +15,7 @@ interface OnboardingFlowProps {
 }
 
 export interface OnboardingData {
-  ir_mode: 'versement_liberatoire' | 'bareme' | null;
+  ir_mode: 'versement_liberatoire' | 'bareme' | 'non_soumis' | null;
   ir_rate: number | null;
   has_acre: boolean;
   acre_year: number | null;
