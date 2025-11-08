@@ -109,10 +109,16 @@ export async function POST(request: NextRequest) {
             console.log('✅ Table subscriptions mise à jour');
           }
 
-          // Mettre à jour les métadonnées avec le plan et le statut (pour compatibilité)
+          // Nettoyer les métadonnées d'essai gratuit et mettre à jour avec l'abonnement payant
+          const cleanedMetadata = { ...userData.user.user_metadata };
+          // Supprimer les clés d'essai gratuit pour éviter les conflits
+          delete cleanedMetadata.premium_trial_started_at;
+          delete cleanedMetadata.premium_trial_ends_at;
+          delete cleanedMetadata.premium_trial_active;
+          
           const metadataUpdate = {
             user_metadata: { 
-              ...userData.user.user_metadata,
+              ...cleanedMetadata,
               subscription_plan: plan, // "pro" ou "premium"
               is_pro: true, // Les deux plans sont "pro"
               is_premium: plan === 'premium',
@@ -122,7 +128,7 @@ export async function POST(request: NextRequest) {
             },
           };
 
-          console.log('💾 Mise à jour des métadonnées utilisateur:', metadataUpdate);
+          console.log('💾 Mise à jour des métadonnées utilisateur (essai nettoyé):', metadataUpdate);
           const { error: metaError } = await supabaseAdmin.auth.admin.updateUserById(userId, metadataUpdate);
 
           if (metaError) {

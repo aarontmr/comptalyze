@@ -340,9 +340,11 @@ export default function PricingPage() {
             </div>
             {(() => {
               const subscription = getUserSubscription(user);
+              const hasStripeSubscription = user?.user_metadata?.stripe_subscription_id;
+              const hasTrial = subscription.isTrial;
               
-              // Si l'utilisateur est déjà Pro, rediriger vers le compte
-              if (subscription.isPro && !subscription.isPremium) {
+              // CAS 1 : Utilisateur Pro payant (avec abonnement Stripe actif)
+              if (subscription.isPro && hasStripeSubscription && !subscription.isPremium) {
                 return (
                   <a
                     href="/dashboard/compte"
@@ -357,7 +359,49 @@ export default function PricingPage() {
                 );
               }
               
-              // Sinon, permettre de souscrire
+              // CAS 2 : Utilisateur Premium (rediriger vers Premium)
+              if (subscription.isPremium) {
+                return (
+                  <div className="mt-6 space-y-2">
+                    <div className="text-center text-xs font-medium px-3 py-2 rounded-lg" style={{ 
+                      backgroundColor: "rgba(0, 208, 132, 0.1)", 
+                      color: "#00D084",
+                      border: "1px solid rgba(0, 208, 132, 0.3)"
+                    }}>
+                      ✨ Vous avez déjà Premium
+                    </div>
+                    <a
+                      href="/dashboard/compte"
+                      className="w-full inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm disabled:opacity-50 transition-all duration-300 hover:scale-[1.05] hover:bg-gray-800/30 hover:shadow-lg cursor-pointer"
+                      style={{
+                        border: "1px solid rgba(46,108,246,0.5)",
+                        backgroundColor: "transparent",
+                      }}
+                    >
+                      Gérer mon abonnement
+                    </a>
+                  </div>
+                );
+              }
+              
+              // CAS 3 : Utilisateur en essai gratuit ou a utilisé l'essai
+              if (hasTrial || user?.user_metadata?.premium_trial_started_at) {
+                return (
+                  <button
+                    onClick={() => handleCheckout("pro")}
+                    disabled={loading !== null}
+                    className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-[1.08] hover:brightness-110 hover:shadow-2xl cursor-pointer active:scale-95 disabled:hover:scale-100 disabled:hover:brightness-100"
+                    style={{
+                      background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                      boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
+                    }}
+                  >
+                    {loading === "pro" ? "Redirection..." : "Passer à Pro"}
+                  </button>
+                );
+              }
+              
+              // CAS 4 : Nouvel utilisateur
               return (
                 <button
                   onClick={() => handleCheckout("pro")}
@@ -491,15 +535,37 @@ export default function PricingPage() {
             {(() => {
               const subscription = getUserSubscription(user);
               const hasTrial = subscription.isTrial;
-              const hasUsedTrial = user?.user_metadata?.premium_trial_started_at && !hasTrial;
+              const hasStripeSubscription = user?.user_metadata?.stripe_subscription_id;
+              const hasUsedTrial = user?.user_metadata?.premium_trial_started_at;
               
+              // CAS 1 : Utilisateur Premium payant (avec abonnement Stripe actif)
+              if (subscription.isPremium && hasStripeSubscription) {
+                return (
+                  <a
+                    href="/dashboard/compte"
+                    className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white transition-all duration-300 hover:scale-[1.08] hover:brightness-110 hover:shadow-2xl cursor-pointer active:scale-95"
+                    style={{
+                      background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                      boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
+                    }}
+                  >
+                    Gérer mon abonnement
+                  </a>
+                );
+              }
+              
+              // CAS 2 : Utilisateur en essai gratuit actif
               if (hasTrial) {
                 const trialEnd = subscription.trialEndsAt ? new Date(subscription.trialEndsAt) : null;
                 const daysLeft = trialEnd ? Math.ceil((trialEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : 0;
                 return (
                   <div className="mt-6 space-y-2">
-                    <div className="text-center text-xs text-gray-400">
-                      Essai gratuit actif • {daysLeft} jour{daysLeft > 1 ? 's' : ''} restant{daysLeft > 1 ? 's' : ''}
+                    <div className="text-center text-xs font-medium px-3 py-2 rounded-lg" style={{ 
+                      backgroundColor: "rgba(0, 208, 132, 0.1)", 
+                      color: "#00D084",
+                      border: "1px solid rgba(0, 208, 132, 0.3)"
+                    }}>
+                      🎉 Essai gratuit actif • {daysLeft} jour{daysLeft > 1 ? 's' : ''} restant{daysLeft > 1 ? 's' : ''}
                     </div>
                     <button
                       onClick={() => handleCheckout("premium")}
@@ -512,28 +578,15 @@ export default function PricingPage() {
                     >
                       {loading === "premium" ? "Redirection..." : "S'abonner maintenant"}
                     </button>
+                    <p className="text-center text-xs text-gray-500 mt-1">
+                      Gardez vos fonctionnalités Premium après l'essai !
+                    </p>
                   </div>
                 );
               }
               
-              if (hasUsedTrial || subscription.isPremium) {
-                // Si l'utilisateur est déjà Premium, afficher un lien vers le compte
-                if (subscription.isPremium) {
-                  return (
-                    <a
-                      href="/dashboard/compte"
-                      className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white transition-all duration-300 hover:scale-[1.08] hover:brightness-110 hover:shadow-2xl cursor-pointer active:scale-95"
-                      style={{
-                        background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                        boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
-                      }}
-                    >
-                      Gérer mon abonnement
-                    </a>
-                  );
-                }
-                
-                // Sinon, permettre de souscrire
+              // CAS 3 : Utilisateur a déjà utilisé l'essai gratuit (mais pas d'abonnement payant)
+              if (hasUsedTrial && !hasStripeSubscription) {
                 return (
                   <button
                     onClick={() => handleCheckout("premium")}
@@ -549,6 +602,7 @@ export default function PricingPage() {
                 );
               }
               
+              // CAS 4 : Nouvel utilisateur (jamais utilisé l'essai gratuit)
               return (
                 <div className="mt-6 space-y-2">
                   <button
