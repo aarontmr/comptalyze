@@ -52,33 +52,57 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // Vérifier le rate-limiting via l'API
-      const rateLimitCheck = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (rateLimitCheck.status === 429) {
-        const data = await rateLimitCheck.json();
-        setError(
-          `⏱️ ${data.error || 'Trop de tentatives.'} Réessayez dans ${data.retryAfter || 60} secondes.`
-        );
-        setLoading(false);
-        return;
-      }
-
-      // Procéder à la connexion Supabase
-      const { error } = await supabase.auth.signInWithPassword({
+      // Procéder directement à la connexion Supabase sans vérifier le rate-limiting
+      // pour éviter les problèmes de connectivité réseau sur mobile
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        // Messages d'erreur plus explicites
+        if (error.message.includes('Invalid login credentials')) {
+          throw new Error('Email ou mot de passe incorrect. Veuillez vérifier vos identifiants.');
+        } else if (error.message.includes('Email not confirmed')) {
+          throw new Error('Veuillez confirmer votre adresse email avant de vous connecter.');
+        } else if (error.message.includes('network')) {
+          throw new Error('Problème de connexion réseau. Vérifiez votre connexion internet.');
+        } else {
+          throw error;
+        }
+      }
+
+      // Vérifier si la session a bien été créée
+      if (!data.session) {
+        throw new Error('Impossible de créer une session. Veuillez réessayer.');
+      }
 
       setSuccessMessage('Connexion réussie...');
+      
+      // Log de rate-limiting après une connexion réussie (en arrière-plan)
+      try {
+        await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password: '***' }),
+        }).catch(() => {
+          // Ignorer les erreurs de logging
+        });
+      } catch (logError) {
+        // Ignorer les erreurs de logging
+      }
     } catch (err: any) {
-      setError(err.message || 'Une erreur est survenue lors de la connexion.');
+      console.error('Erreur de connexion:', err);
+      
+      // Message d'erreur plus explicite
+      let errorMessage = err.message || 'Une erreur est survenue lors de la connexion.';
+      
+      // Détecter les erreurs de connectivité
+      if (errorMessage.includes('Failed to fetch') || errorMessage.includes('Load failed') || errorMessage.includes('NetworkError')) {
+        errorMessage = '🌐 Problème de connexion. Vérifiez votre connexion internet et réessayez.';
+      }
+      
+      setError(errorMessage);
       setLoading(false);
     }
   };

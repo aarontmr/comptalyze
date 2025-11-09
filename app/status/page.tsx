@@ -152,7 +152,7 @@ export default async function StatusPage() {
           <div className="space-y-4">
             {services.map((service, index) => (
               <div
-                key={index}
+                key={`service-${service.name}-${index}`}
                 className="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-700/50"
               >
                 <div className="flex items-center gap-4">

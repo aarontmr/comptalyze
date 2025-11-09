@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "check-env": "node scripts/check-env.js",
+    "check-connection": "node scripts/check-connection.js",
     "check-demo": "node scripts/check-demo-deps.mjs",
     "demo:record": "node scripts/render-preview.mjs",
     "demo:optimize": "node scripts/optimize-gif.mjs",

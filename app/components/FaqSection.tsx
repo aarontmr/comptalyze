@@ -88,7 +88,7 @@ export default function FaqSection() {
           <div className="space-y-4">
             {faqData.map((item, index) => (
               <motion.div
-                key={index}
+                key={`faq-${index}-${item.question.substring(0, 20)}`}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -187,6 +187,7 @@ export default function FaqSection() {
     </>
   );
 }
+
 
 
 

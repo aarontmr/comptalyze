@@ -102,7 +102,7 @@ export default function BeforeAfterSection() {
             <ul className="space-y-4">
               {beforeItems.map((item, index) => (
                 <motion.li
-                  key={index}
+                  key={`before-${index}-${item.substring(0, 20)}`}
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
@@ -151,7 +151,7 @@ export default function BeforeAfterSection() {
             <ul className="space-y-4">
               {afterItems.map((item, index) => (
                 <motion.li
-                  key={index}
+                  key={`after-${index}-${item.substring(0, 20)}`}
                   initial={{ opacity: 0, x: 20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}

@@ -35,15 +35,28 @@ export function getUserSubscription(user: User | null | undefined): UserSubscrip
   const trialActive = metadata.premium_trial_active === true;
   
   // Vérifier si l'essai est toujours valide
+  // IMPORTANT : Un utilisateur avec un abonnement (Stripe OU manuel) n'est JAMAIS en trial
+  // même si les métadonnées premium_trial_active sont encore présentes
   let isTrial = false;
-  if (trialActive && trialEndsAt) {
+  const hasStripeSubscription = !!metadata.stripe_subscription_id;
+  
+  // Un utilisateur est considéré comme "vraiment Premium/Pro" (pas en trial) si :
+  // 1. Il a un stripe_subscription_id (client Stripe)
+  // 2. OU il a status === 'active' (compte manuel activé)
+  // 3. OU il a subscription_plan === 'premium'/'pro' explicitement (compte manuel)
+  const isPaidOrManualAccount = 
+    hasStripeSubscription || 
+    status === 'active' || 
+    subscriptionPlan === 'premium' || 
+    subscriptionPlan === 'pro';
+  
+  if (trialActive && trialEndsAt && !isPaidOrManualAccount) {
     const now = new Date();
     const trialEnd = new Date(trialEndsAt);
     isTrial = now < trialEnd;
     
-    // Si l'essai est expiré, ne pas considérer comme Premium
-    if (!isTrial && !metadata.stripe_subscription_id) {
-      // L'essai est expiré, ne pas retourner Premium
+    // Si l'essai est expiré et pas d'abonnement, retourner Free
+    if (!isTrial) {
       return {
         plan: 'free',
         isPro: false,

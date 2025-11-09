@@ -376,7 +376,7 @@ export default function CheckoutPage() {
 
             <div className="space-y-3 mb-6">
               {currentPlan.features.map((feature, index) => (
-                <div key={index} className="flex items-start gap-2">
+                <div key={`plan-feature-${index}-${feature.substring(0, 15)}`} className="flex items-start gap-2">
                   <Check
                     className="w-5 h-5 flex-shrink-0 mt-0.5"
                     style={{ color: "#00D084" }}
