@@ -47,8 +47,7 @@ export type AnalyticsEvent =
   | { name: 'page_view'; params: { page_path: string; page_title?: string } }
   | { name: 'feedback_submitted'; params: { rating: number; category: string } }
   | { name: 'tutorial_completed'; params: { step: number } }
-  | { name: 'onboarding_completed'; params: { duration_seconds: number } }
-};
+  | { name: 'onboarding_completed'; params: { duration_seconds: number } };
 
 /**
  * Envoie un événement à Google Analytics 4
