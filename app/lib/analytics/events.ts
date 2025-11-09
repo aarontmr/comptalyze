@@ -3,7 +3,7 @@
  * Centralise le tracking des événements importants
  */
 
-export type AnalyticsEvent = {
+export type AnalyticsEvent =
   // Événements Auth
   | { name: 'sign_up'; params: { method: string } }
   | { name: 'login'; params: { method: string } }
