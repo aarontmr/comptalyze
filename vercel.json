@@ -9,6 +9,11 @@
       "schedule": "0 2 1 * *"
     }
   ],
+  "functions": {
+    "app/api/**/*": {
+      "includeFiles": "node_modules/pdfkit/js/data/**"
+    }
+  },
   "headers": [
     {
       "source": "/(.*)",

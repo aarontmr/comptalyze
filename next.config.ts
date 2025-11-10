@@ -33,15 +33,14 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts'],
   },
   
-  // Configuration webpack pour PDFKit
+  // Configuration webpack pour Canvas (utilisé par PDFKit pour les images)
   webpack: (config, { isServer }) => {
     if (isServer) {
-      // Exclure PDFKit du bundling - utiliser la version native de node_modules
+      // Externaliser canvas (optionnel pour PDFKit)
       config.externals = config.externals || [];
-      config.externals.push({
-        'pdfkit': 'commonjs pdfkit',
-        'canvas': 'commonjs canvas',
-      });
+      if (Array.isArray(config.externals)) {
+        config.externals.push('canvas');
+      }
     }
     return config;
   },
