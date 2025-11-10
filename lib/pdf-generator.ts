@@ -5,30 +5,62 @@ import { join, dirname } from 'path';
  * Résout le problème du chemin /ROOT/ sur Vercel
  */
 
-// Configuration du chemin des polices AVANT d'importer PDFKit
-if (typeof process !== 'undefined' && process.env && typeof require !== 'undefined') {
+// Variable pour savoir si la configuration a été faite
+let pdfkitConfigured = false;
+
+/**
+ * Configure le chemin des polices PDFKit au runtime
+ */
+function configurePDFKitFonts() {
+  if (pdfkitConfigured) return;
+  
   try {
-    // Trouver le vrai chemin de PDFKit
-    const pdfkitPath = require.resolve('pdfkit');
-    const pdfkitDir = dirname(dirname(pdfkitPath));
-    const fontPath = join(pdfkitDir, 'js', 'data');
+    // Vérifier si on est côté serveur
+    if (typeof process === 'undefined' || !process.env) return;
     
-    // Définir la variable d'environnement que PDFKit utilise
-    process.env.PDFKIT_FONT_PATH = fontPath;
+    // Essayer plusieurs chemins possibles pour les polices
+    const possiblePaths = [
+      // Chemin standard dans node_modules
+      join(process.cwd(), 'node_modules', 'pdfkit', 'js', 'data'),
+      // Chemin dans .next (après build)
+      join(process.cwd(), '.next', 'server', 'node_modules', 'pdfkit', 'js', 'data'),
+      // Chemin Vercel
+      join('/var', 'task', 'node_modules', 'pdfkit', 'js', 'data'),
+    ];
     
-    console.log('[PDF Generator] PDFKit font path configured:', fontPath);
+    const fs = require('fs');
+    let fontPath = null;
+    
+    // Trouver le premier chemin qui existe
+    for (const path of possiblePaths) {
+      if (fs.existsSync(path)) {
+        fontPath = path;
+        break;
+      }
+    }
+    
+    if (fontPath) {
+      process.env.PDFKIT_FONT_PATH = fontPath;
+      console.log('[PDF Generator] PDFKit font path configured:', fontPath);
+      pdfkitConfigured = true;
+    } else {
+      console.warn('[PDF Generator] No valid font path found, tried:', possiblePaths);
+    }
   } catch (e) {
     console.warn('[PDF Generator] Could not configure PDFKit font path:', e);
   }
 }
 
-// Importer PDFKit APRÈS la configuration
+// Import PDFKit
 import PDFDocument from 'pdfkit';
 
 /**
  * Crée une instance de PDFDocument avec la configuration correcte
  */
 export function createPDFDocument(options: any = {}) {
+  // Configurer les polices au runtime (première fois seulement)
+  configurePDFKitFonts();
+  
   const defaultOptions = {
     autoFirstPage: false,
     size: 'A4',
