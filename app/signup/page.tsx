@@ -215,6 +215,13 @@ export default function SignupPage() {
           email, 
           verification_required: true 
         });
+        
+        // Envoyer l'événement CompleteRegistration à Facebook (non bloquant)
+        fetch('/api/facebook-events/complete-registration', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, userId: data.user.id }),
+        }).catch((err) => console.error('Erreur Facebook (non bloquant):', err));
       } else if (data.session) {
         setSuccessMessage('Inscription réussie...');
         
@@ -223,6 +230,13 @@ export default function SignupPage() {
           email, 
           verification_required: false 
         });
+        
+        // Envoyer l'événement CompleteRegistration à Facebook (non bloquant)
+        fetch('/api/facebook-events/complete-registration', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, userId: data.user.id }),
+        }).catch((err) => console.error('Erreur Facebook (non bloquant):', err));
         
         setTimeout(() => {
           router.push('/dashboard');

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { trackStartTrial } from '@/lib/facebookConversionsApi';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -81,6 +82,23 @@ export async function POST(req: NextRequest) {
     }
 
     console.log(`✅ Essai gratuit Premium démarré pour ${userId} jusqu'au ${trialEndDate.toISOString()}`);
+
+    // Envoyer l'événement StartTrial à Facebook Conversions API
+    try {
+      const userAgent = req.headers.get('user-agent') || undefined;
+      const referer = req.headers.get('referer') || undefined;
+      
+      await trackStartTrial({
+        email: userData.user.email,
+        userAgent,
+        eventSourceUrl: referer,
+        userId,
+      });
+      console.log('📊 Événement StartTrial envoyé à Facebook');
+    } catch (fbError) {
+      // Ne pas bloquer la réponse si Facebook échoue
+      console.error('⚠️ Erreur lors de l\'envoi à Facebook (non bloquant):', fbError);
+    }
 
     return NextResponse.json({ 
       success: true,

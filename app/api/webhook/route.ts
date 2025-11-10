@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
+import { trackPurchase } from '@/lib/facebookConversionsApi';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 
@@ -156,6 +157,22 @@ export async function POST(request: NextRequest) {
           }
           
           console.log(`✅✅✅ Utilisateur ${userId} mis à jour avec le plan ${plan} - SUCCÈS COMPLET`);
+          
+          // Envoyer l'événement Purchase à Facebook Conversions API (non bloquant)
+          try {
+            const amount = session.amount_total ? session.amount_total / 100 : 0; // Convertir centimes en euros
+            await trackPurchase({
+              email: userData.user.email,
+              value: amount,
+              currency: session.currency?.toUpperCase() || 'EUR',
+              userId,
+              subscriptionId: subscriptionId,
+            });
+            console.log('📊 Événement Purchase envoyé à Facebook');
+          } catch (fbError) {
+            // Ne pas bloquer le webhook si Facebook échoue
+            console.error('⚠️ Erreur lors de l\'envoi à Facebook (non bloquant):', fbError);
+          }
         } else {
           console.error('❌ Utilisateur non trouvé dans la réponse');
         }
