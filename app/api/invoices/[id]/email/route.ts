@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import PDFDocument from 'pdfkit';
 import { Resend } from 'resend';
+import { createPDFDocument } from '@/lib/pdf-generator';
 
 export const runtime = 'nodejs';
 
@@ -26,7 +26,7 @@ async function generateInvoicePDF(invoice: any): Promise<Buffer> {
   return new Promise((resolve, reject) => {
     let doc;
     try {
-      doc = new PDFDocument({
+      doc = createPDFDocument({
         size: 'A4',
         margin: 50,
         autoFirstPage: false

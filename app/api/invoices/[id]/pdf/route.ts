@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { join } from 'path';
 import { existsSync } from 'fs';
+import { createPDFDocument } from '@/lib/pdf-generator';
 
 export const runtime = 'nodejs';
 
@@ -21,21 +22,11 @@ interface InvoiceItem {
 }
 
 async function generateInvoicePDF(invoice: any): Promise<Buffer> {
-  // Import dynamique de PDFKit
-  const PDFDocumentModule = await import('pdfkit');
-  const PDFDocument = PDFDocumentModule.default || PDFDocumentModule;
-
   return new Promise((resolve, reject) => {
-    // Vérifier que PDFDocument est bien un constructeur
-    if (typeof PDFDocument !== 'function') {
-      reject(new Error(`PDFDocument is not a constructor. Type: ${typeof PDFDocument}`));
-      return;
-    }
-
     // Configuration avec autoFirstPage: false pour éviter le chargement précoce des polices
     let doc: any;
     try {
-      doc = new PDFDocument({
+      doc = createPDFDocument({
         size: 'A4',
         margin: 50,
         autoFirstPage: false
