@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     const authUrl = new URL('https://connect.stripe.com/oauth/authorize');
     authUrl.searchParams.set('response_type', 'code');
     authUrl.searchParams.set('client_id', stripeClientId);
-    authUrl.searchParams.set('scope', 'read_only');
+    authUrl.searchParams.set('scope', 'read_write');
     authUrl.searchParams.set('redirect_uri', stripeRedirectUri);
     authUrl.searchParams.set('state', state);
 
