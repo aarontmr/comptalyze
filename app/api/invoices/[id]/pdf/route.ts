@@ -40,24 +40,19 @@ async function generateInvoicePDF(invoice: any): Promise<Buffer> {
         margin: 50,
         autoFirstPage: false
       });
-    } catch (error: any) {
-      reject(new Error(`Erreur lors de l'initialisation PDFKit: ${error?.message || 'Erreur inconnue'}`));
-      return;
-    }
-    
-    const buffers: Buffer[] = [];
-    doc.on('data', buffers.push.bind(buffers));
-    doc.on('end', () => {
-      const pdfBuffer = Buffer.concat(buffers);
-      resolve(pdfBuffer);
-    });
-    doc.on('error', reject);
+      
+      const buffers: Buffer[] = [];
+      doc.on('data', buffers.push.bind(buffers));
+      doc.on('end', () => {
+        const pdfBuffer = Buffer.concat(buffers);
+        resolve(pdfBuffer);
+      });
+      doc.on('error', reject);
 
-    // Ajouter la première page manuellement après la configuration
-    try {
+      // Ajouter la première page manuellement après la configuration
       doc.addPage();
     } catch (error: any) {
-      reject(new Error(`Erreur lors de l'ajout de la page: ${error?.message || 'Erreur inconnue'}`));
+      reject(new Error(`Erreur lors de l'initialisation PDFKit: ${error?.message || 'Erreur inconnue'}`));
       return;
     }
 

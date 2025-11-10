@@ -24,8 +24,9 @@ interface InvoiceItem {
 
 async function generateInvoicePDF(invoice: any): Promise<Buffer> {
   return new Promise((resolve, reject) => {
+    let doc;
     try {
-      const doc = new PDFDocument({
+      doc = new PDFDocument({
         size: 'A4',
         margin: 50,
         autoFirstPage: false

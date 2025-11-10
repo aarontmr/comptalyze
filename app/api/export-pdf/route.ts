@@ -138,8 +138,9 @@ export async function POST(req: NextRequest) {
 
 async function generatePDF(records: any[], year: number): Promise<Buffer> {
   return new Promise((resolve, reject) => {
+    let doc;
     try {
-      const doc = new PDFDocument({
+      doc = new PDFDocument({
         size: 'A4',
         margin: 50,
         autoFirstPage: false
