@@ -232,11 +232,13 @@ export default function SignupPage() {
         });
         
         // Envoyer l'événement CompleteRegistration à Facebook (non bloquant)
-        fetch('/api/facebook-events/complete-registration', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, userId: data.user.id }),
-        }).catch((err) => console.error('Erreur Facebook (non bloquant):', err));
+        if (data.user?.id) {
+          fetch('/api/facebook-events/complete-registration', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, userId: data.user.id }),
+          }).catch((err) => console.error('Erreur Facebook (non bloquant):', err));
+        }
         
         setTimeout(() => {
           router.push('/dashboard');
