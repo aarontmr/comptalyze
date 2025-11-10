@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
-import { createPDFDocument } from '@/lib/pdf-generator';
+import { generateRecordsPDF } from '@/lib/pdf-generator';
 
 export const runtime = 'nodejs';
 
@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Générer le PDF
-    const pdfBuffer = await generatePDF(records, filterYear);
+    const pdfBuffer = await generateRecordsPDF(records, filterYear);
 
     // Envoyer l'email avec le PDF
     const fromEmail = process.env.COMPANY_FROM_EMAIL || 'Comptalyze <no-reply@comptalyze.com>';
@@ -135,173 +135,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error.message || 'Erreur lors de l\'export PDF' }, { status: 500 });
   }
 }
-
-async function generatePDF(records: any[], year: number): Promise<Buffer> {
-  return new Promise((resolve, reject) => {
-    let doc;
-    try {
-      doc = createPDFDocument({
-        size: 'A4',
-        margin: 50,
-        autoFirstPage: false
-      });
-
-      const buffers: Buffer[] = [];
-      doc.on('data', buffers.push.bind(buffers));
-      doc.on('end', () => {
-        const pdfBuffer = Buffer.concat(buffers);
-        resolve(pdfBuffer);
-      });
-      doc.on('error', reject);
-
-      // Ajouter la première page manuellement
-      doc.addPage();
-    } catch (error: any) {
-      reject(new Error(`Erreur lors de l'initialisation PDFKit: ${error.message}`));
-      return;
-    }
-
-    // En-tête avec gradient (simulé avec un rectangle)
-    doc
-      .rect(0, 0, doc.page.width, 100)
-      .fill('#0e0f12');
-
-    // Logo ou titre
-    doc
-      .fillColor('#00D084')
-      .fontSize(24)
-      .text('Comptalyze', 50, 30);
-
-    doc
-      .fillColor('#ffffff')
-      .fontSize(16)
-      .text(`Relevé ${year}`, 50, 60);
-
-    // Titre du document
-    doc
-      .fillColor('#2E6CF6')
-      .fontSize(18)
-      .text(`Relevé Comptalyze – ${year}`, 50, 120);
-
-    // Table des enregistrements
-    let y = 170;
-    const tableTop = y;
-    const itemHeight = 25;
-    const pageHeight = doc.page.height;
-
-    // Définir les colonnes avec espacement optimisé
-    const colMois = 50;
-    const colActivite = 130;
-    const colCA = 320;
-    const colCotisations = 410;
-    const colNet = 500;
-    const tableWidth = 520;
-
-    // En-têtes du tableau
-    doc
-      .fillColor('#0e0f12')
-      .fontSize(10)
-      .font('Helvetica-Bold')
-      .text('Mois', colMois, y);
-    doc.text('Activité', colActivite, y);
-    doc.text('CA (€)', colCA, y, { width: 80, align: 'right' });
-    doc.text('Cotisations (€)', colCotisations, y, { width: 80, align: 'right' });
-    doc.text('Net (€)', colNet, y, { width: 70, align: 'right' });
-
-    y += 20;
-    doc
-      .moveTo(colMois, y)
-      .lineTo(colMois + tableWidth, y)
-      .strokeColor('#cccccc')
-      .lineWidth(1)
-      .stroke();
-
-    y += 10;
-
-    // Totaux
-    let totalCA = 0;
-    let totalContrib = 0;
-    let totalNet = 0;
-
-    const MONTHS = [
-      'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-      'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
-    ];
-
-    // Lignes du tableau
-    records.forEach((record) => {
-      // Vérifier si on doit créer une nouvelle page
-      if (y > pageHeight - 100) {
-        doc.addPage();
-        y = 50;
-      }
-
-      const monthName = MONTHS[record.month - 1] || `Mois ${record.month}`;
-      const ca = Number(record.amount_eur);
-      const contrib = Number(record.computed_contrib_eur);
-      const net = Number(record.computed_net_eur);
-
-      totalCA += ca;
-      totalContrib += contrib;
-      totalNet += net;
-
-      doc
-        .fillColor('#333333')
-        .fontSize(9)
-        .font('Helvetica')
-        .text(monthName, colMois, y, { width: 70 });
-      doc.text(record.activity_type, colActivite, y, { width: 180 });
-      doc.text(ca.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), colCA, y, { width: 80, align: 'right' });
-      doc.text(contrib.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), colCotisations, y, { width: 80, align: 'right' });
-      doc.text(net.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), colNet, y, { width: 70, align: 'right' });
-
-      y += itemHeight;
-    });
-
-    // Ligne de séparation avant les totaux
-    y += 5;
-    doc
-      .moveTo(colMois, y)
-      .lineTo(colMois + tableWidth, y)
-      .strokeColor('#333333')
-      .lineWidth(2)
-      .stroke();
-
-    y += 15;
-
-    // Totaux
-    doc
-      .fillColor('#0e0f12')
-      .fontSize(11)
-      .font('Helvetica-Bold')
-      .text('TOTAL', colMois, y, { width: 70 });
-    
-    doc
-      .fillColor('#0e0f12')
-      .font('Helvetica-Bold')
-      .text(totalCA.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), colCA, y, { width: 80, align: 'right' });
-    
-    doc
-      .fillColor('#0e0f12')
-      .text(totalContrib.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), colCotisations, y, { width: 80, align: 'right' });
-    
-    doc
-      .fillColor('#00D084')
-      .text(totalNet.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), colNet, y, { width: 70, align: 'right' });
-
-    // Pied de page
-    const footerY = doc.page.height - 50;
-    doc
-      .fillColor('#999999')
-      .fontSize(8)
-      .text(
-        `Généré le ${new Date().toLocaleDateString('fr-FR')} • Comptalyze`,
-        50,
-        footerY,
-        { align: 'center', width: doc.page.width - 100 }
-      );
-
-    doc.end();
-  });
-}
-

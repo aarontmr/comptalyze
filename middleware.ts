@@ -103,12 +103,12 @@ export function middleware(request: NextRequest) {
   // CSP (Content Security Policy) - ajuster selon les besoins
   const csp = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com https://www.googletagmanager.com https://www.google-analytics.com",
+    "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com https://connect.facebook.net https://www.googletagmanager.com https://www.google-analytics.com",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https: blob:",
-    "connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://region1.google-analytics.com https://*.supabase.co wss://*.supabase.co",
-    "frame-src https://js.stripe.com",
+    "connect-src 'self' https://api.stripe.com https://connect.stripe.com https://www.google-analytics.com https://www.google.com https://region1.google-analytics.com https://*.supabase.co wss://*.supabase.co https://*.myshopify.com",
+    "frame-src 'self' https://js.stripe.com https://connect.stripe.com https://www.googletagmanager.com https://*.myshopify.com",
   ].join('; ');
   
   response.headers.set('Content-Security-Policy', csp);

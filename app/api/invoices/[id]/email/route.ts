@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
-import { createPDFDocument } from '@/lib/pdf-generator';
+import { generateInvoicePDF } from '@/lib/pdf-generator';
 
 export const runtime = 'nodejs';
 
@@ -15,239 +15,6 @@ if (!supabaseUrl || !supabaseServiceKey) {
 }
 
 const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
-
-interface InvoiceItem {
-  description: string;
-  quantity: number;
-  unit_price_eur: number;
-}
-
-async function generateInvoicePDF(invoice: any): Promise<Buffer> {
-  return new Promise((resolve, reject) => {
-    let doc;
-    try {
-      doc = createPDFDocument({
-        size: 'A4',
-        margin: 50,
-        autoFirstPage: false
-      });
-
-      const buffers: Buffer[] = [];
-      doc.on('data', buffers.push.bind(buffers));
-      doc.on('end', () => {
-        const pdfBuffer = Buffer.concat(buffers);
-        resolve(pdfBuffer);
-      });
-      doc.on('error', reject);
-
-      // Ajouter la première page manuellement
-      doc.addPage();
-    } catch (error: any) {
-      reject(new Error(`Erreur lors de l'initialisation PDFKit: ${error.message}`));
-      return;
-    }
-
-    // En-tête avec gradient
-    doc
-      .rect(0, 0, doc.page.width, 100)
-      .fill('#0e0f12');
-
-    // Logo ou titre
-    doc
-      .fillColor('#00D084')
-      .fontSize(24)
-      .text('Comptalyze', 50, 30);
-
-    doc
-      .fillColor('#ffffff')
-      .fontSize(12)
-      .text('Noraa', 50, 60);
-
-    // Titre
-    doc
-      .fillColor('#2E6CF6')
-      .fontSize(20)
-      .text('FACTURE', 50, 120);
-
-    // Informations de facture
-    let y = 160;
-    doc
-      .fillColor('#666666')
-      .fontSize(10)
-      .text('Numéro:', 50, y);
-    doc
-      .fillColor('#000000')
-      .text(invoice.invoice_number, 120, y);
-
-    y += 15;
-    doc
-      .fillColor('#666666')
-      .text('Date d\'émission:', 50, y);
-    doc
-      .fillColor('#000000')
-      .text(new Date(invoice.issue_date).toLocaleDateString('fr-FR'), 120, y);
-
-    if (invoice.due_date) {
-      y += 15;
-      doc
-        .fillColor('#666666')
-        .text('Date d\'échéance:', 50, y);
-      doc
-        .fillColor('#000000')
-        .text(new Date(invoice.due_date).toLocaleDateString('fr-FR'), 120, y);
-    }
-
-    // Destinataire
-    y = 160;
-    doc
-      .fillColor('#666666')
-      .fontSize(10)
-      .text('Facturé à:', 350, y);
-    y += 15;
-    doc
-      .fillColor('#000000')
-      .text(invoice.customer_name, 350, y);
-    y += 15;
-    if (invoice.customer_email) {
-      doc
-        .fillColor('#333333')
-        .text(invoice.customer_email, 350, y);
-      y += 15;
-    }
-    if (invoice.customer_address) {
-      doc
-        .fillColor('#333333')
-        .text(invoice.customer_address, 350, y, { width: 200 });
-    }
-
-    // Tableau des lignes
-    y = 280;
-    const itemHeight = 25;
-
-    // En-têtes du tableau
-    doc
-      .fillColor('#0e0f12')
-      .fontSize(10)
-      .text('Description', 50, y);
-    doc.text('Qté', 350, y);
-    doc.text('Prix unitaire', 390, y);
-    doc.text('Total', 470, y, { align: 'right' });
-
-    y += 20;
-    doc
-      .moveTo(50, y)
-      .lineTo(550, y)
-      .strokeColor('#cccccc')
-      .stroke();
-
-    y += 10;
-
-    // Lignes
-    const items = invoice.items as InvoiceItem[];
-    items.forEach((item) => {
-      doc
-        .fillColor('#333333')
-        .fontSize(9)
-        .text(item.description, 50, y, { width: 280 });
-      doc.text(item.quantity.toString(), 350, y);
-      doc.text(
-        Number(item.unit_price_eur).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €',
-        390,
-        y
-      );
-      doc.text(
-        (item.quantity * item.unit_price_eur).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €',
-        470,
-        y,
-        { align: 'right' }
-      );
-      y += itemHeight;
-    });
-
-    // Ligne de séparation
-    y += 5;
-    doc
-      .moveTo(50, y)
-      .lineTo(550, y)
-      .strokeColor('#cccccc')
-      .stroke();
-
-    y += 15;
-
-    // Totaux
-    doc
-      .fillColor('#333333')
-      .fontSize(10)
-      .text('Sous-total HT:', 350, y);
-    doc
-      .fillColor('#000000')
-      .text(
-        Number(invoice.subtotal_eur).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €',
-        470,
-        y,
-        { align: 'right' }
-      );
-
-    if (invoice.vat_rate > 0) {
-      y += 15;
-      doc
-        .fillColor('#333333')
-        .text(`TVA (${invoice.vat_rate}%):`, 350, y);
-      doc
-        .fillColor('#000000')
-        .text(
-          (Number(invoice.subtotal_eur) * invoice.vat_rate / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €',
-          470,
-          y,
-          { align: 'right' }
-        );
-    }
-
-    y += 20;
-    doc
-      .moveTo(350, y)
-      .lineTo(550, y)
-      .strokeColor('#cccccc')
-      .stroke();
-
-    y += 15;
-    doc
-      .fillColor('#0e0f12')
-      .fontSize(12)
-      .text('Total TTC:', 350, y);
-    doc
-      .fillColor('#00D084')
-      .fontSize(14)
-      .text(
-        Number(invoice.total_eur).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €',
-        470,
-        y,
-        { align: 'right' }
-      );
-
-    // Notes
-    if (invoice.notes) {
-      y += 40;
-      doc
-        .fillColor('#666666')
-        .fontSize(9)
-        .text('Notes:', 50, y);
-      y += 15;
-      doc
-        .fillColor('#333333')
-        .text(invoice.notes, 50, y, { width: 500 });
-    }
-
-    // Pied de page
-    const footerY = doc.page.height - 50;
-    doc
-      .fillColor('#999999')
-      .fontSize(8)
-      .text('Comptalyze - Facture générée automatiquement', 50, footerY, { align: 'center', width: 500 });
-
-    doc.end();
-  });
-}
 
 export async function POST(
   req: NextRequest,
@@ -285,7 +52,7 @@ export async function POST(
       return NextResponse.json({ error: 'Facture non trouvée' }, { status: 404 });
     }
 
-    // Générer le PDF
+    // Générer le PDF avec pdf-lib
     const pdfBuffer = await generateInvoicePDF(invoice);
 
     // Déterminer l'email destinataire
@@ -325,4 +92,3 @@ export async function POST(
     return NextResponse.json({ error: 'Erreur lors de l\'envoi de l\'email' }, { status: 500 });
   }
 }
-

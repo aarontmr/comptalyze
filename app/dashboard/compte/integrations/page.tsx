@@ -30,6 +30,15 @@ export default function IntegrationsPage() {
   useEffect(() => {
     checkAuth();
     loadIntegrations();
+    
+    // Vérifier si retour en mode démo
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('shopify') === 'demo') {
+      setError('Les intégrations Shopify ne sont pas configurées. Contactez le support pour activer cette fonctionnalité.');
+    }
+    if (urlParams.get('stripe') === 'demo') {
+      setError('Les intégrations Stripe ne sont pas configurées. Contactez le support pour activer cette fonctionnalité.');
+    }
   }, []);
 
   const checkAuth = async () => {

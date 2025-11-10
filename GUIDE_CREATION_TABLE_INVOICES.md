@@ -131,3 +131,6 @@ Si une table existe déjà, le script utilisera `CREATE TABLE IF NOT EXISTS`, do
 
 
 
+
+
+
