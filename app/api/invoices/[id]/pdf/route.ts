@@ -1,66 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { join, dirname } from 'path';
-import { existsSync, readFileSync, copyFileSync, mkdirSync } from 'fs';
+import { join } from 'path';
+import { existsSync } from 'fs';
 
 export const runtime = 'nodejs';
-
-// Corriger le chemin PDFKit au niveau du module (avant tout import)
-// Créer le répertoire et copier les fichiers si nécessaire
-try {
-  const pdfkitPath = require.resolve('pdfkit');
-  const pdfkitDir = dirname(dirname(pdfkitPath));
-  const fontDataPath = join(pdfkitDir, 'js', 'data');
-  const rootPath = 'C:\\ROOT\\node_modules\\pdfkit\\js\\data';
-  
-  console.log('Font data path:', fontDataPath);
-  console.log('Font data exists:', existsSync(fontDataPath));
-  
-  if (existsSync(fontDataPath)) {
-    // Créer le répertoire C:\ROOT\node_modules\pdfkit\js\data si nécessaire
-    const rootDir = dirname(rootPath);
-    try {
-      if (!existsSync(rootDir)) {
-        console.log('Creating directory:', rootDir);
-        mkdirSync(rootDir, { recursive: true });
-      }
-      
-      // Créer le sous-répertoire data
-      if (!existsSync(rootPath)) {
-        console.log('Creating directory:', rootPath);
-        mkdirSync(rootPath, { recursive: true });
-      }
-      
-      // Copier tous les fichiers .afm vers C:\ROOT
-      const fontFiles = ['Helvetica.afm', 'Helvetica-Bold.afm', 'Helvetica-Oblique.afm', 'Helvetica-BoldOblique.afm'];
-      fontFiles.forEach(file => {
-        const sourceFile = join(fontDataPath, file);
-        const targetFile = join(rootPath, file);
-        if (existsSync(sourceFile)) {
-          try {
-            if (!existsSync(targetFile)) {
-              console.log('Copying font file:', sourceFile, '->', targetFile);
-              copyFileSync(sourceFile, targetFile);
-              console.log('Successfully copied:', file);
-            } else {
-              console.log('Font file already exists:', targetFile);
-            }
-          } catch (copyError: any) {
-            console.error('Error copying font file:', file, copyError.message);
-          }
-        } else {
-          console.warn('Source font file not found:', sourceFile);
-        }
-      });
-    } catch (dirError: any) {
-      console.error('Error creating directory or copying files:', dirError.message);
-    }
-  } else {
-    console.warn('Font data path does not exist:', fontDataPath);
-  }
-} catch (e: any) {
-  console.error('Configuration PDFKit error:', e.message);
-}
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -89,27 +32,17 @@ async function generateInvoicePDF(invoice: any): Promise<Buffer> {
       return;
     }
 
-    // Configuration minimale - PDFKit chargera les polices standard sans fichiers externes
+    // Configuration avec autoFirstPage: false pour éviter le chargement précoce des polices
     let doc: any;
     try {
-      // Essayer d'initialiser sans déclencher le chargement des polices
       doc = new PDFDocument({
         size: 'A4',
         margin: 50,
+        autoFirstPage: false
       });
     } catch (error: any) {
-      // Si l'erreur vient des fichiers de police, essayer une initialisation minimale
-      if (error.message && error.message.includes('.afm')) {
-        try {
-          doc = new PDFDocument();
-        } catch (e: any) {
-          reject(new Error(`Erreur lors de l'initialisation PDFKit: ${e?.message || 'Erreur inconnue'}`));
-          return;
-        }
-      } else {
-        reject(new Error(`Erreur lors de l'initialisation PDFKit: ${error?.message || 'Erreur inconnue'}`));
-        return;
-      }
+      reject(new Error(`Erreur lors de l'initialisation PDFKit: ${error?.message || 'Erreur inconnue'}`));
+      return;
     }
     
     const buffers: Buffer[] = [];
@@ -119,6 +52,14 @@ async function generateInvoicePDF(invoice: any): Promise<Buffer> {
       resolve(pdfBuffer);
     });
     doc.on('error', reject);
+
+    // Ajouter la première page manuellement après la configuration
+    try {
+      doc.addPage();
+    } catch (error: any) {
+      reject(new Error(`Erreur lors de l'ajout de la page: ${error?.message || 'Erreur inconnue'}`));
+      return;
+    }
 
     // En-tête professionnel avec logo
     const headerHeight = 120;

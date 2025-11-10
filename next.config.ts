@@ -32,6 +32,19 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts'],
   },
+  
+  // Configuration webpack pour PDFKit
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      // Exclure PDFKit du bundling - utiliser la version native de node_modules
+      config.externals = config.externals || [];
+      config.externals.push({
+        'pdfkit': 'commonjs pdfkit',
+        'canvas': 'commonjs canvas',
+      });
+    }
+    return config;
+  },
   async headers() {
     return [
       {

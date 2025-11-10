@@ -24,18 +24,27 @@ interface InvoiceItem {
 
 async function generateInvoicePDF(invoice: any): Promise<Buffer> {
   return new Promise((resolve, reject) => {
-    const doc = new PDFDocument({
-      size: 'A4',
-      margin: 50,
-    });
+    try {
+      const doc = new PDFDocument({
+        size: 'A4',
+        margin: 50,
+        autoFirstPage: false
+      });
 
-    const buffers: Buffer[] = [];
-    doc.on('data', buffers.push.bind(buffers));
-    doc.on('end', () => {
-      const pdfBuffer = Buffer.concat(buffers);
-      resolve(pdfBuffer);
-    });
-    doc.on('error', reject);
+      const buffers: Buffer[] = [];
+      doc.on('data', buffers.push.bind(buffers));
+      doc.on('end', () => {
+        const pdfBuffer = Buffer.concat(buffers);
+        resolve(pdfBuffer);
+      });
+      doc.on('error', reject);
+
+      // Ajouter la première page manuellement
+      doc.addPage();
+    } catch (error: any) {
+      reject(new Error(`Erreur lors de l'initialisation PDFKit: ${error.message}`));
+      return;
+    }
 
     // En-tête avec gradient
     doc
