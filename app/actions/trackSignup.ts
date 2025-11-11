@@ -86,25 +86,3 @@ export async function trackSignup(params: TrackSignupParams) {
   }
 }
 
-/**
- * Get attribution data from localStorage (client-side utility)
- * This should be called from client components before calling trackSignup
- */
-export function getAttributionData() {
-  if (typeof window === "undefined") {
-    return {};
-  }
-
-  return {
-    utmSource: localStorage.getItem("utm_source"),
-    utmMedium: localStorage.getItem("utm_medium"),
-    utmCampaign: localStorage.getItem("utm_campaign"),
-    utmContent: localStorage.getItem("utm_content"),
-    utmTerm: localStorage.getItem("utm_term"),
-    gclid: localStorage.getItem("gclid"),
-    fbclid: localStorage.getItem("fbclid"),
-    landingSlug: localStorage.getItem("landing_slug"),
-    referrer: localStorage.getItem("referrer"),
-  };
-}
-
