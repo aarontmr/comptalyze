@@ -6,12 +6,15 @@
 import { getUserPlan } from '@/app/lib/billing/getUserPlan';
 import { getPlan } from '@/app/lib/billing/plans';
 import { cookies } from 'next/headers';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@supabase/supabase-js';
 import TrialBadgeClient from './TrialBadgeClient';
 
 export default async function TrialBadge() {
   // Récupérer l'utilisateur courant
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
   const { data: { user } } = await supabase.auth.getUser();
   
   if (!user) {
