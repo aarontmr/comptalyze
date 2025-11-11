@@ -40,30 +40,40 @@ export default function PricingPage() {
 
     try {
       setTrialLoading(true);
-      console.log('🚀 Démarrage de l\'essai pour:', user.id);
-      
-      const res = await fetch("/api/start-trial", {
+      const planWithCycle = billingCycle === "yearly" ? "premium_yearly" : "premium";
+
+      console.log('🚀 Redirection Stripe pour essai Premium:', { userId: user.id, planWithCycle });
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        window.location.href = "/login";
+        return;
+      }
+
+      const res = await fetch("/api/checkout", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id }),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ 
+          plan: planWithCycle,
+          userId: user.id,
+          trial: true,
+        }),
       });
 
       const data = await res.json();
-      console.log('📦 Réponse API:', data);
 
       if (!res.ok) {
-        console.error('❌ Erreur API:', data.error);
+        console.error('❌ Erreur API Stripe:', data.error);
         showError(data.error || "Une erreur est survenue");
         setTrialLoading(false);
         return;
       }
 
-      console.log('✅ Essai activé avec succès');
-      success("🎉 Votre essai gratuit de 3 jours a commencé ! Profitez de toutes les fonctionnalités Premium.");
-      setTimeout(() => {
-        console.log('🔄 Rechargement de la page...');
-        window.location.reload();
-      }, 1500);
+      console.log('✅ Session Stripe créée pour essai Premium, redirection...');
+      window.location.href = data.url;
     } catch (error) {
       console.error("❌ Erreur lors du démarrage de l'essai:", error);
       showError("Une erreur est survenue lors du démarrage de l'essai. Vérifiez la console pour plus de détails.");
