@@ -1,18 +1,6 @@
 {
-  "crons": [
-    {
-      "path": "/api/cron/daily-tasks",
-      "schedule": "0 6 * * *"
-    },
-    {
-      "path": "/api/cron/monthly-sync",
-      "schedule": "0 2 1 * *"
-    },
-    {
-      "path": "/api/cron/reconcile-trials",
-      "schedule": "0 3 * * *"
-    }
-  ],
+  "_comment_crons": "Crons temporairement désactivés pour déploiement - Limite plan gratuit = 2 crons",
+  "crons": [],
   "functions": {
     "app/api/**/*": {
       "includeFiles": "node_modules/pdfkit/js/data/**"
