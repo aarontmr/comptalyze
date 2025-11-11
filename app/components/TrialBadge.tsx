@@ -29,12 +29,17 @@ export default async function TrialBadge() {
     return null;
   }
   
+  // Le badge n'est pertinent que pour les trials Pro/Premium (pas Free)
+  if (userPlan.trialPlan === 'free') {
+    return null;
+  }
+  
   const planDetails = getPlan(userPlan.trialPlan);
   
   return (
     <TrialBadgeClient 
       trialEndsAt={userPlan.trialEndsAt.toISOString()} 
-      plan={userPlan.trialPlan}
+      plan={userPlan.trialPlan as 'pro' | 'premium'}
       planColor={planDetails.color}
       planGradient={planDetails.gradient || planDetails.color}
     />
