@@ -47,7 +47,7 @@ export async function getUserPlan(userId: string): Promise<UserPlan> {
   
   const now = new Date();
   const trialEndsAt = data.trial_ends_at ? new Date(data.trial_ends_at) : null;
-  const isTrialing = data.plan_status === 'trialing' && trialEndsAt && trialEndsAt > now;
+  const isTrialing = !!(data.plan_status === 'trialing' && trialEndsAt && trialEndsAt > now);
   
   // Plan effectif = trial_plan si en trial actif, sinon plan payant
   const effectivePlan = (isTrialing && data.trial_plan ? data.trial_plan : data.plan) as PlanId;
@@ -55,7 +55,7 @@ export async function getUserPlan(userId: string): Promise<UserPlan> {
   return {
     plan: data.plan as PlanId,
     planStatus: data.plan_status as any,
-    isTrialing,
+    isTrialing: isTrialing as boolean,
     trialPlan: data.trial_plan as PlanId | null,
     trialEndsAt,
     effectivePlan,
