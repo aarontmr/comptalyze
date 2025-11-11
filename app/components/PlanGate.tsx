@@ -10,7 +10,7 @@ import { getUserPlan } from '@/app/lib/billing/getUserPlan';
 import { getPlan, type PlanId } from '@/app/lib/billing/plans';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@supabase/supabase-js';
 
 interface PlanGateProps {
   requiredPlan: PlanId;
@@ -32,7 +32,10 @@ export default async function PlanGate({
   showUpgradePrompt = true,
 }: PlanGateProps) {
   // Récupérer l'utilisateur courant
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
   const { data: { user } } = await supabase.auth.getUser();
   
   if (!user) {
