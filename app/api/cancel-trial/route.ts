@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       .single();
 
     const metadataTrialActive = metadata.premium_trial_active === true;
-    const metadataTrialStarted = !!metadata.premium_trial_started_at;
+    const metadataTrialStarted = !!metadata.premium_trial_started_at && (!metadata.premium_trial_ends_at || new Date(metadata.premium_trial_ends_at) > new Date());
     const profileTrialActive =
       userProfile?.plan_status === 'trialing' ||
       (userProfile?.trial_plan && (!userProfile.trial_ends_at || new Date(userProfile.trial_ends_at) > new Date()));
