@@ -1,5 +1,4 @@
 {
-  "_comment_crons": "Crons temporairement désactivés pour déploiement - Limite plan gratuit = 2 crons",
   "crons": [],
   "functions": {
     "app/api/**/*": {
