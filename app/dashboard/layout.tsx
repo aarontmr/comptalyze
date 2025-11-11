@@ -63,6 +63,27 @@ export default function DashboardLayout({
           return;
         }
 
+        const ensureEmailVerified = async () => {
+          if (session.user.email_confirmed_at) {
+            return true;
+          }
+
+          const { data: profile } = await supabase
+            .from('user_profiles')
+            .select('email_verified')
+            .eq('id', session.user.id)
+            .single();
+
+          return !!profile?.email_verified;
+        };
+
+        const emailVerified = await ensureEmailVerified();
+
+        if (!emailVerified) {
+          router.push('/verify-email-sent');
+          return;
+        }
+
         setUser(session.user);
       } catch (err) {
         console.error('Erreur lors de la vérification de la session:', err);
@@ -75,11 +96,26 @@ export default function DashboardLayout({
     checkAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         if (event === 'SIGNED_OUT' || !session) {
           router.push('/login');
         } else {
-          setUser(session.user);
+          if (session.user.email_confirmed_at) {
+            setUser(session.user);
+            return;
+          }
+
+          const { data: profile } = await supabase
+          .from('user_profiles')
+          .select('email_verified')
+          .eq('id', session.user.id)
+          .single();
+
+          if (profile?.email_verified) {
+            setUser(session.user);
+          } else {
+            router.push('/verify-email-sent');
+          }
         }
       }
     );
