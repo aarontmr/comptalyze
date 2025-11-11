@@ -323,12 +323,16 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   console.log('💰 invoice.payment_succeeded:', invoice.id);
   
   // Vérifier si c'est le premier paiement (fin du trial)
-  if (!invoice.subscription) {
+  const subscriptionId = typeof invoice.subscription === 'string' 
+    ? invoice.subscription 
+    : invoice.subscription?.id;
+    
+  if (!subscriptionId) {
     console.log('ℹ️ Invoice sans subscription (paiement unique)');
     return;
   }
   
-  const subscription = await stripe.subscriptions.retrieve(invoice.subscription as string);
+  const subscription = await stripe.subscriptions.retrieve(subscriptionId);
   const userId = getUserId(null, subscription);
   
   if (!userId) {
