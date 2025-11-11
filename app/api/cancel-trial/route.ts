@@ -35,25 +35,42 @@ export async function POST(req: NextRequest) {
       .eq('id', userId)
       .single();
 
-    const metadataTrialActive = metadata.premium_trial_active === true;
-    const metadataTrialStarted = !!metadata.premium_trial_started_at && (!metadata.premium_trial_ends_at || new Date(metadata.premium_trial_ends_at) > new Date());
-    const profileTrialActive =
-      userProfile?.plan_status === 'trialing' ||
-      (userProfile?.trial_plan && (!userProfile.trial_ends_at || new Date(userProfile.trial_ends_at) > new Date()));
-
-    // Vérifier si l'utilisateur a un essai actif
-    if (!metadataTrialActive && !metadataTrialStarted && !profileTrialActive) {
-      return NextResponse.json({ 
-        error: "Vous n'avez pas d'essai gratuit actif" 
-      }, { status: 400 });
-    }
-
     const nowIso = new Date().toISOString();
     const trialStart = metadata.premium_trial_started_at || nowIso;
     const stripeSubscriptionId =
       metadata.stripe_subscription_id ||
       userProfile?.stripe_subscription_id ||
       null;
+
+    const metadataTrialActive = metadata.premium_trial_active === true;
+    const metadataTrialStarted =
+      !!metadata.premium_trial_started_at &&
+      (!metadata.premium_trial_ends_at || new Date(metadata.premium_trial_ends_at) > new Date());
+    const profileTrialActive =
+      userProfile?.plan_status === 'trialing' ||
+      (userProfile?.trial_plan && (!userProfile.trial_ends_at || new Date(userProfile.trial_ends_at) > new Date()));
+
+    let hasActiveTrial = metadataTrialActive || metadataTrialStarted || profileTrialActive;
+
+    if (!hasActiveTrial && stripeSubscriptionId && stripe) {
+      try {
+        const subscription = await stripe.subscriptions.retrieve(stripeSubscriptionId);
+        if (subscription.status === 'trialing') {
+          hasActiveTrial = true;
+        } else if (subscription.status === 'active' && subscription.trial_end && subscription.trial_end * 1000 > Date.now()) {
+          hasActiveTrial = true;
+        }
+      } catch (stripeError: any) {
+        console.warn(`⚠️ Impossible de vérifier le statut du trial Stripe ${stripeSubscriptionId}:`, stripeError?.message);
+      }
+    }
+
+    // Vérifier si l'utilisateur a un essai actif
+    if (!hasActiveTrial) {
+      return NextResponse.json({ 
+        error: "Vous n'avez pas d'essai gratuit actif" 
+      }, { status: 400 });
+    }
 
     if (stripeSubscriptionId && stripe) {
       try {
