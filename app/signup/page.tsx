@@ -206,13 +206,24 @@ export default function SignupPage() {
       if (error) throw error;
 
       // Si l'email doit être vérifié, Supabase envoie automatiquement l'email avec le template personnalisé
+      if (data.user) {
+        try {
+          await fetch('/api/auth/send-verification-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: data.user.id }),
+          });
+        } catch (err) {
+          console.error('Erreur envoi email de vérification:', err);
+        }
+      }
+
       if (data.user && !data.session) {
         setShowVerificationMessage(true);
-        setSuccessMessage('Un email de vérification a été envoyé à votre adresse.');
+        setSuccessMessage('Un email de vérification vient de vous être envoyé. Pensez à vérifier vos spams !');
         
-        // Track signup completed (email verification required)
         await trackEvent('signup_completed', { 
-          email, 
+          email,
           verification_required: true 
         });
         
@@ -223,11 +234,11 @@ export default function SignupPage() {
           body: JSON.stringify({ email, userId: data.user.id }),
         }).catch((err) => console.error('Erreur Facebook (non bloquant):', err));
       } else if (data.session) {
-        setSuccessMessage('Inscription réussie...');
+        setShowVerificationMessage(true);
+        setSuccessMessage('Inscription réussie. Un email de confirmation vous a été envoyé.');
         
-        // Track signup completed (no verification)
         await trackEvent('signup_completed', { 
-          email, 
+          email,
           verification_required: false 
         });
         
