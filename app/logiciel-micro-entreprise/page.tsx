@@ -45,7 +45,7 @@ export default function LogicielMicroEntrepriseLanding() {
                 boxShadow: "0 4px 15px rgba(46,108,246,0.3)",
               }}
             >
-              Essai gratuit 3 jours
+              Voir les offres
             </Link>
           </div>
         </div>
@@ -103,7 +103,7 @@ export default function LogicielMicroEntrepriseLanding() {
               }}
             >
               <Sparkles className="w-5 h-5" />
-              Essai gratuit – 3 jours
+              Passer à Premium dès 7,90 €/mois
             </Link>
           </div>
 

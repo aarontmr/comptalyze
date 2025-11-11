@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     default: "Comptalyze - Comptabilité Simplifiée pour Micro-Entrepreneurs",
     template: "%s | Comptalyze",
   },
-  description: "Logiciel de comptabilité pour micro-entrepreneurs : calcul automatique des cotisations URSSAF, factures conformes, déclarations fiscales, statistiques CA. Essai gratuit 3 jours.",
+  description: "Logiciel de comptabilité pour micro-entrepreneurs : calcul automatique des cotisations URSSAF, factures conformes, déclarations fiscales, statistiques CA.",
   keywords: [
     "comptalyze",
     "comptabilité micro-entreprise",

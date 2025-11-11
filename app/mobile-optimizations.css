@@ -272,12 +272,6 @@
    ======================================== */
 
 @media (max-width: 768px) {
-  /* Trial Banner */
-  [class*="TrialBanner"] {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-  }
-  
   /* Cards du dashboard */
   [data-tutorial] {
     width: 100% !important;

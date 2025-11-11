@@ -16,10 +16,9 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const CRON_SECRET = process.env.CRON_SECRET;
 
 /**
- * Cron combiné pour tâches quotidiennes :
- * 1. Vérifier les essais gratuits expirés
- * 2. Envoyer les emails marketing J+3 avec code promo
- */
+* Cron combiné pour tâches quotidiennes :
+* - Envoyer les emails marketing J+3 avec code promo
+*/
 export async function GET(req: NextRequest) {
   try {
     // Vérifier le secret CRON
@@ -31,48 +30,11 @@ export async function GET(req: NextRequest) {
     }
 
     const results = {
-      checkTrials: { processed: 0, deactivated: 0 },
       upgradeEmails: { sent: 0, errors: 0 }
     };
 
     // ==============================================
-    // TÂCHE 1 : Vérifier les essais gratuits expirés
-    // ==============================================
-    try {
-      const { data: { users }, error: usersError } = await supabaseAdmin.auth.admin.listUsers();
-
-      if (usersError) {
-        console.error('Erreur lors de la récupération des utilisateurs:', usersError);
-      } else if (users) {
-        for (const user of users) {
-          const trialStartedAt = user.user_metadata?.premium_trial_started_at;
-          
-          if (trialStartedAt) {
-            const trialStart = new Date(trialStartedAt);
-            const now = new Date();
-            const daysSinceStart = Math.floor((now.getTime() - trialStart.getTime()) / (1000 * 60 * 60 * 24));
-
-            results.checkTrials.processed++;
-
-            // Si l'essai a plus de 3 jours, le désactiver
-            if (daysSinceStart > 3) {
-              await supabaseAdmin.auth.admin.updateUserById(user.id, {
-                user_metadata: {
-                  ...user.user_metadata,
-                  premium_trial_started_at: null,
-                }
-              });
-              results.checkTrials.deactivated++;
-            }
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Erreur dans check-trials:', error);
-    }
-
-    // ==============================================
-    // TÂCHE 2 : Envoyer emails marketing J+3
+    // TÂCHE 1 : Envoyer emails marketing J+3
     // ==============================================
     try {
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://comptalyze.com';
@@ -97,8 +59,7 @@ export async function GET(req: NextRequest) {
           const isThreeDaysOld = createdAt >= fourDaysAgo && createdAt < threeDaysAgo;
           const isFree = !user.user_metadata?.stripe_customer_id && 
                          !user.user_metadata?.is_pro && 
-                         !user.user_metadata?.is_premium &&
-                         !user.user_metadata?.premium_trial_started_at;
+                         !user.user_metadata?.is_premium;
           
           return isThreeDaysOld && isFree && user.email;
         });

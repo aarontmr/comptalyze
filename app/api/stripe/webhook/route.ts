@@ -3,13 +3,13 @@
  * WEBHOOK STRIPE - HANDLER IDEMPOTENT & ROBUSTE
  * ============================================================================
  * 
- * Gère tous les événements Stripe liés aux abonnements avec trial de 3 jours
+ * Gère tous les événements Stripe liés aux abonnements
  * 
  * Événements gérés :
- * - checkout.session.completed : Démarrage du trial
- * - customer.subscription.updated : Changements de statut (trialing → active)
+ * - checkout.session.completed : Activation de l'abonnement
+ * - customer.subscription.updated : Changements de statut
  * - customer.subscription.deleted : Annulation
- * - invoice.payment_succeeded : Premier paiement (fin du trial)
+ * - invoice.payment_succeeded : Paiements réussis (renouvellements)
  * 
  * Idempotence : Chaque événement n'est traité qu'une seule fois
  * Source de vérité : Table user_profiles en DB
@@ -107,7 +107,7 @@ function getUserId(
 // ============================================================================
 
 /**
- * 1) checkout.session.completed - Création de l'abonnement avec trial
+ * 1) checkout.session.completed - Création de l'abonnement
  */
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   console.log('💳 checkout.session.completed:', session.id);
@@ -119,7 +119,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     return;
   }
   
-  // Récupérer le subscription pour obtenir le trial_end
+  // Récupérer la subscription pour obtenir les détails
   const subscriptionId = session.subscription as string;
   if (!subscriptionId) {
     console.warn('⚠️ Pas de subscription_id dans la session:', session.id);
@@ -136,22 +136,10 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     plan,
   });
   
-  // Déterminer le statut et les champs de trial
-  let planStatus: string;
-  let trialPlan: string | null = null;
-  let trialEndsAt: string | null = null;
-  
-  if (subscription.status === 'trialing' && subscription.trial_end) {
-    planStatus = 'trialing';
-    trialPlan = plan;
-    trialEndsAt = new Date(subscription.trial_end * 1000).toISOString();
-    console.log(`🎁 Trial actif jusqu'au ${trialEndsAt}`);
-  } else if (subscription.status === 'active') {
-    planStatus = 'active';
-    console.log('✅ Abonnement actif (sans trial)');
-  } else {
-    planStatus = subscription.status;
-  }
+  // Déterminer le statut
+  const planStatus = subscription.status === 'canceled' ? 'canceled' : 'active';
+  const trialPlan: string | null = null;
+  const trialEndsAt: string | null = null;
   
   // Upsert dans user_profiles
   const { error } = await supabaseAdmin
@@ -159,7 +147,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     .upsert(
       {
         id: userId,
-        plan: subscription.status === 'active' ? plan : 'free',
+        plan: planStatus === 'active' ? plan : 'free',
         plan_status: planStatus,
         trial_plan: trialPlan,
         trial_ends_at: trialEndsAt,
@@ -185,7 +173,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     },
   });
   
-  console.log(`✅ User ${userId} mis à jour: plan_status=${planStatus}, trial_plan=${trialPlan}`);
+  console.log(`✅ User ${userId} mis à jour: plan_status=${planStatus}`);
 }
 
 /**
@@ -203,50 +191,28 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   
   const plan = extractPlan(subscription.items.data[0]?.price.id, subscription.metadata);
   
-  // Déterminer le statut et les champs selon le status Stripe
-  let planValue: 'free' | 'pro' | 'premium';
-  let planStatus: string;
-  let trialPlan: string | null = null;
-  let trialEndsAt: string | null = null;
-  
+  let planValue: 'free' | 'pro' | 'premium' = 'free';
+  let planStatus: string = subscription.status;
+
   switch (subscription.status) {
-    case 'trialing':
-      planValue = 'free'; // Encore en trial, pas de plan payant
-      planStatus = 'trialing';
-      trialPlan = plan;
-      trialEndsAt = subscription.trial_end ? new Date(subscription.trial_end * 1000).toISOString() : null;
-      console.log(`🎁 Trial actif pour ${plan} jusqu'au ${trialEndsAt}`);
-      break;
-      
     case 'active':
-      planValue = plan; // Plan payant actif
+      planValue = plan;
       planStatus = 'active';
-      trialPlan = null;
-      trialEndsAt = null;
       console.log(`✅ Abonnement ${plan} actif`);
       break;
-      
     case 'past_due':
     case 'unpaid':
-      planValue = 'free'; // Downgrade en cas de problème de paiement
-      planStatus = subscription.status;
-      trialPlan = null;
-      trialEndsAt = null;
+      planValue = 'free';
       console.log(`⚠️ Problème de paiement: ${subscription.status}`);
       break;
-      
     case 'canceled':
     case 'incomplete_expired':
       planValue = 'free';
       planStatus = 'canceled';
-      trialPlan = null;
-      trialEndsAt = null;
       console.log(`❌ Abonnement annulé ou expiré`);
       break;
-      
     default:
       planValue = 'free';
-      planStatus = subscription.status;
       console.log(`ℹ️ Statut non géré: ${subscription.status}`);
   }
   
@@ -258,8 +224,8 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
         id: userId,
         plan: planValue,
         plan_status: planStatus,
-        trial_plan: trialPlan,
-        trial_ends_at: trialEndsAt,
+        trial_plan: null,
+        trial_ends_at: null,
         stripe_customer_id: subscription.customer as string,
         stripe_subscription_id: subscription.id,
         updated_at: new Date().toISOString(),
@@ -317,12 +283,12 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
 }
 
 /**
- * 4) invoice.payment_succeeded - Paiement réussi (fin du trial ou renouvellement)
+ * 4) invoice.payment_succeeded - Paiement réussi (renouvellement)
  */
 async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   console.log('💰 invoice.payment_succeeded:', invoice.id);
   
-  // Vérifier si c'est le premier paiement (fin du trial)
+  // Vérifier si c'est le premier paiement (renouvellement initial)
   const invoiceData = invoice as any;
   const subscriptionId = typeof invoiceData.subscription === 'string' 
     ? invoiceData.subscription 
@@ -343,7 +309,7 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   
   const plan = extractPlan(subscription.items.data[0]?.price.id, subscription.metadata);
   
-  // Si premier paiement après trial, activer le plan
+  // Si premier paiement réussi, activer le plan
   if (subscription.status === 'active') {
     console.log(`✅ Premier paiement réussi pour ${plan}, activation du plan`);
     

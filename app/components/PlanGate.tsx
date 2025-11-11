@@ -118,11 +118,6 @@ function UpgradePrompt({ requiredPlan, feature }: { requiredPlan: PlanId; featur
             </Link>
           </div>
           
-          {planDetails.features.freeTrialDays > 0 && (
-            <p className="text-sm text-gray-500 mt-4">
-              ✨ Essai gratuit {planDetails.features.freeTrialDays} jours sans engagement
-            </p>
-          )}
         </div>
       </div>
     </div>

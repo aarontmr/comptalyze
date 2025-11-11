@@ -31,66 +31,30 @@ export function getUserSubscription(user: User | null | undefined): UserSubscrip
   const isPro = metadata.is_pro === true;
   const isPremium = metadata.is_premium === true;
   const status = metadata.subscription_status || null;
-  const trialEndsAt = metadata.premium_trial_ends_at || null;
-  const trialActive = metadata.premium_trial_active === true;
-  
-  // Vérifier si l'essai est toujours valide
-  // IMPORTANT : Un utilisateur avec un abonnement (Stripe OU manuel) n'est JAMAIS en trial
-  // même si les métadonnées premium_trial_active sont encore présentes
-  let isTrial = false;
   const hasStripeSubscription = !!metadata.stripe_subscription_id;
-  
-  // Un utilisateur est considéré comme "vraiment Premium/Pro" (pas en trial) si :
-  // 1. Il a un stripe_subscription_id (client Stripe)
-  // 2. OU il a status === 'active' (compte manuel activé)
-  // 3. OU il a subscription_plan === 'premium'/'pro' explicitement (compte manuel)
-  const isPaidOrManualAccount = 
-    hasStripeSubscription || 
-    status === 'active' || 
-    subscriptionPlan === 'premium' || 
-    subscriptionPlan === 'pro';
-  
-  if (trialActive && trialEndsAt && !isPaidOrManualAccount) {
-    const now = new Date();
-    const trialEnd = new Date(trialEndsAt);
-    isTrial = now < trialEnd;
-    
-    // Si l'essai est expiré et pas d'abonnement, retourner Free
-    if (!isTrial) {
-      return {
-        plan: 'free',
-        isPro: false,
-        isPremium: false,
-        status: null,
-        isTrial: false,
-        trialEndsAt: null,
-      };
-    }
-  }
 
-  // Déterminer le plan
+  const finalIsPremium =
+    isPremium ||
+    subscriptionPlan === 'premium' ||
+    status === 'active' ||
+    hasStripeSubscription;
+
+  const finalIsPro = !finalIsPremium && (isPro || subscriptionPlan === 'pro');
+
   let plan: SubscriptionPlan = 'free';
-  let finalIsPremium = isPremium;
-  
-  // Un utilisateur est Premium si :
-  // - is_premium est true ET (a un essai actif OU a un abonnement Stripe OU statut est 'active')
-  if (isPremium) {
-    finalIsPremium = isTrial || !!metadata.stripe_subscription_id || status === 'active';
-  }
-  
-  if (subscriptionPlan === 'premium' || finalIsPremium) {
+  if (finalIsPremium) {
     plan = 'premium';
-  } else if (subscriptionPlan === 'pro' || isPro) {
+  } else if (finalIsPro) {
     plan = 'pro';
   }
 
   return {
     plan,
-    isPro,
+    isPro: finalIsPro,
     isPremium: finalIsPremium,
     status,
-    isTrial,
-    trialEndsAt,
+    isTrial: false,
+    trialEndsAt: null,
   };
 }
 

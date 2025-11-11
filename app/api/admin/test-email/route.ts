@@ -81,21 +81,6 @@ export async function POST(req: NextRequest) {
           <p><a href="${process.env.NEXT_PUBLIC_BASE_URL}/dashboard">Accéder au dashboard</a></p>
         `,
       },
-      trial_start: {
-        subject: '🎉 Votre essai Premium a commencé',
-        html: `
-          <h1>Essai Premium activé !</h1>
-          <p>Profitez de 3 jours gratuits pour tester toutes les fonctionnalités Premium.</p>
-        `,
-      },
-      trial_end: {
-        subject: '⏰ Votre essai Premium se termine bientôt',
-        html: `
-          <h1>Votre essai se termine bientôt</h1>
-          <p>Il vous reste 1 jour pour profiter des fonctionnalités Premium.</p>
-          <p><a href="${process.env.NEXT_PUBLIC_BASE_URL}/pricing">Passer à Premium</a></p>
-        `,
-      },
       quota_warning: {
         subject: '⚠️ Vous approchez de votre limite',
         html: `
@@ -159,7 +144,7 @@ export async function POST(req: NextRequest) {
 export async function GET() {
   return NextResponse.json({
     message: 'Utilisez POST avec { to: "email@example.com", template: "welcome" }',
-    templates: ['welcome', 'trial_start', 'trial_end', 'quota_warning', 'quota_reached', 'monthly_recap'],
+    templates: ['welcome', 'quota_warning', 'quota_reached', 'monthly_recap'],
     note: 'Route réservée aux administrateurs',
   });
 }

@@ -28,7 +28,7 @@ test.describe('Landing pages intent-specific', () => {
     // Vérifier CTA above-the-fold
     const cta = page.locator('a[href="/signup"]').first();
     await expect(cta).toBeVisible();
-    await expect(cta).toContainText(/Essai gratuit/i);
+    await expect(cta).toContainText(/Passer à Premium/i);
 
     // Vérifier trust bullets
     await expect(page.locator('text=/sans carte bancaire/i')).toBeVisible();

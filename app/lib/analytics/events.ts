@@ -13,8 +13,6 @@ export type AnalyticsEvent =
   | { name: 'view_pricing'; params: {} }
   | { name: 'start_checkout'; params: { plan: string; period: 'monthly' | 'yearly' } }
   | { name: 'upgrade_completed'; params: { plan: string; value: number; currency: string } }
-  | { name: 'trial_started'; params: { plan: string } }
-  | { name: 'trial_ended'; params: { plan: string; converted: boolean } }
   | { name: 'subscription_cancelled'; params: { plan: string } }
   
   // Événements Simulation URSSAF

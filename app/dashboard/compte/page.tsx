@@ -67,41 +67,11 @@ export default function ComptePage() {
   }, []);
 
   const subscription = getUserSubscription(user);
-  const [cancelingTrial, setCancelingTrial] = useState(false);
-  const [showCancelTrialConfirm, setShowCancelTrialConfirm] = useState(false);
 
   const getPlanType = (): 'free' | 'pro' | 'premium' => {
     if (subscription.isPremium) return 'premium';
     if (subscription.isPro) return 'pro';
     return 'free';
-  };
-
-  const handleCancelTrial = async () => {
-    if (!user) return;
-    
-    setCancelingTrial(true);
-    try {
-      const res = await fetch('/api/cancel-trial', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user.id }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(`Erreur: ${data.error || 'Une erreur est survenue'}`);
-        setCancelingTrial(false);
-        return;
-      }
-
-      alert('Votre essai gratuit est définitivement annulé. Vous allez être redirigé vers votre espace Gratuit.');
-      window.location.href = '/dashboard';
-    } catch (error) {
-      console.error('Erreur:', error);
-      alert('Une erreur est survenue lors de l\'annulation de l\'essai.');
-      setCancelingTrial(false);
-    }
   };
 
   const handleDeleteAccount = async () => {
@@ -442,104 +412,8 @@ export default function ComptePage() {
         </motion.div>
       )}
 
-      {/* Gestion de l'essai gratuit */}
-      {subscription.isTrial && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="mb-6"
-        >
-          <Card>
-            <h2 className="text-lg font-semibold text-white mb-4">Essai gratuit</h2>
-            <div className="space-y-4">
-              {subscription.trialEndsAt && (() => {
-                const trialEnd = new Date(subscription.trialEndsAt);
-                const daysLeft = Math.ceil((trialEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-                return (
-                  <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(0, 208, 132, 0.1)', border: '1px solid rgba(0, 208, 132, 0.2)' }}>
-                    <p className="text-base text-white font-semibold mb-1">
-                      Essai gratuit actif
-                    </p>
-                    <p className="text-sm text-gray-300">
-                      {daysLeft} jour{daysLeft > 1 ? 's' : ''} restant{daysLeft > 1 ? 's' : ''} • Expire le {trialEnd.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
-                    </p>
-                  </div>
-                );
-              })()}
-              <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
-                <div className="flex items-start gap-2">
-                  <AlertTriangle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm text-gray-300 mb-1">
-                      <strong>Attention :</strong> L'annulation de l'essai est immédiate.
-                    </p>
-                    <p className="text-sm text-gray-400">
-                      Vous perdrez l'accès aux fonctionnalités Premium.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              {!showCancelTrialConfirm ? (
-                <button
-                  onClick={() => setShowCancelTrialConfirm(true)}
-                  disabled={cancelingTrial}
-                  className="px-6 py-3 rounded-lg text-white font-medium transition-all hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                  style={{ backgroundColor: '#dc2626' }}
-                >
-                  <XCircle className="w-5 h-5" />
-                  {cancelingTrial ? 'Annulation...' : 'Annuler mon essai gratuit'}
-                </button>
-              ) : (
-                <div className="space-y-3">
-                  <div className="p-4 rounded-lg bg-red-900/20 border border-red-500/30">
-                    <p className="text-base text-white font-semibold mb-2">
-                      Confirmez l'annulation de l'essai
-                    </p>
-                    <p className="text-sm text-gray-300">
-                      Cette action est irréversible. Vous perdrez immédiatement l'accès Premium et serez redirigé vers le plan Gratuit.
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap gap-3">
-                    <button
-                      onClick={handleCancelTrial}
-                      disabled={cancelingTrial}
-                      className="px-6 py-3 rounded-lg text-white font-medium transition-all hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                      style={{ backgroundColor: '#b91c1c' }}
-                    >
-                      <XCircle className="w-5 h-5" />
-                      {cancelingTrial ? 'Annulation...' : "Confirmer l'annulation"}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setShowCancelTrialConfirm(false)}
-                      disabled={cancelingTrial}
-                      className="px-6 py-3 rounded-lg font-medium transition-all hover:bg-gray-800 disabled:opacity-50"
-                      style={{ backgroundColor: '#23272f', border: '1px solid #2d3441', color: '#e5e7eb' }}
-                    >
-                      Conserver mon essai
-                    </button>
-                  </div>
-                </div>
-              )}
-              <Link href="/pricing" className="block">
-                <button
-                  className="w-full px-6 py-3 rounded-lg text-white font-medium transition-all hover:scale-[1.02] flex items-center justify-center gap-2"
-                  style={{
-                    background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                    boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
-                  }}
-                >
-                  S'abonner maintenant
-                </button>
-              </Link>
-            </div>
-          </Card>
-        </motion.div>
-      )}
-
       {/* Gestion de l'abonnement (Pro/Premium) */}
-      {(subscription.isPro || subscription.isPremium) && !subscription.isTrial && (
+      {(subscription.isPro || subscription.isPremium) && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -916,106 +790,8 @@ export default function ComptePage() {
             </motion.div>
           )}
 
-          {/* Gestion de l'essai gratuit */}
-          {subscription.isTrial && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <SectionTitle title="Essai gratuit" />
-              <Card>
-                <div className="space-y-4">
-                  {subscription.trialEndsAt && (() => {
-                    const trialEnd = new Date(subscription.trialEndsAt);
-                    const daysLeft = Math.ceil((trialEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-                    return (
-                      <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(0, 208, 132, 0.1)', border: '1px solid rgba(0, 208, 132, 0.2)' }}>
-                        <p className="text-sm text-white font-semibold mb-1">
-                          Essai gratuit actif
-                        </p>
-                        <p className="text-xs text-gray-300">
-                          {daysLeft} jour{daysLeft > 1 ? 's' : ''} restant{daysLeft > 1 ? 's' : ''} • Expire le {trialEnd.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
-                        </p>
-                      </div>
-                    );
-                  })()}
-                  <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
-                    <div className="flex items-start gap-2">
-                      <AlertTriangle className="w-4 h-4 text-yellow-500 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-xs text-gray-300 mb-1">
-                          <strong>Attention :</strong> L'annulation de l'essai est immédiate.
-                        </p>
-                        <p className="text-xs text-gray-400">
-                          Vous perdrez l'accès aux fonctionnalités Premium.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  {!showCancelTrialConfirm ? (
-                    <button
-                      onClick={() => setShowCancelTrialConfirm(true)}
-                      disabled={cancelingTrial}
-                      className="w-full px-4 py-3 rounded-lg text-white font-medium transition-all hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                      style={{ backgroundColor: '#dc2626' }}
-                    >
-                      <XCircle className="w-5 h-5" />
-                      {cancelingTrial ? 'Annulation...' : 'Annuler mon essai gratuit'}
-                    </button>
-                  ) : (
-                    <div className="space-y-3">
-                      <div className="p-3 rounded-lg bg-red-900/20 border border-red-500/30">
-                        <p className="text-sm text-white font-semibold mb-2">
-                          Confirmez l'annulation
-                        </p>
-                        <p className="text-xs text-gray-300">
-                          Cette action est irréversible. Vous repasserez immédiatement sur le plan Gratuit.
-                        </p>
-                      </div>
-                      <div className="flex flex-col sm:flex-row gap-2">
-                        <button
-                          onClick={handleCancelTrial}
-                          disabled={cancelingTrial}
-                          className="w-full px-4 py-3 rounded-lg text-white font-medium transition-all hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                          style={{ backgroundColor: '#b91c1c' }}
-                        >
-                          <XCircle className="w-5 h-5" />
-                          {cancelingTrial ? 'Annulation...' : "Confirmer l'annulation"}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setShowCancelTrialConfirm(false)}
-                          disabled={cancelingTrial}
-                          className="w-full px-4 py-3 rounded-lg font-medium transition-all hover:bg-gray-800 disabled:opacity-50"
-                          style={{ backgroundColor: '#23272f', border: '1px solid #2d3441', color: '#e5e7eb' }}
-                        >
-                          Conserver mon essai
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                  <Link
-                    href="/pricing"
-                    className="block"
-                  >
-                    <button
-                      className="w-full px-4 py-3 rounded-lg text-white font-medium transition-all hover:scale-[1.02] flex items-center justify-center gap-2"
-                      style={{
-                        background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                        boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
-                      }}
-                    >
-                      S'abonner maintenant
-                    </button>
-                  </Link>
-                </div>
-              </Card>
-            </motion.div>
-          )}
-
           {/* Gestion de l'abonnement (Pro/Premium) */}
-          {(subscription.isPro || subscription.isPremium) && !subscription.isTrial && (
+          {(subscription.isPro || subscription.isPremium) && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}

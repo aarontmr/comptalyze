@@ -34,7 +34,7 @@ Vous disposez maintenant d'un **système complet de tracking et conversion** pou
 
 **Caractéristiques communes :**
 - H1 aligné à l'intent
-- CTA above-the-fold : "Essai gratuit – 3 jours"
+- CTA above-the-fold : "Passer à Premium"
 - Trust bullets : Sans CB, 100% français, Export comptable, Assistant IA
 - Trust badges : Données URSSAF officielles, +10M€ CA déclaré
 - Section "Comment ça marche" (3 étapes)

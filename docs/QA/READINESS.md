@@ -62,7 +62,7 @@
 |-------------|--------|-------|
 | Checkout Stripe fonctionnel | ✅ PASS | `/app/api/checkout/route.ts` |
 | Webhooks activent plan | ✅ PASS | `checkout.session.completed` met à jour user_metadata |
-| Essai gratuit 3 jours (Premium) | ✅ PASS | Fonctionnel via `/api/start-trial` |
+| Activation Premium | ✅ PASS | Fonctionnelle via `/api/checkout` |
 | Billing portal 1-clic | ✅ PASS | Composant `BillingPortalButton` créé |
 | Annulation propre | ✅ PASS | Webhook `customer.subscription.deleted` retire accès |
 

@@ -1,9 +1,9 @@
 /**
- * Helper pour créer une session Stripe Checkout avec période d'essai de 3 jours
+ * Helper pour créer une session Stripe Checkout sans période d'essai
  * 
  * Gère :
  * - Création/récupération du customer Stripe
- * - Configuration du trial automatique
+ * - Configuration de l'abonnement automatique
  * - Métadonnées pour tracking webhook
  */
 
@@ -88,7 +88,7 @@ async function ensureStripeCustomer({
 }
 
 /**
- * Crée une session Checkout avec trial de 3 jours
+ * Crée une session Checkout pour un abonnement
  */
 export async function createCheckoutSession({
   plan,
@@ -113,7 +113,7 @@ export async function createCheckoutSession({
   // Récupérer/créer le customer
   const customer = await ensureStripeCustomer({ userId, email });
 
-  // Créer la session avec trial
+  // Créer la session d'abonnement
   const session = await stripe.checkout.sessions.create({
     mode: 'subscription',
     customer: customer.id,
@@ -123,9 +123,7 @@ export async function createCheckoutSession({
         quantity: 1,
       },
     ],
-    // 🎯 KEY: Activer l'essai gratuit de 3 jours
     subscription_data: {
-      trial_period_days: 3,
       metadata: {
         userId,
         plan,
@@ -158,7 +156,6 @@ export async function createCheckoutSession({
   }
 
   console.log(`✅ Session créée: ${session.id}`);
-  console.log(`🎁 Trial de 3 jours activé pour ${plan}`);
 
   return {
     url: session.url,

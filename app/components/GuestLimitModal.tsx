@@ -199,11 +199,11 @@ export default function GuestLimitModal({ onClose, remaining }: GuestLimitModalP
             }}
           >
             <UserPlus className="w-5 h-5" />
-            Créer mon compte – 3 jours gratuits
+            Découvrir les formules Premium
           </Link>
 
           <p className="mt-4 text-xs text-gray-500">
-            Sans carte bancaire • Annulable à tout moment
+            Paiement sécurisé • Annulable à tout moment
           </p>
         </div>
       </div>

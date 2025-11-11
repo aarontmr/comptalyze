@@ -15,7 +15,6 @@ import Link from 'next/link';
 import PremiumAdvice from '@/app/components/PremiumAdvice';
 import { motion } from 'framer-motion';
 import UpgradeTeaser from '@/app/components/UpgradeTeaser';
-import TrialBanner from '@/app/components/TrialBanner';
 import { useUserPreferences } from '@/app/hooks/useUserPreferences';
 
 interface CARecord {
@@ -157,13 +156,6 @@ export default function DashboardOverview() {
       <Breadcrumbs items={[{ label: 'Aperçu' }]} />
       <h1 className="text-3xl font-semibold text-white mb-8" data-tutorial="overview">Aperçu</h1>
 
-      {/* Trial Banner */}
-      {subscription.isTrial && subscription.trialEndsAt && (
-        <TrialBanner 
-          trialEndsAt={subscription.trialEndsAt}
-          plan={subscription.isPremium ? 'premium' : 'pro'}
-        />
-      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8" data-tutorial="stats-cards">
         {/* Chiffre d'affaires total */}
@@ -324,12 +316,6 @@ export default function DashboardOverview() {
     <MobileShell title="Aperçu">
       <div className="space-y-6 pt-4">
         {/* Trial Banner */}
-        {subscription.isTrial && subscription.trialEndsAt && (
-          <TrialBanner 
-            trialEndsAt={subscription.trialEndsAt}
-            plan={subscription.isPremium ? 'premium' : 'pro'}
-          />
-        )}
         
         {/* Stats Cards */}
         <div className="space-y-3">

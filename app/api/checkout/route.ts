@@ -99,7 +99,7 @@ export async function POST(req: Request) {
     // Utiliser NEXT_PUBLIC_BASE_URL en priorité pour éviter localhost en production
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || req.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'https://comptalyze.com';
 
-    // 🎯 Créer la session avec trial de 3 jours
+    // 🎯 Créer la session d'abonnement
     const { url, sessionId } = await createCheckoutSession({
       plan: basePlan,
       priceId: prices[plan],
@@ -110,7 +110,7 @@ export async function POST(req: Request) {
       yearly: isYearly,
     });
 
-    console.log(`✅ Session Checkout créée: ${sessionId} avec trial de 3 jours pour ${basePlan}`);
+    console.log(`✅ Session Checkout créée: ${sessionId} pour ${basePlan}`);
 
     return NextResponse.json({ url, sessionId });
   } catch (err: any) {

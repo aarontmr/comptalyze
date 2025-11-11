@@ -151,17 +151,6 @@ Allez sur `https://comptalyze.com` et :
 2. **Entrez vos identifiants**
 3. **La connexion devrait maintenant fonctionner** ✅
 
-### Pour le badge essai gratuit :
-
-1. **Si vous avez un compte Premium manuel :**
-   - Le badge "Essai gratuit" ne devrait plus s'afficher
-   - Vous verrez "Premium" normal
-
-2. **Si c'est un vrai essai :**
-   - Le badge s'affichera correctement avec le compte à rebours
-
----
-
 ## ✅ Checklist finale
 
 Une fois le déploiement terminé :
@@ -171,7 +160,7 @@ Une fois le déploiement terminé :
 - [ ] Console : "Supabase client initialisé" ✅
 - [ ] Console : Pas d'erreur CSP ✅
 - [ ] Connexion fonctionne ✅
-- [ ] Badge essai gratuit correct ✅
+- [ ] CTA Premium fonctionne ✅
 
 ---
 

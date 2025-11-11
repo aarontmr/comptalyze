@@ -149,7 +149,7 @@ export default function ArticlePage() {
             <div className="mt-12 p-8 rounded-2xl text-center" style={{ background: 'linear-gradient(135deg, rgba(0, 208, 132, 0.1) 0%, rgba(46, 108, 246, 0.1) 100%)', border: '1px solid rgba(0, 208, 132, 0.3)' }}>
               <h3 className="text-2xl font-bold text-white mb-4">Essayez Comptalyze gratuitement</h3>
               <p className="text-gray-300 mb-6">
-                3 jours d'essai gratuit du plan Premium • Sans carte bancaire
+                Accédez au plan Premium dès 7,90 €/mois • Paiement sécurisé
               </p>
               <Link
                 href="/signup"

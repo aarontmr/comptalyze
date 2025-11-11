@@ -45,7 +45,7 @@ export default function SimulateurUrssafLanding() {
                 boxShadow: "0 4px 15px rgba(46,108,246,0.3)",
               }}
             >
-              Essai gratuit 3 jours
+              Voir les offres
             </Link>
           </div>
         </div>
@@ -105,16 +105,12 @@ export default function SimulateurUrssafLanding() {
               }}
             >
               <Sparkles className="w-5 h-5" />
-              Essayer gratuitement – 3 jours
+              Passer à Premium dès 7,90 €/mois
             </Link>
           </div>
 
           {/* Trust bullets */}
           <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-gray-400">
-            <div className="flex items-center gap-2">
-              <Check className="w-4 h-4" style={{ color: "#00D084" }} />
-              <span>Sans carte bancaire</span>
-            </div>
             <div className="flex items-center gap-2">
               <Check className="w-4 h-4" style={{ color: "#00D084" }} />
               <span>100% français</span>

@@ -6,15 +6,11 @@ import { supabase } from "@/lib/supabaseClient";
 import { getUserSubscription } from "@/lib/subscriptionUtils";
 import { User } from "@supabase/supabase-js";
 import { Check, ArrowLeft } from "lucide-react";
-import Toast from "@/app/components/Toast";
-import { useToast } from "@/app/hooks/useToast";
 
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
-  const [trialLoading, setTrialLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
-  const { toast, success, error: showError, hideToast } = useToast();
 
   // Récupérer l'utilisateur connecté
   useEffect(() => {
@@ -31,55 +27,6 @@ export default function PricingPage() {
 
     return () => subscription.unsubscribe();
   }, []);
-
-  const handleStartTrial = async () => {
-    if (!user) {
-      window.location.href = "/login";
-      return;
-    }
-
-    try {
-      setTrialLoading(true);
-      const planWithCycle = billingCycle === "yearly" ? "premium_yearly" : "premium";
-
-      console.log('🚀 Redirection Stripe pour essai Premium:', { userId: user.id, planWithCycle });
-
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        window.location.href = "/login";
-        return;
-      }
-
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({ 
-          plan: planWithCycle,
-          userId: user.id,
-          trial: true,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        console.error('❌ Erreur API Stripe:', data.error);
-        showError(data.error || "Une erreur est survenue");
-        setTrialLoading(false);
-        return;
-      }
-
-      console.log('✅ Session Stripe créée pour essai Premium, redirection...');
-      window.location.href = data.url;
-    } catch (error) {
-      console.error("❌ Erreur lors du démarrage de l'essai:", error);
-      showError("Une erreur est survenue lors du démarrage de l'essai. Vérifiez la console pour plus de détails.");
-      setTrialLoading(false);
-    }
-  };
 
   const handleCheckout = async (plan: "pro" | "premium") => {
     // Vérifier que l'utilisateur est connecté
@@ -151,14 +98,6 @@ export default function PricingPage() {
 
   return (
     <>
-      {/* Toast notifications */}
-      <Toast
-        message={toast.message}
-        type={toast.type}
-        isVisible={toast.isVisible}
-        onClose={hideToast}
-      />
-      
       <main
         className="min-h-screen w-full text-white"
         style={{ backgroundColor: "#0e0f12", fontFamily: "Poppins, sans-serif" }}
@@ -351,26 +290,10 @@ export default function PricingPage() {
             {(() => {
               const subscription = getUserSubscription(user);
               const hasStripeSubscription = user?.user_metadata?.stripe_subscription_id;
-              const hasTrial = subscription.isTrial;
+              const isPro = subscription.plan === "pro" || subscription.isPro;
+              const isPremium = subscription.plan === "premium" || subscription.isPremium;
               
-              // CAS 1 : Utilisateur Pro payant (avec abonnement Stripe actif)
-              if (subscription.isPro && hasStripeSubscription && !subscription.isPremium) {
-                return (
-                  <a
-                    href="/dashboard/compte"
-                    className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white transition-all duration-300 hover:scale-[1.08] hover:brightness-110 hover:shadow-2xl cursor-pointer active:scale-95"
-                    style={{
-                      background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                      boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
-                    }}
-                  >
-                    Gérer mon abonnement
-                  </a>
-                );
-              }
-              
-              // CAS 2 : Utilisateur Premium (rediriger vers Premium)
-              if (subscription.isPremium) {
+              if (isPremium) {
                 return (
                   <div className="mt-6 space-y-2">
                     <div className="text-center text-xs font-medium px-3 py-2 rounded-lg" style={{ 
@@ -394,8 +317,22 @@ export default function PricingPage() {
                 );
               }
               
-              // CAS 3 : Utilisateur en essai gratuit ou a utilisé l'essai
-              if (hasTrial || user?.user_metadata?.premium_trial_started_at) {
+              if (isPro && hasStripeSubscription) {
+                return (
+                  <a
+                    href="/dashboard/compte"
+                    className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white transition-all duration-300 hover:scale-[1.08] hover:brightness-110 hover:shadow-2xl cursor-pointer active:scale-95"
+                    style={{
+                      background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                      boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
+                    }}
+                  >
+                    Gérer mon abonnement
+                  </a>
+                );
+              }
+              
+              if (isPro) {
                 return (
                   <button
                     onClick={() => handleCheckout("pro")}
@@ -411,7 +348,6 @@ export default function PricingPage() {
                 );
               }
               
-              // CAS 4 : Nouvel utilisateur
               return (
                 <button
                   onClick={() => handleCheckout("pro")}
@@ -544,9 +480,9 @@ export default function PricingPage() {
             </div>
             {(() => {
               const subscription = getUserSubscription(user);
-              const hasTrial = subscription.isTrial;
               const hasStripeSubscription = user?.user_metadata?.stripe_subscription_id;
-              const hasUsedTrial = user?.user_metadata?.premium_trial_started_at;
+              const isPremium = subscription.plan === "premium" || subscription.isPremium;
+              const isPro = subscription.plan === "pro" || subscription.isPro;
               
               // CAS 1 : Utilisateur Premium payant (avec abonnement Stripe actif)
               if (subscription.isPremium && hasStripeSubscription) {
@@ -564,10 +500,7 @@ export default function PricingPage() {
                 );
               }
               
-              // CAS 2 : Utilisateur en essai gratuit actif
-              if (hasTrial) {
-                const trialEnd = subscription.trialEndsAt ? new Date(subscription.trialEndsAt) : null;
-                const daysLeft = trialEnd ? Math.ceil((trialEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : 0;
+              if (isPremium) {
                 return (
                   <div className="mt-6 space-y-2">
                     <div className="text-center text-xs font-medium px-3 py-2 rounded-lg" style={{ 
@@ -575,72 +508,36 @@ export default function PricingPage() {
                       color: "#00D084",
                       border: "1px solid rgba(0, 208, 132, 0.3)"
                     }}>
-                      🎉 Essai gratuit actif • {daysLeft} jour{daysLeft > 1 ? 's' : ''} restant{daysLeft > 1 ? 's' : ''}
+                      ✨ Vous profitez déjà de Premium
                     </div>
-                    <button
-                      onClick={() => handleCheckout("premium")}
-                      disabled={loading !== null}
-                      className="w-full inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-[1.08] hover:brightness-110 hover:shadow-2xl cursor-pointer active:scale-95 disabled:hover:scale-100 disabled:hover:brightness-100"
+                    <a
+                      href="/dashboard/compte"
+                      className="w-full inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm disabled:opacity-50 transition-all duration-300 hover:scale-[1.05] hover:bg-gray-800/30 hover:shadow-lg cursor-pointer"
                       style={{
-                        background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                        boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
+                        border: "1px solid rgba(46,108,246,0.5)",
+                        backgroundColor: "transparent",
                       }}
                     >
-                      {loading === "premium" ? "Redirection..." : "S'abonner maintenant"}
-                    </button>
-                    <p className="text-center text-xs text-gray-500 mt-1">
-                      Gardez vos fonctionnalités Premium après l'essai !
-                    </p>
+                      Gérer mon abonnement
+                    </a>
                   </div>
                 );
               }
               
-              // CAS 3 : Utilisateur a déjà utilisé l'essai gratuit (mais pas d'abonnement payant)
-              if (hasUsedTrial && !hasStripeSubscription) {
-                return (
-                  <button
-                    onClick={() => handleCheckout("premium")}
-                    disabled={loading !== null}
-                    className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-[1.08] hover:brightness-110 hover:shadow-2xl cursor-pointer active:scale-95 disabled:hover:scale-100 disabled:hover:brightness-100"
-                    style={{
-                      background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                      boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
-                    }}
-                  >
-                    {loading === "premium" ? "Redirection..." : "Passer à Premium"}
-                  </button>
-                );
-              }
+              const ctaLabel = isPro ? "Passer à Premium" : "S'abonner maintenant";
               
-              // CAS 4 : Nouvel utilisateur (jamais utilisé l'essai gratuit)
               return (
-                <div className="mt-6 space-y-2">
-                  <button
-                    onClick={handleStartTrial}
-                    disabled={trialLoading || loading !== null}
-                    className="w-full inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-[1.08] hover:brightness-110 hover:shadow-2xl cursor-pointer active:scale-95 disabled:hover:scale-100 disabled:hover:brightness-100"
-                    style={{
-                      background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                      boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
-                    }}
-                  >
-                    {trialLoading ? "Chargement..." : "Essai gratuit 3 jours"}
-                  </button>
-                  <button
-                    onClick={() => handleCheckout("premium")}
-                    disabled={loading !== null || trialLoading}
-                    className="w-full inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-[1.05] hover:bg-gray-800/30 hover:shadow-lg cursor-pointer active:scale-95 disabled:hover:scale-100"
-                    style={{
-                      border: "1px solid rgba(46,108,246,0.5)",
-                      backgroundColor: "transparent",
-                    }}
-                  >
-                    {loading === "premium" ? "Redirection..." : "S'abonner directement"}
-                  </button>
-                  <p className="text-center text-xs text-gray-500 mt-1">
-                    Sans carte bancaire • Annulable à tout moment
-                  </p>
-                </div>
+                <button
+                  onClick={() => handleCheckout("premium")}
+                  disabled={loading !== null}
+                  className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-[1.08] hover:brightness-110 hover:shadow-2xl cursor-pointer active:scale-95 disabled:hover:scale-100 disabled:hover:brightness-100"
+                  style={{
+                    background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                    boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
+                  }}
+                >
+                  {loading === "premium" ? "Redirection..." : ctaLabel}
+                </button>
               );
             })()}
           </div>

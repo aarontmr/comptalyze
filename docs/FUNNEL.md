@@ -91,7 +91,7 @@ Toutes les landing pages suivent ce template :
 1. **Above-the-fold** (< 1 scroll)
    - H1 aligné à l'intent
    - Subhead problème → solution
-   - CTA primaire ("Essai gratuit – 3 jours")
+   - CTA primaire ("Passer à Premium")
    - Trust bullets (sans CB, 100% français, export comptable, assistant IA)
    - Trust badges (données URSSAF officielles, +10M€ CA déclaré)
 

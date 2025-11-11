@@ -1,5 +1,5 @@
 /**
- * Helper pour récupérer le plan actif d'un utilisateur (avec gestion des trials)
+ * Helper pour récupérer le plan actif d'un utilisateur
  * 
  * Source de vérité : user_profiles en DB
  */
@@ -15,11 +15,8 @@ const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
 export interface UserPlan {
   plan: PlanId;
-  planStatus: 'none' | 'trialing' | 'active' | 'canceled' | 'past_due' | 'unpaid';
-  isTrialing: boolean;
-  trialPlan: PlanId | null;
-  trialEndsAt: Date | null;
-  effectivePlan: PlanId; // Plan effectif (trial_plan si en trial, sinon plan)
+  planStatus: 'none' | 'active' | 'canceled' | 'past_due' | 'unpaid';
+  effectivePlan: PlanId;
 }
 
 /**
@@ -28,7 +25,7 @@ export interface UserPlan {
 export async function getUserPlan(userId: string): Promise<UserPlan> {
   const { data, error } = await supabaseAdmin
     .from('user_profiles')
-    .select('plan, plan_status, trial_plan, trial_ends_at')
+    .select('plan, plan_status')
     .eq('id', userId)
     .single();
   
@@ -38,27 +35,17 @@ export async function getUserPlan(userId: string): Promise<UserPlan> {
     return {
       plan: 'free',
       planStatus: 'none',
-      isTrialing: false,
-      trialPlan: null,
-      trialEndsAt: null,
       effectivePlan: 'free',
     };
   }
   
-  const now = new Date();
-  const trialEndsAt = data.trial_ends_at ? new Date(data.trial_ends_at) : null;
-  const isTrialing = !!(data.plan_status === 'trialing' && trialEndsAt && trialEndsAt > now);
-  
-  // Plan effectif = trial_plan si en trial actif, sinon plan payant
-  const effectivePlan = (isTrialing && data.trial_plan ? data.trial_plan : data.plan) as PlanId;
+  const planStatus = (data.plan_status as UserPlan['planStatus']) || 'none';
+  const plan = (data.plan as PlanId) || 'free';
   
   return {
-    plan: data.plan as PlanId,
-    planStatus: data.plan_status as any,
-    isTrialing: isTrialing as boolean,
-    trialPlan: data.trial_plan as PlanId | null,
-    trialEndsAt,
-    effectivePlan,
+    plan,
+    planStatus,
+    effectivePlan: plan,
   };
 }
 

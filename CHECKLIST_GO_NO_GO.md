@@ -33,7 +33,7 @@ curl -I https://comptalyze.com/facturation-auto-entrepreneur
 - [ ] H1 visible et aligné à l'intent sur `/simulateur-urssaf`
 - [ ] H1 visible et aligné à l'intent sur `/logiciel-micro-entreprise`
 - [ ] H1 visible et aligné à l'intent sur `/facturation-auto-entrepreneur`
-- [ ] CTA primaire ("Essai gratuit – 3 jours") visible sans scroll
+- [ ] CTA primaire ("Passer à Premium") visible sans scroll
 - [ ] Trust bullets visibles (sans CB, 100% français, export comptable, assistant IA)
 - [ ] Trust badges visibles (données URSSAF, +10M€ CA)
 

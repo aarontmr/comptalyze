@@ -28,7 +28,7 @@ Cette bibliothèque contient toutes les fonctions pour envoyer des événements 
 
 ##### 1️⃣ **StartTrial** - Démarrage d'essai gratuit
 - **Déclenché** : Quand un utilisateur démarre son essai gratuit de 3 jours
-- **Localisation** : `app/api/start-trial/route.ts`
+- **Localisation** : `app/api/checkout/route.ts`
 - **Données envoyées** :
   - Email (haché)
   - User Agent
@@ -108,7 +108,7 @@ Si vous utilisez Vercel :
 3. **Testez l'événement StartTrial** :
    - Connectez-vous
    - Allez sur la page des tarifs
-   - Cliquez sur "Essai gratuit"
+   - Cliquez sur "Passer à Premium"
    - Vérifiez les logs : "📊 Événement StartTrial envoyé à Facebook"
 
 4. **Testez l'événement Purchase** :

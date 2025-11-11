@@ -55,7 +55,7 @@ FICHIERS CRÉÉS/MODIFIÉS - FUNNEL MARKETING GOOGLE ADS → SIGNUPS
 │                                                                         │
 │ Fonctionnalités :                                                       │
 │ - H1 aligné à l'intent de recherche                                     │
-│ - CTA above-the-fold "Essai gratuit – 3 jours"                         │
+│ - CTA above-the-fold "Passer à Premium"                                │
 │ - Trust bullets (sans CB, 100% français, export, IA)                   │
 │ - Trust badges (URSSAF officiel, +10M€ CA)                             │
 │ - Section "Comment ça marche" (3 étapes)                               │
