@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import Script from "next/script";
 import { usePathname, useSearchParams } from "next/navigation";
 
@@ -8,7 +8,7 @@ interface AnalyticsProviderProps {
   children: React.ReactNode;
 }
 
-export default function AnalyticsProvider({ children }: AnalyticsProviderProps) {
+function AnalyticsTracking() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   
@@ -76,8 +76,20 @@ export default function AnalyticsProvider({ children }: AnalyticsProviderProps) 
     }
   }, [pathname, GA4_ID, GTM_ID, META_PIXEL_ID]);
 
+  return null;
+}
+
+export default function AnalyticsProvider({ children }: AnalyticsProviderProps) {
+  const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID;
+  const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
+  const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
+
   return (
     <>
+      <Suspense fallback={null}>
+        <AnalyticsTracking />
+      </Suspense>
+
       {/* Google Tag Manager */}
       {GTM_ID && (
         <>
