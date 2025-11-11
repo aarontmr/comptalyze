@@ -68,6 +68,7 @@ export default function ComptePage() {
 
   const subscription = getUserSubscription(user);
   const [cancelingTrial, setCancelingTrial] = useState(false);
+  const [showCancelTrialConfirm, setShowCancelTrialConfirm] = useState(false);
 
   const getPlanType = (): 'free' | 'pro' | 'premium' => {
     if (subscription.isPremium) return 'premium';
@@ -94,8 +95,8 @@ export default function ComptePage() {
         return;
       }
 
-      alert('Votre essai gratuit a été annulé. Vous allez être redirigé...');
-      window.location.reload();
+      alert('Votre essai gratuit est définitivement annulé. Vous allez être redirigé vers votre espace Gratuit.');
+      window.location.href = '/dashboard';
     } catch (error) {
       console.error('Erreur:', error);
       alert('Une erreur est survenue lors de l\'annulation de l\'essai.');
@@ -479,15 +480,48 @@ export default function ComptePage() {
                   </div>
                 </div>
               </div>
-              <button
-                onClick={handleCancelTrial}
-                disabled={cancelingTrial}
-                className="px-6 py-3 rounded-lg text-white font-medium transition-all hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                style={{ backgroundColor: '#dc2626' }}
-              >
-                <XCircle className="w-5 h-5" />
-                {cancelingTrial ? 'Annulation...' : 'Annuler mon essai gratuit'}
-              </button>
+              {!showCancelTrialConfirm ? (
+                <button
+                  onClick={() => setShowCancelTrialConfirm(true)}
+                  disabled={cancelingTrial}
+                  className="px-6 py-3 rounded-lg text-white font-medium transition-all hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  style={{ backgroundColor: '#dc2626' }}
+                >
+                  <XCircle className="w-5 h-5" />
+                  {cancelingTrial ? 'Annulation...' : 'Annuler mon essai gratuit'}
+                </button>
+              ) : (
+                <div className="space-y-3">
+                  <div className="p-4 rounded-lg bg-red-900/20 border border-red-500/30">
+                    <p className="text-base text-white font-semibold mb-2">
+                      Confirmez l'annulation de l'essai
+                    </p>
+                    <p className="text-sm text-gray-300">
+                      Cette action est irréversible. Vous perdrez immédiatement l'accès Premium et serez redirigé vers le plan Gratuit.
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    <button
+                      onClick={handleCancelTrial}
+                      disabled={cancelingTrial}
+                      className="px-6 py-3 rounded-lg text-white font-medium transition-all hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      style={{ backgroundColor: '#b91c1c' }}
+                    >
+                      <XCircle className="w-5 h-5" />
+                      {cancelingTrial ? 'Annulation...' : "Confirmer l'annulation"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowCancelTrialConfirm(false)}
+                      disabled={cancelingTrial}
+                      className="px-6 py-3 rounded-lg font-medium transition-all hover:bg-gray-800 disabled:opacity-50"
+                      style={{ backgroundColor: '#23272f', border: '1px solid #2d3441', color: '#e5e7eb' }}
+                    >
+                      Conserver mon essai
+                    </button>
+                  </div>
+                </div>
+              )}
               <Link href="/pricing" className="block">
                 <button
                   className="w-full px-6 py-3 rounded-lg text-white font-medium transition-all hover:scale-[1.02] flex items-center justify-center gap-2"
@@ -919,15 +953,48 @@ export default function ComptePage() {
                       </div>
                     </div>
                   </div>
-                  <button
-                    onClick={handleCancelTrial}
-                    disabled={cancelingTrial}
-                    className="w-full px-4 py-3 rounded-lg text-white font-medium transition-all hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                    style={{ backgroundColor: '#dc2626' }}
-                  >
-                    <XCircle className="w-5 h-5" />
-                    {cancelingTrial ? 'Annulation...' : 'Annuler mon essai gratuit'}
-                  </button>
+                  {!showCancelTrialConfirm ? (
+                    <button
+                      onClick={() => setShowCancelTrialConfirm(true)}
+                      disabled={cancelingTrial}
+                      className="w-full px-4 py-3 rounded-lg text-white font-medium transition-all hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      style={{ backgroundColor: '#dc2626' }}
+                    >
+                      <XCircle className="w-5 h-5" />
+                      {cancelingTrial ? 'Annulation...' : 'Annuler mon essai gratuit'}
+                    </button>
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="p-3 rounded-lg bg-red-900/20 border border-red-500/30">
+                        <p className="text-sm text-white font-semibold mb-2">
+                          Confirmez l'annulation
+                        </p>
+                        <p className="text-xs text-gray-300">
+                          Cette action est irréversible. Vous repasserez immédiatement sur le plan Gratuit.
+                        </p>
+                      </div>
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <button
+                          onClick={handleCancelTrial}
+                          disabled={cancelingTrial}
+                          className="w-full px-4 py-3 rounded-lg text-white font-medium transition-all hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                          style={{ backgroundColor: '#b91c1c' }}
+                        >
+                          <XCircle className="w-5 h-5" />
+                          {cancelingTrial ? 'Annulation...' : "Confirmer l'annulation"}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setShowCancelTrialConfirm(false)}
+                          disabled={cancelingTrial}
+                          className="w-full px-4 py-3 rounded-lg font-medium transition-all hover:bg-gray-800 disabled:opacity-50"
+                          style={{ backgroundColor: '#23272f', border: '1px solid #2d3441', color: '#e5e7eb' }}
+                        >
+                          Conserver mon essai
+                        </button>
+                      </div>
+                    </div>
+                  )}
                   <Link
                     href="/pricing"
                     className="block"
