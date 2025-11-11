@@ -103,7 +103,7 @@ export function middleware(request: NextRequest) {
   // CSP (Content Security Policy) - ajuster selon les besoins
   const csp = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com https://connect.facebook.net https://www.googletagmanager.com https://www.google-analytics.com https://*.googlesyndication.com https://www.googleadservices.com",
+    "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com https://connect.facebook.net https://www.googletagmanager.com https://www.google-analytics.com https://*.googlesyndication.com https://www.googleadservices.com https://*.doubleclick.net",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https: blob:",
