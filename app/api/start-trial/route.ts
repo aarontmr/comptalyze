@@ -65,10 +65,11 @@ export async function POST(req: NextRequest) {
         ...metadata,
         premium_trial_started_at: trialStartDate.toISOString(),
         premium_trial_ends_at: trialEndDate.toISOString(),
-        is_premium: true,
-        subscription_plan: 'premium',
-        subscription_status: 'trialing',
         premium_trial_active: true,
+        is_premium: true,
+        is_pro: false,
+        subscription_plan: null,
+        subscription_status: 'trialing',
       },
     };
 
