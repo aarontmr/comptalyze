@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabaseServer';
 import { createServiceClient } from '@/lib/supabaseService';
 import { Resend } from 'resend';
 
@@ -20,19 +19,10 @@ export async function POST(request: NextRequest) {
 
   const body = await request.json().catch(() => null);
   const userId = body?.userId as string | undefined;
+  const userEmail = body?.email as string | undefined;
 
   if (!userId) {
     return NextResponse.json({ error: 'userId manquant' }, { status: 400 });
-  }
-
-  // Vérifier la session utilisateur (doit être connecté)
-  const supabase = await createServerClient();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  if (!session || session.user.id !== userId) {
-    return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
   }
 
   const adminClient = createServiceClient();
@@ -78,7 +68,14 @@ export async function POST(request: NextRequest) {
 
   const resend = new Resend(resendApiKey);
 
-  const targetEmail = profile.email || session.user.email;
+  const targetEmail = profile.email || userEmail;
+
+  if (!targetEmail) {
+    return NextResponse.json(
+      { error: "Adresse email introuvable pour l'utilisateur." },
+      { status: 400 }
+    );
+  }
 
   try {
     await resend.emails.send({
