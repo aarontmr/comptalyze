@@ -8,6 +8,8 @@ import { Check, ArrowRight, Sparkles, RefreshCw } from "lucide-react";
 import logo from "@/public/logo.png";
 import { supabase } from "@/lib/supabaseClient";
 import { getUserSubscription } from "@/lib/subscriptionUtils";
+import { trackSignup } from "@/app/actions/trackSignup";
+import { getAttributionData } from "@/lib/attributionUtils";
 
 function SuccessContent() {
   const searchParams = useSearchParams();
@@ -18,6 +20,7 @@ function SuccessContent() {
   const [subscriptionActive, setSubscriptionActive] = useState(false);
   const [checkingSubscription, setCheckingSubscription] = useState(true);
   const [retryCount, setRetryCount] = useState(0);
+  const [conversionTracked, setConversionTracked] = useState(false);
 
   useEffect(() => {
     // Vérifier que nous avons bien un identifiant de paiement
@@ -30,11 +33,97 @@ function SuccessContent() {
 
       // Vérifier l'activation de l'abonnement
       checkSubscriptionStatus();
+
+      // Track conversions (une seule fois)
+      if (!conversionTracked) {
+        trackConversions();
+      }
     } else {
       setLoading(false);
       setCheckingSubscription(false);
     }
   }, [sessionId, paymentIntent]);
+
+  const trackConversions = async () => {
+    try {
+      console.log("📊 Tracking conversions...");
+
+      // Get user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        console.warn("⚠️ No user found for conversion tracking");
+        return;
+      }
+
+      // Get attribution data
+      const attribution = getAttributionData();
+
+      // 1) Track signup in database
+      await trackSignup({
+        userId: user.id,
+        email: user.email!,
+        utmSource: attribution.utmSource,
+        utmMedium: attribution.utmMedium,
+        utmCampaign: attribution.utmCampaign,
+        utmContent: attribution.utmContent,
+        utmTerm: attribution.utmTerm,
+        gclid: attribution.gclid,
+        fbclid: attribution.fbclid,
+        landingSlug: attribution.landingSlug,
+        referrer: attribution.referrer,
+      });
+
+      console.log("✅ Signup tracked in database");
+
+      // 2) Fire Google Ads conversion (if available)
+      const googleAdsConvId = process.env.NEXT_PUBLIC_GOOGLE_ADS_CONV_ID;
+      const googleAdsConvLabel = process.env.NEXT_PUBLIC_GOOGLE_ADS_CONV_LABEL;
+
+      if (googleAdsConvId && googleAdsConvLabel && (window as any).gtag) {
+        (window as any).gtag("event", "conversion", {
+          send_to: `${googleAdsConvId}/${googleAdsConvLabel}`,
+          transaction_id: sessionId || paymentIntent || user.id,
+        });
+        console.log("✅ Google Ads conversion fired");
+      }
+
+      // 3) Fire GA4 event
+      if ((window as any).gtag) {
+        (window as any).gtag("event", "signup_complete", {
+          method: "email",
+          user_id: user.id,
+          utm_source: attribution.utmSource,
+          utm_campaign: attribution.utmCampaign,
+        });
+        console.log("✅ GA4 signup_complete event fired");
+      }
+
+      // 4) Fire GTM event
+      if ((window as any).dataLayer) {
+        (window as any).dataLayer.push({
+          event: "signup_complete",
+          user_id: user.id,
+          email: user.email,
+          utm_source: attribution.utmSource,
+          utm_campaign: attribution.utmCampaign,
+        });
+        console.log("✅ GTM signup_complete event fired");
+      }
+
+      // 5) Fire Meta Pixel CompleteRegistration
+      if ((window as any).fbq) {
+        (window as any).fbq("track", "CompleteRegistration", {
+          content_name: "Signup",
+          status: "completed",
+        });
+        console.log("✅ Meta Pixel CompleteRegistration fired");
+      }
+
+      setConversionTracked(true);
+    } catch (error) {
+      console.error("❌ Error tracking conversions:", error);
+    }
+  };
 
   const checkSubscriptionStatus = async (currentRetry: number = 0) => {
     console.log(`🔍 Vérification du statut de l'abonnement (tentative ${currentRetry + 1}/10)...`);

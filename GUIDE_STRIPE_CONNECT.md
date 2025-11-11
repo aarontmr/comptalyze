@@ -354,3 +354,4 @@ https://dashboard.stripe.com/settings/connect
 **Dernière mise à jour : Novembre 2025**
 
 
+

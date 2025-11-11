@@ -1,17 +1,13 @@
 // app/api/checkout/route.ts
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
+import { createCheckoutSession } from "@/app/lib/billing/createCheckoutSession";
+import { createClient } from '@supabase/supabase-js';
 
 export const runtime = 'nodejs'; // Stripe ne fonctionne pas en edge
 
-function getStripeClient(): Stripe {
-  if (!process.env.STRIPE_SECRET_KEY) {
-    throw new Error("STRIPE_SECRET_KEY n'est pas défini dans les variables d'environnement");
-  }
-  return new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: "2025-10-29.clover", // or latest supported
-  });
-}
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
 export async function POST(req: Request) {
   try {
@@ -21,9 +17,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Configuration Stripe manquante" }, { status: 500 });
     }
 
-    const stripe = getStripeClient();
-
-    const { plan, userId } = await req.json(); // "pro" or "premium", userId from frontend
+    const { plan, userId } = await req.json(); // "pro" or "premium" or "pro_yearly" or "premium_yearly", userId from frontend
 
     if (!plan) {
       return NextResponse.json({ error: "Le plan est requis" }, { status: 400 });
@@ -38,6 +32,18 @@ export async function POST(req: Request) {
     if (!validPlans.includes(plan)) {
       return NextResponse.json({ error: `Plan invalide: ${plan}. Les plans valides sont: pro, premium, pro_yearly, premium_yearly` }, { status: 400 });
     }
+
+    // Récupérer l'email de l'utilisateur
+    const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(userId);
+    
+    if (userError || !userData?.user?.email) {
+      console.error('Erreur récupération utilisateur:', userError);
+      return NextResponse.json({ error: "Utilisateur non trouvé" }, { status: 404 });
+    }
+
+    // Déterminer le plan de base (sans _yearly)
+    const basePlan = plan.replace('_yearly', '') as 'pro' | 'premium';
+    const isYearly = plan.includes('_yearly');
 
     const prices: Record<string, string> = {
       pro: process.env.STRIPE_PRICE_PRO || "",
@@ -93,28 +99,20 @@ export async function POST(req: Request) {
     // Utiliser NEXT_PUBLIC_BASE_URL en priorité pour éviter localhost en production
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || req.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'https://comptalyze.com';
 
-    const session = await stripe.checkout.sessions.create({
-      mode: "subscription",
-      payment_method_types: ["card"],
-      line_items: [{ price: prices[plan], quantity: 1 }],
-      success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/cancel`,
-      automatic_tax: { enabled: true },
-      // Activer les codes promo (LAUNCH5, etc.)
-      allow_promotion_codes: true,
-      // Passer l'userId pour que le webhook puisse identifier l'utilisateur
-      client_reference_id: userId,
-      metadata: {
-        userId: userId,
-        plan: plan, // "pro" ou "premium"
-      },
+    // 🎯 Créer la session avec trial de 3 jours
+    const { url, sessionId } = await createCheckoutSession({
+      plan: basePlan,
+      priceId: prices[plan],
+      successUrl: `${baseUrl}/success`,
+      cancelUrl: `${baseUrl}/cancel`,
+      userId,
+      email: userData.user.email,
+      yearly: isYearly,
     });
 
-    if (!session.url) {
-      return NextResponse.json({ error: "Impossible de créer la session Stripe" }, { status: 500 });
-    }
+    console.log(`✅ Session Checkout créée: ${sessionId} avec trial de 3 jours pour ${basePlan}`);
 
-    return NextResponse.json({ url: session.url });
+    return NextResponse.json({ url, sessionId });
   } catch (err: any) {
     console.error("Erreur checkout:", err);
     const errorMessage = err.type === 'StripeInvalidRequestError' 
