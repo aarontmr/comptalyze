@@ -112,12 +112,10 @@ export async function GET(req: NextRequest) {
     }
 
     // ==============================================
-    // TÂCHE 2 : Synchronisation des intégrations (toutes les 6h)
+    // TÂCHE 2 : Synchronisation des intégrations (une fois par jour)
     // ==============================================
     try {
-      const currentHour = new Date().getHours();
-      // Exécuter seulement à certaines heures (0, 6, 12, 18)
-      if (currentHour % 6 === 0) {
+      // Exécuter la sync une fois par jour (limite Hobby plan)
         const { data: integrations, error: integrationsError } = await supabase
           .from('integration_tokens')
           .select('*')
@@ -143,10 +141,6 @@ export async function GET(req: NextRequest) {
             }
           }
         }
-      } else {
-        results.syncIntegrations.synced = 0;
-        results.syncIntegrations.note = `Sync intégrations exécutée seulement aux heures 0, 6, 12, 18 (heure actuelle: ${currentHour})`;
-      }
     } catch (error: any) {
       console.error('Erreur tâche sync intégrations:', error);
       results.syncIntegrations.errors++;
