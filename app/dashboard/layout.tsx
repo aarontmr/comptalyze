@@ -1,3 +1,4 @@
+import { Session } from '@supabase/supabase-js';
 import { createServerClient } from '@/lib/supabaseServer';
 import { createServiceClient } from '@/lib/supabaseService';
 import DashboardLayoutClient from './DashboardLayoutClient';
@@ -12,7 +13,7 @@ export default async function DashboardLayout({
     data: { session },
   } = await supabase.auth.getSession();
 
-  let verifiedSession = session;
+  let verifiedSession: Session | null = session;
 
   if (session) {
     const serviceClient = createServiceClient();
@@ -26,11 +27,7 @@ export default async function DashboardLayout({
       !!session.user.email_confirmed_at || !!profile?.email_verified;
 
     if (!emailVerified) {
-      return (
-        <DashboardLayoutClient initialSession={null}>
-          {children}
-        </DashboardLayoutClient>
-      );
+      verifiedSession = null;
     }
   }
 
