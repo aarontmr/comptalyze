@@ -54,14 +54,22 @@ export default function DashboardLayoutClient({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [session, setSession] = useState<Session | null>(initialSession);
   const [user, setUser] = useState<User | null>(initialSession.user);
-  const [showTutorial, setShowTutorial] = useState(true);
+  const [showTutorial, setShowTutorial] = useState(() => {
+    const metadata = initialSession?.user?.user_metadata || {};
+    return metadata.onboarding_completed !== true;
+  });
 
   useEffect(() => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, newSession) => {
+      if (!newSession) {
+        return;
+      }
       setSession(newSession);
-      setUser(newSession?.user ?? null);
+      setUser(newSession.user);
+      const metadata = newSession.user.user_metadata || {};
+      setShowTutorial(metadata.onboarding_completed !== true);
     });
 
     return () => {
