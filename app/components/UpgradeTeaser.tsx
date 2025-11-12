@@ -150,7 +150,7 @@ export default function UpgradeTeaser({ currentPlan }: UpgradeTeaserProps) {
                   <Zap className="w-5 h-5" style={{ color: '#00D084' }} />
                 )}
                 <span className="font-semibold text-white">
-                  Offre de lancement
+                  Offre Black Friday
                 </span>
               </div>
               <p className="text-sm text-gray-400">

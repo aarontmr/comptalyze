@@ -78,21 +78,21 @@ export default function PricingPage() {
     }
   };
 
-  // Prix et économies - OFFRE DE LANCEMENT 🚀
+  // Prix et économies - OFFRE BLACK FRIDAY 🚀
   const pricing = {
     pro: {
-      monthly: 3.90,        // Offre de lancement (prix normal: 5,90 €)
+      monthly: 3.90,        // Offre Black Friday
       yearly: 37.90,        // ~3,16 €/mois (économie de 20%)
       yearlyMonthly: 3.16,
       savings: 8.90,
-      originalMonthly: 5.90 // Prix normal pour afficher la réduction
+      originalMonthly: 9.90 // Prix barré pour afficher la réduction
     },
     premium: {
-      monthly: 7.90,        // Offre de lancement (prix normal: 9,90 €)
+      monthly: 7.90,        // Offre Black Friday
       yearly: 75.90,        // ~6,33 €/mois (économie de 20%)
       yearlyMonthly: 6.33,
       savings: 18.90,
-      originalMonthly: 9.90 // Prix normal pour afficher la réduction
+      originalMonthly: 17.90 // Prix barré pour afficher la réduction
     }
   };
 
@@ -121,10 +121,10 @@ export default function PricingPage() {
         </div>
 
         <div className="mx-auto max-w-6xl text-center">
-          {/* Badge Offre de lancement */}
+          {/* Badge Offre Black Friday */}
           <div className="mb-8">
             <span className="inline-flex items-center gap-2 text-sm px-5 py-2.5 rounded-full font-medium animate-pulse" style={{ backgroundColor: "rgba(0, 208, 132, 0.15)", color: "#00D084", border: "1px solid rgba(0, 208, 132, 0.3)" }}>
-              🚀 Offre de lancement exclusive - Jusqu'à -34% !
+              🚀 Offre Black Friday exclusive - Jusqu'à -34% !
             </span>
           </div>
           
@@ -132,7 +132,7 @@ export default function PricingPage() {
             Des plans simples et transparents
           </h1>
           <p className="mt-4 text-lg sm:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
-            Profitez de nos prix de lancement réduits pour nos premiers clients.
+            Profitez de nos prix Black Friday réduits pour nos premiers clients.
           </p>
           
           {/* Toggle Mensuel/Annuel */}
@@ -222,7 +222,7 @@ export default function PricingPage() {
           >
             <div className="absolute right-6 top-6 flex gap-2">
               <span className="rounded-md px-2 py-1 text-xs font-medium" style={{ backgroundColor: "#00D084", color: "#0e0f12" }}>
-                🚀 Offre de lancement
+                🚀 Offre Black Friday
               </span>
               <span className="rounded-md px-2 py-1 text-xs font-medium" style={{ backgroundColor: "#2E6CF6" }}>
                 Recommandé
@@ -238,7 +238,7 @@ export default function PricingPage() {
                   </div>
                   <div className="text-gray-400 text-lg mb-2">/mois</div>
                   <div className="text-sm font-semibold" style={{ color: "#00D084" }}>
-                    💰 Économisez 2 € par mois !
+                    💰 Économisez 6 € par mois !
                   </div>
                 </>
               ) : (
@@ -368,7 +368,7 @@ export default function PricingPage() {
           <div className="rounded-2xl p-8 relative flex flex-col transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl" style={{ backgroundColor: "#14161b", border: "1px solid rgba(0,208,132,0.4)" }}>
             <div className="absolute right-6 top-6 flex gap-2">
               <span className="rounded-md px-2 py-1 text-xs font-medium" style={{ backgroundColor: "#00D084", color: "#0e0f12" }}>
-                🚀 Offre de lancement
+                🚀 Offre Black Friday
               </span>
               <span className="rounded-md px-2 py-1 text-xs font-medium" style={{ background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)" }}>
                 Premium
@@ -386,7 +386,7 @@ export default function PricingPage() {
                   </div>
                   <div className="text-gray-400 text-lg mb-2">/mois</div>
                   <div className="text-sm font-semibold" style={{ color: "#00D084" }}>
-                    💰 Économisez 2 € par mois !
+                    💰 Économisez 10 € par mois !
                   </div>
                 </>
               ) : (

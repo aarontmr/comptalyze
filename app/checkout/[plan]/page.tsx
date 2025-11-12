@@ -134,7 +134,7 @@ export default function CheckoutPage() {
     },
   };
 
-  // OFFRE DE LANCEMENT 🚀 - Prix réduits pour les premiers clients
+  // OFFRE BLACK FRIDAY 🚀 - Prix réduits pour les premiers clients
   const planDetails: Record<string, {
     name: string;
     price: string;
@@ -149,7 +149,7 @@ export default function CheckoutPage() {
     pro: {
       name: "Pro",
       price: "3,90 €",
-      originalPrice: "5,90 €",
+      originalPrice: "9,90 €",
       billingPeriod: "mois",
       color: "#2E6CF6",
       features: [
@@ -181,7 +181,7 @@ export default function CheckoutPage() {
     premium: {
       name: "Premium",
       price: "7,90 €",
-      originalPrice: "9,90 €",
+      originalPrice: "17,90 €",
       billingPeriod: "mois",
       gradient: "linear-gradient(90deg, #00D084, #2E6CF6)",
       features: [
@@ -304,7 +304,7 @@ export default function CheckoutPage() {
         <div className="text-center mb-12">
           <div className="mb-4">
             <span className="inline-flex items-center gap-2 text-sm px-4 py-2 rounded-full font-medium animate-pulse" style={{ backgroundColor: "rgba(0, 208, 132, 0.15)", color: "#00D084", border: "1px solid rgba(0, 208, 132, 0.3)" }}>
-              🚀 Offre de lancement exclusive - Prix réduits !
+              🚀 Offre Black Friday exclusive - Prix réduits !
             </span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-semibold mb-3">
@@ -330,10 +330,10 @@ export default function CheckoutPage() {
             </div>
 
             <div className="mb-6">
-              {/* Badge Offre de lancement */}
+              {/* Badge Offre Black Friday */}
               <div className="mb-3">
                 <span className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-full font-medium" style={{ backgroundColor: "#00D084", color: "#0e0f12" }}>
-                  🚀 Offre de lancement
+                  🚀 Offre Black Friday
                 </span>
               </div>
               
