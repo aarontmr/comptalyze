@@ -1,8 +1,30 @@
-# 🔧 Déclenchement Manuel des Tâches Cron
+# 🔧 Orchestrators Cron et Déclenchement Manuel
 
-Ce guide explique comment déclencher manuellement les tâches qui étaient précédemment exécutées via des crons (limités à 2 sur le plan gratuit Vercel).
+Ce guide explique le système d'orchestrators qui regroupe plusieurs tâches cron en seulement 2 crons (limite du plan gratuit Vercel), et comment déclencher manuellement certaines tâches si nécessaire.
 
-## 📋 Routes Disponibles
+## 🎯 Système d'Orchestrators (2 Crons)
+
+Pour contourner la limite de 2 crons du plan gratuit Vercel, nous avons créé 2 orchestrators qui regroupent plusieurs tâches :
+
+### 1. Daily Orchestrator (`/api/cron/daily-orchestrator`)
+**Schedule:** Toutes les 6 heures (`0 */6 * * *`)
+
+**Tâches exécutées :**
+- ✅ Envoi emails marketing J+3 (tous les jours)
+- ✅ Synchronisation des intégrations (Shopify, Stripe) - seulement aux heures 0, 6, 12, 18
+
+### 2. Monthly Orchestrator (`/api/cron/monthly-orchestrator`)
+**Schedule:** Tous les jours à 7h UTC (`0 7 * * *`)
+
+**Tâches exécutées selon la date :**
+- ✅ Envoi rappels mensuels - **seulement le 2 du mois**
+- ✅ Synchronisation mensuelle CA - **seulement le dernier jour du mois**
+
+Chaque orchestrator vérifie automatiquement la date/heure et n'exécute les tâches que si les conditions sont remplies.
+
+---
+
+## 📋 Routes de Déclenchement Manuel
 
 ### 1. Vérification des Seuils URSSAF
 
