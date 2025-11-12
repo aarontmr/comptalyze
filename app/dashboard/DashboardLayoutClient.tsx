@@ -270,7 +270,7 @@ export default function DashboardLayoutClient({
             <div className="px-4 py-4 border-t border-gray-800 flex-shrink-0">
               <div className="mb-3 px-4 py-2 rounded-lg" style={{ backgroundColor: '#16181d' }}>
                 <p className="text-xs text-gray-400 mb-1">Connecté en tant que</p>
-                <p className="text-sm text-white font-medium truncate">{user.email}</p>
+                <p className="text-sm text-white font-medium truncate">{user?.email ?? 'Utilisateur'}</p>
               </div>
               <button
                 onClick={handleSignOut}
