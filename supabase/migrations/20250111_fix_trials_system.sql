@@ -234,3 +234,4 @@ COMMENT ON FUNCTION has_feature_access IS
 COMMIT;
 
 
+
