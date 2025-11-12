@@ -20,9 +20,24 @@ export default function LoginPage() {
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        router.push('/dashboard');
+      if (!session) return;
+
+      const { data: profile } = await supabase
+        .from('user_profiles')
+        .select('email_verified')
+        .eq('id', session.user.id)
+        .single();
+
+      const emailVerified =
+        !!session.user.email_confirmed_at || !!profile?.email_verified;
+
+      if (!emailVerified) {
+        await supabase.auth.signOut();
+        router.push('/verify-email-sent');
+        return;
       }
+
+      router.push('/dashboard');
     };
     checkSession();
   }, [router]);
@@ -32,6 +47,21 @@ export default function LoginPage() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (event === 'SIGNED_IN' && session) {
+          const { data: profile } = await supabase
+            .from('user_profiles')
+            .select('email_verified')
+            .eq('id', session.user.id)
+            .single();
+
+          const emailVerified =
+            !!session.user.email_confirmed_at || !!profile?.email_verified;
+
+          if (!emailVerified) {
+            await supabase.auth.signOut();
+            router.push('/verify-email-sent');
+            return;
+          }
+
           setSuccessMessage('Connexion réussie...');
           setTimeout(() => {
             router.push('/dashboard');
@@ -72,9 +102,27 @@ export default function LoginPage() {
         }
       }
 
-      // Vérifier si la session a bien été créée
       if (!data.session) {
         throw new Error('Impossible de créer une session. Veuillez réessayer.');
+      }
+
+      const { data: profile } = await supabase
+        .from('user_profiles')
+        .select('email_verified')
+        .eq('id', data.session.user.id)
+        .single();
+
+      const emailVerified =
+        !!data.session.user.email_confirmed_at || !!profile?.email_verified;
+
+      if (!emailVerified) {
+        await supabase.auth.signOut();
+        setSuccessMessage(
+          'Connexion réussie. Merci de confirmer votre email pour accéder à votre compte.'
+        );
+        setLoading(false);
+        router.push('/verify-email-sent');
+        return;
       }
 
       setSuccessMessage('Connexion réussie...');
