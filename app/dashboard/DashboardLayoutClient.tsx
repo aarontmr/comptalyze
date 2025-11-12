@@ -52,26 +52,9 @@ export default function DashboardLayoutClient({
   const pathname = usePathname();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [session, setSession] = useState<Session | null>(initialSession);
-  const [user, setUser] = useState<User | null>(initialSession.user);
+  const [session] = useState<Session | null>(initialSession);
+  const [user] = useState<User | null>(initialSession.user);
   const [showTutorial, setShowTutorial] = useState(true);
-
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, newSession) => {
-        setSession(newSession);
-        setUser(newSession?.user ?? null);
-      }
-    );
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  if (!session || !user) {
-    return null;
-  }
 
   const subscription = getUserSubscription(user);
 
@@ -186,25 +169,7 @@ export default function DashboardLayoutClient({
                   priority
                 />
               </Link>
-              {subscription.isTrial && subscription.trialEndsAt && (() => {
-                const trialEnd = new Date(subscription.trialEndsAt);
-                const daysLeft = Math.ceil((trialEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-                return (
-                  <div
-                    className="mt-2 px-3 py-1 rounded-full text-xs font-bold animate-pulse"
-                    style={{
-                      background: daysLeft <= 1
-                        ? 'linear-gradient(135deg, #F59E0B, #EF4444)'
-                        : subscription.isPremium
-                          ? 'linear-gradient(135deg, #8B5CF6, #3B82F6)'
-                          : 'linear-gradient(135deg, #00D084, #2E6CF6)',
-                      color: 'white',
-                    }}
-                  >
-                    Essai : {daysLeft}j restant{daysLeft > 1 ? 's' : ''}
-                  </div>
-                );
-              })()}
+              <div className="mt-2" />
             </div>
 
             <div className="px-4 py-2 border-b border-gray-800 flex-shrink-0">
@@ -357,25 +322,7 @@ export default function DashboardLayoutClient({
                     priority
                   />
                 </Link>
-                {subscription.isTrial && subscription.trialEndsAt && (() => {
-                  const trialEnd = new Date(subscription.trialEndsAt);
-                  const daysLeft = Math.ceil((trialEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-                  return (
-                    <div
-                      className="mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold"
-                      style={{
-                        background: daysLeft <= 1
-                          ? 'linear-gradient(135deg, #F59E0B, #EF4444)'
-                          : subscription.isPremium
-                            ? 'linear-gradient(135deg, #8B5CF6, #3B82F6)'
-                            : 'linear-gradient(135deg, #00D084, #2E6CF6)',
-                        color: 'white',
-                      }}
-                    >
-                      Essai : {daysLeft}j
-                    </div>
-                  );
-                })()}
+              <div className="mt-1" />
               </div>
               <button
                 onClick={() => setSidebarOpen(false)}
@@ -522,25 +469,7 @@ export default function DashboardLayoutClient({
               />
             </Link>
 
-            {subscription.isTrial && subscription.trialEndsAt && (() => {
-              const trialEnd = new Date(subscription.trialEndsAt);
-              const daysLeft = Math.ceil((trialEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-              return (
-                <div
-                  className="px-2 py-1 rounded-full text-[10px] font-bold"
-                  style={{
-                    background: daysLeft <= 1
-                      ? 'linear-gradient(135deg, #F59E0B, #EF4444)'
-                      : subscription.isPremium
-                        ? 'linear-gradient(135deg, #8B5CF6, #3B82F6)'
-                        : 'linear-gradient(135deg, #00D084, #2E6CF6)',
-                    color: 'white',
-                  }}
-                >
-                  {daysLeft}j
-                </div>
-              );
-            })() || <div className="w-10" />}
+          <div className="w-10" />
           </header>
 
           <div className="hidden lg:block">
