@@ -208,13 +208,22 @@ export default function SignupPage() {
       // Si l'email doit être vérifié, Supabase envoie automatiquement l'email avec le template personnalisé
       if (data.user) {
         try {
-          await fetch('/api/auth/send-verification-email', {
+          const emailResponse = await fetch('/api/auth/send-verification-email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: data.user.id }),
+            body: JSON.stringify({ userId: data.user.id, email }),
           });
+          
+          if (!emailResponse.ok) {
+            const emailError = await emailResponse.json().catch(() => ({ error: 'Erreur inconnue' }));
+            console.error('❌ Erreur envoi email de vérification:', emailError);
+            // Ne pas bloquer le signup, mais logger l'erreur
+          } else {
+            console.log('✅ Email de vérification envoyé avec succès');
+          }
         } catch (err) {
-          console.error('Erreur envoi email de vérification:', err);
+          console.error('❌ Erreur réseau lors de l\'envoi email de vérification:', err);
+          // Ne pas bloquer le signup, mais logger l'erreur
         }
       }
 
