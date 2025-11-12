@@ -1564,10 +1564,10 @@ export default function LandingPage() {
                 }}
               >
                 <Sparkles className="w-5 h-5" />
-                Essayer Premium gratuitement (3 jours)
+                Passer à Premium dès 7,90 €/mois
               </Link>
               <p className="text-sm text-gray-400 mt-4">
-                Sans engagement • Annulation en 1 clic
+                Paiement sécurisé • Annulation en 1 clic
               </p>
             </div>
           </FadeIn>
