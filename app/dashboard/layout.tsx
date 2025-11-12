@@ -245,26 +245,6 @@ export default async function DashboardLayout({
                 priority
               />
             </Link>
-            {/* Badge Essai Gratuit */}
-            {subscription.isTrial && subscription.trialEndsAt && (() => {
-              const trialEnd = new Date(subscription.trialEndsAt);
-              const daysLeft = Math.ceil((trialEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-              return (
-                <div
-                  className="mt-2 px-3 py-1 rounded-full text-xs font-bold animate-pulse"
-                  style={{
-                    background: daysLeft <= 1 
-                      ? 'linear-gradient(135deg, #F59E0B, #EF4444)'
-                      : subscription.isPremium
-                      ? 'linear-gradient(135deg, #8B5CF6, #3B82F6)'
-                      : 'linear-gradient(135deg, #00D084, #2E6CF6)',
-                    color: 'white',
-                  }}
-                >
-                  Essai : {daysLeft}j restant{daysLeft > 1 ? 's' : ''}
-                </div>
-              );
-            })()}
           </div>
 
           {/* Lien vers l'accueil */}
@@ -426,26 +406,6 @@ export default async function DashboardLayout({
                   priority
                 />
               </Link>
-              {/* Badge Essai Gratuit Mobile */}
-              {subscription.isTrial && subscription.trialEndsAt && (() => {
-                const trialEnd = new Date(subscription.trialEndsAt);
-                const daysLeft = Math.ceil((trialEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-                return (
-                  <div
-                    className="mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold"
-                    style={{
-                      background: daysLeft <= 1 
-                        ? 'linear-gradient(135deg, #F59E0B, #EF4444)'
-                        : subscription.isPremium
-                        ? 'linear-gradient(135deg, #8B5CF6, #3B82F6)'
-                        : 'linear-gradient(135deg, #00D084, #2E6CF6)',
-                      color: 'white',
-                    }}
-                  >
-                    Essai : {daysLeft}j
-                  </div>
-                );
-              })()}
             </div>
             <button
               onClick={() => setSidebarOpen(false)}
@@ -601,26 +561,7 @@ export default async function DashboardLayout({
             />
           </Link>
 
-          {/* Badge Essai Mobile Header */}
-          {subscription.isTrial && subscription.trialEndsAt && (() => {
-            const trialEnd = new Date(subscription.trialEndsAt);
-            const daysLeft = Math.ceil((trialEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-            return (
-              <div
-                className="px-2 py-1 rounded-full text-[10px] font-bold"
-                style={{
-                  background: daysLeft <= 1 
-                    ? 'linear-gradient(135deg, #F59E0B, #EF4444)'
-                    : subscription.isPremium
-                    ? 'linear-gradient(135deg, #8B5CF6, #3B82F6)'
-                    : 'linear-gradient(135deg, #00D084, #2E6CF6)',
-                  color: 'white',
-                }}
-              >
-                {daysLeft}j
-              </div>
-            );
-          })() || <div className="w-10" />}
+          <div className="w-10" />
         </header>
 
         {/* Desktop layout */}
