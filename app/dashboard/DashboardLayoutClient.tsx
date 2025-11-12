@@ -34,7 +34,7 @@ const OnboardingTutorial = dynamic(() => import('@/app/components/OnboardingTuto
 
 interface DashboardLayoutClientProps {
   children: React.ReactNode;
-  initialSession: Session;
+  initialSession: Session | null;
 }
 
 interface NavItem {
@@ -53,7 +53,7 @@ export default function DashboardLayoutClient({
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [session, setSession] = useState<Session | null>(initialSession);
-  const [user, setUser] = useState<User | null>(initialSession.user);
+  const [user, setUser] = useState<User | null>(initialSession?.user ?? null);
   const [showTutorial, setShowTutorial] = useState(() => {
     const metadata = initialSession?.user?.user_metadata || {};
     return metadata.onboarding_completed !== true;
