@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import UrssafCalculator from '@/app/components/UrssafCalculator';
@@ -12,64 +11,14 @@ interface DashboardClientProps {
   user: User | null;
 }
 
-export default function DashboardClient({ user: serverUser }: DashboardClientProps) {
+export default function DashboardClient({ user }: DashboardClientProps) {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<User | null>(serverUser);
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        // Délai pour s'assurer que localStorage est accessible
-        await new Promise(resolve => setTimeout(resolve, 100));
-        
-        const { data: { session }, error } = await supabase.auth.getSession();
-
-        if (error) {
-          console.error('Erreur de session:', error);
-          router.push('/login');
-          return;
-        }
-
-        if (!session) {
-          router.push('/login');
-          return;
-        }
-
-        setUser(session.user);
-        setLoading(false);
-      } catch (err) {
-        console.error('Erreur lors de la vérification de la session:', err);
-        router.push('/login');
-      }
-    };
-
-    checkAuth();
-
-    // Écouter les changements d'authentification
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (event === 'SIGNED_OUT' || !session) {
-          router.push('/login');
-        } else {
-          setUser(session.user);
-          setLoading(false);
-        }
-      }
-    );
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [router]);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-white text-lg">Chargement...</div>
-      </div>
-    );
+  if (!user) {
+    return null;
   }
+
+  const subscription = getUserSubscription(user);
 
   return (
     <div>
@@ -95,12 +44,12 @@ export default function DashboardClient({ user: serverUser }: DashboardClientPro
           style={{ backgroundColor: '#1a1d24', border: '1px solid #2d3441' }}
         >
           <p className="text-gray-300">
-            Bienvenue, <span className="text-white font-medium">{user?.email}</span>
+            Bienvenue, <span className="text-white font-medium">{user.email}</span>
           </p>
         </div>
 
         {/* Email Reminder Toggle (Premium only) */}
-        {user && getUserSubscription(user).isPremium && (
+        {subscription.isPremium && (
           <div className="mb-6">
             <EmailReminderToggle userId={user.id} isPremium={true} />
           </div>
