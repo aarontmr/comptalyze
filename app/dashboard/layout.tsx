@@ -31,6 +31,14 @@ export default async function DashboardLayout({
     }
   }
 
+  if (!verifiedSession) {
+    return (
+      <DashboardLayoutClient initialSession={null as unknown as Session}>
+        {children}
+      </DashboardLayoutClient>
+    );
+  }
+
   return (
     <DashboardLayoutClient initialSession={verifiedSession}>
       {children}
