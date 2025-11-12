@@ -5,20 +5,8 @@
       "schedule": "0 7 2 * *"
     },
     {
-      "path": "/api/cron/check-thresholds",
-      "schedule": "0 10 * * 1"
-    },
-    {
       "path": "/api/cron/daily-tasks",
       "schedule": "0 9 * * *"
-    },
-    {
-      "path": "/api/cron/monthly-sync",
-      "schedule": "0 23 28-31 * *"
-    },
-    {
-      "path": "/api/cron/sync-integrations",
-      "schedule": "0 */6 * * *"
     }
   ],
   "functions": {
