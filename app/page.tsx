@@ -12,6 +12,7 @@ import Counter from "@/app/components/anim/Counter";
 import GradientBlob from "@/app/components/anim/GradientBlob";
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
+import UrssafCalculatorDemo from "@/app/components/UrssafCalculatorDemo";
 
 // Dynamic imports pour les composants lourds (chargés uniquement quand visibles)
 const TrustBadges = dynamic(() => import("@/app/components/TrustBadges"), {
@@ -468,6 +469,24 @@ export default function LandingPage() {
               </div>
             </div>
           </FadeIn>
+        </div>
+      </section>
+
+      {/* CALCULATEUR URSSAF DEMO */}
+      <section className="relative px-4 py-12 sm:py-16 md:py-20">
+        <div className="mx-auto max-w-7xl">
+          <FadeIn delay={0} y={12} duration={0.5}>
+            <div className="text-center mb-8 sm:mb-12">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 text-white">
+                Testez notre calculateur URSSAF
+              </h2>
+              <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto">
+                Calculez vos cotisations et votre net en quelques secondes. Aucune inscription requise pour cette démo.
+              </p>
+            </div>
+          </FadeIn>
+
+          <UrssafCalculatorDemo />
         </div>
       </section>
 

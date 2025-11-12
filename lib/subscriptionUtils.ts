@@ -33,13 +33,29 @@ export function getUserSubscription(user: User | null | undefined): UserSubscrip
   const status = metadata.subscription_status || null;
   const hasStripeSubscription = !!metadata.stripe_subscription_id;
 
-  const finalIsPremium =
-    isPremium ||
-    subscriptionPlan === 'premium' ||
-    status === 'active' ||
-    hasStripeSubscription;
+  // Détection Premium : priorité au plan explicite, puis aux flags, puis au statut actif
+  // Si subscription_plan est défini, l'utiliser en priorité
+  let finalIsPremium = false;
+  let finalIsPro = false;
 
-  const finalIsPro = !finalIsPremium && (isPro || subscriptionPlan === 'pro');
+  if (subscriptionPlan === 'premium' || isPremium) {
+    finalIsPremium = true;
+  } else if (subscriptionPlan === 'pro' || isPro) {
+    finalIsPro = true;
+  } else if (status === 'active' || hasStripeSubscription) {
+    // Si actif mais pas de plan explicite, vérifier les flags
+    // Si aucun flag non plus, considérer comme Pro par défaut (compatibilité)
+    if (isPremium) {
+      finalIsPremium = true;
+    } else if (isPro) {
+      finalIsPro = true;
+    } else {
+      // Par défaut, si actif mais pas de plan explicite, ne pas donner d'accès
+      // (l'utilisateur devra avoir ses métadonnées mises à jour)
+      finalIsPremium = false;
+      finalIsPro = false;
+    }
+  }
 
   let plan: SubscriptionPlan = 'free';
   if (finalIsPremium) {

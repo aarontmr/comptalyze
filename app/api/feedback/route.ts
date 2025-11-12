@@ -1,8 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!supabaseUrl || !supabaseServiceKey) {
+  throw new Error('Missing Supabase environment variables');
+}
+
+// Créer un client Supabase admin avec la clé de service
+const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,59 +30,60 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Créer un client Supabase avec la clé de service (ou anon)
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
     // Récupérer l'utilisateur connecté (si authentifié)
     const authHeader = request.headers.get('authorization');
     let userId: string | null = null;
 
     if (authHeader) {
-      const token = authHeader.replace('Bearer ', '');
-      const { data: { user } } = await supabase.auth.getUser(token);
-      userId = user?.id || null;
-    }
-
-    // Alternative : essayer de récupérer depuis les cookies
-    if (!userId) {
-      const cookieHeader = request.headers.get('cookie');
-      if (cookieHeader) {
-        const cookies = Object.fromEntries(
-          cookieHeader.split('; ').map(c => {
-            const [key, ...v] = c.split('=');
-            return [key, v.join('=')];
-          })
-        );
+      try {
+        const token = authHeader.replace('Bearer ', '');
+        // Avec la clé de service, on peut utiliser getUser pour valider le token
+        const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
         
-        // Supabase stocke le token dans un cookie
-        const accessToken = cookies['sb-access-token'] || cookies['supabase-auth-token'];
-        if (accessToken) {
-          const { data: { user } } = await supabase.auth.getUser(accessToken);
-          userId = user?.id || null;
+        if (!authError && user) {
+          userId = user.id;
+        } else {
+          console.error('Erreur authentification:', authError);
+          // Continuer sans userId si l'authentification échoue
         }
+      } catch (error) {
+        console.error('Erreur lors de la vérification du token:', error);
+        // Continuer sans userId si l'authentification échoue
       }
     }
 
+    // Préparer les données pour l'insertion
+    const feedbackData: any = {
+      feedback: feedback.trim(),
+      email: email && email.trim() ? email.trim() : null,
+      user_agent: request.headers.get('user-agent') || null,
+      page_url: request.headers.get('referer') || null,
+    };
+
+    // Ajouter user_id seulement s'il est disponible
+    if (userId) {
+      feedbackData.user_id = userId;
+    }
+
     // Insérer le feedback dans la table
-    const { data, error } = await supabase
+    // Avec la clé de service, on peut contourner les politiques RLS
+    const { data, error } = await supabaseAdmin
       .from('feedbacks')
-      .insert([
-        {
-          feedback: feedback.trim(),
-          email: email && email.trim() ? email.trim() : null,
-          user_id: userId,
-          created_at: new Date().toISOString(),
-          user_agent: request.headers.get('user-agent'),
-          page_url: request.headers.get('referer') || null,
-        }
-      ])
+      .insert([feedbackData])
       .select()
       .single();
 
     if (error) {
       console.error('Erreur Supabase:', error);
+      // Log plus de détails pour le débogage
+      console.error('Détails de l\'erreur:', {
+        message: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint,
+      });
       return NextResponse.json(
-        { error: 'Erreur lors de l\'enregistrement du feedback' },
+        { error: `Erreur lors de l'enregistrement du feedback: ${error.message || 'Erreur inconnue'}` },
         { status: 500 }
       );
     }
@@ -94,6 +102,7 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
 
 
 

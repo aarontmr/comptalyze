@@ -73,6 +73,7 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
   const subscription = getUserSubscription(user);
   const isPro = subscription.isPro;
   const isPremium = subscription.isPremium;
+  const hasUnlimitedAccess = isPro || isPremium; // Pro et Premium ont des enregistrements illimités
   
   // Vérifier l'accès aux fonctionnalités
   const canExportPDF = hasFeatureAccess(user, 'export_pdf');
@@ -250,7 +251,7 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
     if (!caValue || !selectedActivity || !user) return;
     
     // Vérifier la limite pour les utilisateurs gratuits
-    if (!isPro && records.length >= FREE_PLAN_LIMIT) {
+    if (!hasUnlimitedAccess && records.length >= FREE_PLAN_LIMIT) {
       showToastMessage('Limite atteinte. Passez au plan Pro pour enregistrer sans limite.');
       return;
     }
@@ -455,8 +456,8 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
   };
 
   // Calculer le nombre d'enregistrements pour les utilisateurs gratuits
-  const remainingCalculations = isPro ? Infinity : Math.max(0, FREE_PLAN_LIMIT - records.length);
-  const canSave = isPro || remainingCalculations > 0;
+  const remainingCalculations = hasUnlimitedAccess ? Infinity : Math.max(0, FREE_PLAN_LIMIT - records.length);
+  const canSave = hasUnlimitedAccess || remainingCalculations > 0;
 
   return (
     <div className="w-full">
@@ -473,7 +474,7 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
       )}
 
       {/* Bannière de plan */}
-      {!isPro && !isPremium ? (
+      {!hasUnlimitedAccess ? (
         /* Utilisateurs Free */
         <div
           className="mb-6 p-4 rounded-xl"
@@ -966,7 +967,7 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
             </div>
             
             {/* Message de limite lorsque la limite est atteinte */}
-            {!isPro && records.length >= FREE_PLAN_LIMIT && (
+            {!hasUnlimitedAccess && records.length >= FREE_PLAN_LIMIT && (
               <div
                 className="mt-4 p-4 rounded-lg"
                 style={{ backgroundColor: '#2d1b1b', border: '1px solid #ef4444' }}
@@ -991,7 +992,7 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
             )}
             
             {/* Indicateur de simulations restantes */}
-            {!isPro && records.length > 0 && records.length < FREE_PLAN_LIMIT && (
+            {!hasUnlimitedAccess && records.length > 0 && records.length < FREE_PLAN_LIMIT && (
               <div className="mt-4 p-3 rounded-lg" style={{ backgroundColor: '#1b2d1b', border: '1px solid #10b981' }}>
                 <p className="text-xs text-green-400">
                   ✓ {remainingCalculations} enregistrement{remainingCalculations !== 1 ? 's' : ''} restant{remainingCalculations !== 1 ? 's' : ''} • Enregistrez ce calcul pour le sauvegarder
@@ -1056,7 +1057,7 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3 className="text-lg font-semibold text-white">Historique</h3>
-            {!isPro && (
+            {!hasUnlimitedAccess && (
               <p className="text-xs text-gray-400 mt-1">
                 {records.length} / {FREE_PLAN_LIMIT} enregistrements utilisés
               </p>

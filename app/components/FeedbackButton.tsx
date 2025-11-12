@@ -50,16 +50,40 @@ export default function FeedbackButton() {
     setLoading(true);
 
     try {
+      // Récupérer le token d'authentification
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+
+      const headers: HeadersInit = { 
+        'Content-Type': 'application/json',
+      };
+      
+      // Ajouter le token si disponible
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const response = await fetch('/api/feedback', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           feedback: feedback.trim(),
           email: email.trim() || null,
         }),
       });
 
-      const data = await response.json();
+      // Vérifier le type de contenu de la réponse
+      const contentType = response.headers.get('content-type');
+      let data;
+      
+      if (contentType && contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        // Si ce n'est pas du JSON, essayer de lire le texte
+        const text = await response.text();
+        console.error('Réponse non-JSON:', text);
+        throw new Error('Erreur: Le serveur a renvoyé une réponse inattendue.');
+      }
 
       if (!response.ok) {
         throw new Error(data.error || 'Erreur lors de l\'envoi');
@@ -70,6 +94,7 @@ export default function FeedbackButton() {
       setEmail('');
       setTimeout(() => setIsOpen(false), 2000);
     } catch (err: any) {
+      console.error('Erreur feedback:', err);
       showError(err.message || 'Une erreur est survenue');
     } finally {
       setLoading(false);

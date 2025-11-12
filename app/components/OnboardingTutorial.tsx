@@ -263,7 +263,7 @@ export default function OnboardingTutorial({ user, onComplete }: OnboardingTutor
       // Calculer la position de la tooltip avec responsive
       const isMobile = window.innerWidth < 640;
       const tooltipWidth = isMobile ? window.innerWidth - 32 : 400; // Responsive width
-      const tooltipHeight = 250; // Hauteur approximative
+      const tooltipHeight = Math.min(500, window.innerHeight - 100); // Hauteur max adaptative
       const gap = isMobile ? 10 : 20; // Espacement réduit sur mobile
 
       let top = 0;
@@ -297,15 +297,30 @@ export default function OnboardingTutorial({ user, onComplete }: OnboardingTutor
             left = position.left + position.width + gap;
         }
 
-        // Ajuster pour éviter de sortir de l'écran
+        // Ajuster pour éviter de sortir de l'écran et garantir que les boutons sont visibles
         const padding = 20;
+        const minBottomSpace = 120; // Espace minimum en bas pour les boutons
+        
+        // Ajuster horizontalement
         if (left < padding) left = padding;
         if (left + tooltipWidth > window.innerWidth - padding) {
           left = window.innerWidth - tooltipWidth - padding;
         }
-        if (top < padding) top = padding;
-        if (top + tooltipHeight > window.innerHeight + scrollY - padding) {
-          top = window.innerHeight + scrollY - tooltipHeight - padding;
+        
+        // Ajuster verticalement - garantir que le tooltip ne sort pas en haut
+        if (top < scrollY + padding) {
+          top = scrollY + padding;
+        }
+        
+        // Garantir que le tooltip ne sort pas en bas (avec espace pour les boutons)
+        const maxTop = window.innerHeight + scrollY - tooltipHeight - minBottomSpace;
+        if (top > maxTop) {
+          top = Math.max(scrollY + padding, maxTop);
+        }
+        
+        // Si le tooltip est trop haut, le centrer verticalement
+        if (top < scrollY + 100 && position.top + position.height < window.innerHeight / 2) {
+          top = window.innerHeight / 2 + scrollY - tooltipHeight / 2;
         }
       }
 
@@ -448,7 +463,7 @@ export default function OnboardingTutorial({ user, onComplete }: OnboardingTutor
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed w-[calc(100vw-2rem)] sm:w-96 max-w-md"
+            className="fixed w-[calc(100vw-2rem)] sm:w-96 max-w-md max-h-[calc(100vh-4rem)] overflow-y-auto"
             style={{
               zIndex: 10001,
               ...(isCenter || (typeof window !== 'undefined' && window.innerWidth < 640 && step.targetSelector)
@@ -456,24 +471,28 @@ export default function OnboardingTutorial({ user, onComplete }: OnboardingTutor
                     top: "50%",
                     left: "50%",
                     transform: "translate(-50%, -50%)",
+                    maxHeight: "90vh",
                   }
                 : tooltipPosition
                 ? {
-                    top: `${tooltipPosition.top}px`,
-                    left: `${tooltipPosition.left}px`,
+                    top: `${Math.max(20, Math.min(tooltipPosition.top, window.innerHeight - 400))}px`,
+                    left: `${Math.max(16, Math.min(tooltipPosition.left, window.innerWidth - 400))}px`,
+                    maxHeight: `${window.innerHeight - Math.max(20, Math.min(tooltipPosition.top, window.innerHeight - 400)) - 40}px`,
                   }
                 : {
                     top: "2rem",
                     left: "50%",
                     transform: "translateX(-50%)",
+                    maxHeight: "calc(100vh - 4rem)",
                   })
             }}
           >
             <div
-              className="bg-[#16181d] border rounded-2xl p-6 shadow-2xl"
+              className="bg-[#16181d] border rounded-2xl p-6 shadow-2xl flex flex-col"
               style={{
                 borderColor: "rgba(46, 108, 246, 0.3)",
                 boxShadow: "0 20px 60px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(46, 108, 246, 0.2)",
+                minHeight: "fit-content",
               }}
             >
               {/* Header */}
@@ -504,10 +523,10 @@ export default function OnboardingTutorial({ user, onComplete }: OnboardingTutor
               </div>
 
               {/* Description */}
-              <p className="text-gray-300 mb-6 leading-relaxed">{step.description}</p>
+              <p className="text-gray-300 mb-6 leading-relaxed flex-shrink-0">{step.description}</p>
 
               {/* Progress bar */}
-              <div className="mb-6">
+              <div className="mb-6 flex-shrink-0">
                 <div className="w-full bg-gray-800 rounded-full h-1.5 overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
@@ -521,8 +540,8 @@ export default function OnboardingTutorial({ user, onComplete }: OnboardingTutor
                 </div>
               </div>
 
-              {/* Actions */}
-              <div className="flex items-center justify-between gap-3">
+              {/* Actions - Toujours visible en bas */}
+              <div className="flex items-center justify-between gap-3 mt-auto flex-shrink-0 pt-4 border-t" style={{ borderColor: "rgba(46, 108, 246, 0.2)" }}>
                 <button
                   onClick={handleSkip}
                   className="text-sm text-gray-400 hover:text-gray-200 transition-colors"

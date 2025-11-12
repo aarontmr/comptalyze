@@ -75,16 +75,35 @@ function SuccessContent() {
 
       console.log("✅ Signup tracked in database");
 
-      // 2) Fire Google Ads conversion (if available)
+      // 2) Fire Google Ads conversion "Achat" (if available)
+      // Récupérer le plan de l'utilisateur pour déterminer la valeur
+      const subscription = getUserSubscription(user);
+      let conversionValue = 0;
+      let planType = 'free';
+      
+      if (subscription.isPremium) {
+        conversionValue = 19.90; // Premium
+        planType = 'premium';
+      } else if (subscription.isPro) {
+        conversionValue = 9.90; // Pro
+        planType = 'pro';
+      }
+      
+      // Track conversion "Achat" seulement si c'est un paiement (pas juste une inscription)
       const googleAdsConvId = process.env.NEXT_PUBLIC_GOOGLE_ADS_CONV_ID;
       const googleAdsConvLabel = process.env.NEXT_PUBLIC_GOOGLE_ADS_CONV_LABEL;
-
-      if (googleAdsConvId && googleAdsConvLabel && (window as any).gtag) {
+      
+      // Fire conversion "Achat" seulement si un paiement a eu lieu
+      if ((sessionId || paymentIntent) && conversionValue > 0 && googleAdsConvId && googleAdsConvLabel && (window as any).gtag) {
         (window as any).gtag("event", "conversion", {
           send_to: `${googleAdsConvId}/${googleAdsConvLabel}`,
           transaction_id: sessionId || paymentIntent || user.id,
+          value: conversionValue,
+          currency: "EUR",
         });
-        console.log("✅ Google Ads conversion fired");
+        console.log(`✅ Google Ads conversion "Achat" fired avec valeur: ${conversionValue}€ (${planType})`);
+      } else if (sessionId || paymentIntent) {
+        console.log("⚠️ Google Ads conversion 'Achat' non déclenchée (pas de valeur ou config manquante)");
       }
 
       // 3) Fire GA4 event
