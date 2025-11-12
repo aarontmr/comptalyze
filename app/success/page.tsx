@@ -15,6 +15,7 @@ function SuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const paymentIntent = searchParams.get("payment_intent");
+  const gclidFromUrl = searchParams.get("gclid"); // Récupérer le gclid depuis l'URL (passé par Stripe)
   const [loading, setLoading] = useState(true);
   const [showConfetti, setShowConfetti] = useState(false);
   const [subscriptionActive, setSubscriptionActive] = useState(false);
@@ -56,7 +57,33 @@ function SuccessContent() {
       }
 
       // Get attribution data
+      // Priorité : gclid depuis l'URL (passé par Stripe) > localStorage > cookie
       const attribution = getAttributionData();
+      
+      // Utiliser le gclid depuis l'URL en priorité (passé par Stripe)
+      if (gclidFromUrl) {
+        attribution.gclid = gclidFromUrl;
+        // Stocker dans localStorage pour les prochaines conversions
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('gclid', gclidFromUrl);
+        }
+        console.log(`✅ GCLID récupéré depuis l'URL: ${gclidFromUrl}`);
+      }
+      
+      // Vérifier la présence du cookie gclid (défini par Google Ads)
+      // Le cookie gclid est préservé automatiquement par le navigateur, même lors des redirections vers Stripe
+      const gclidCookie = typeof document !== 'undefined' 
+        ? document.cookie.split(';').find(c => c.trim().startsWith('gclid='))?.split('=')[1]
+        : null;
+      
+      if (gclidCookie && !attribution.gclid) {
+        attribution.gclid = gclidCookie;
+        console.log(`✅ GCLID récupéré depuis le cookie: ${gclidCookie}`);
+      }
+      
+      if (!attribution.gclid) {
+        console.warn(`⚠️ GCLID non trouvé - conversion Google Ads peut ne pas être attribuée`);
+      }
 
       // 1) Track signup in database
       await trackSignup({

@@ -17,7 +17,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Configuration Stripe manquante" }, { status: 500 });
     }
 
-    const { plan, userId } = await req.json(); // "pro" or "premium" or "pro_yearly" or "premium_yearly", userId from frontend
+    const body = await req.json();
+    const { plan, userId, gclid } = body; // "pro" or "premium" or "pro_yearly" or "premium_yearly", userId from frontend, gclid for Google Ads tracking
 
     if (!plan) {
       return NextResponse.json({ error: "Le plan est requis" }, { status: 400 });
@@ -99,11 +100,22 @@ export async function POST(req: Request) {
     // Utiliser NEXT_PUBLIC_BASE_URL en priorité pour éviter localhost en production
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || req.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'https://comptalyze.com';
 
+    // 🎯 Construire l'URL de success avec le gclid si présent (pour Google Ads conversion tracking)
+    // Le gclid est envoyé par le frontend depuis localStorage
+    // Stripe remplacera {CHECKOUT_SESSION_ID} par le vrai session ID
+    let successUrl = `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`;
+    if (gclid) {
+      successUrl += `&gclid=${encodeURIComponent(gclid)}`;
+      console.log(`✅ GCLID ajouté à l'URL de success: ${gclid}`);
+    } else {
+      console.log(`⚠️ GCLID non trouvé - conversion Google Ads peut ne pas être attribuée`);
+    }
+
     // 🎯 Créer la session d'abonnement
     const { url, sessionId } = await createCheckoutSession({
       plan: basePlan,
       priceId: prices[plan],
-      successUrl: `${baseUrl}/success`,
+      successUrl: successUrl,
       cancelUrl: `${baseUrl}/cancel`,
       userId,
       email: userData.user.email,
