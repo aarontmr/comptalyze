@@ -1,57 +1,42 @@
-'use client';
+import { redirect } from 'next/navigation';
+import { createServerClient } from '@/lib/supabaseServer';
+import { createServiceClient } from '@/lib/supabaseService';
+import DashboardLayoutClient from './DashboardLayoutClient';
 
-import { useState, useEffect } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-import Link from 'next/link';
-import Image from 'next/image';
-import { supabase } from '@/lib/supabaseClient';
-import { getUserSubscription } from '@/lib/subscriptionUtils';
-import { User } from '@supabase/supabase-js';
-import {
-  LayoutDashboard,
-  Calculator,
-  FileText,
-  BarChart3,
-  User as UserIcon,
-  Menu,
-  X,
-  LogOut,
-  Home,
-  Sparkles,
-  Receipt,
-  Download,
-  Calendar as CalendarIcon,
-  Percent,
-  CreditCard,
-} from 'lucide-react';
-import logo from '@/public/logo.png';
-import dynamic from 'next/dynamic';
-import QuickSettings from '@/app/components/QuickSettings';
-
-// Dynamic imports pour les composants lourds
-const OnboardingTutorial = dynamic(() => import('@/app/components/OnboardingTutorial'), {
-  ssr: false,
-});
-
-interface NavItem {
-  label: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
-  requiresPro?: boolean;
-  requiresPremium?: boolean;
-}
-
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-  const router = useRouter();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [showTutorial, setShowTutorial] = useState(true);
+  const supabase = await createServerClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    redirect('/login');
+  }
+
+  const serviceClient = createServiceClient();
+  const { data: profile } = await serviceClient
+    .from('user_profiles')
+    .select('email_verified')
+    .eq('id', session.user.id)
+    .single();
+
+  const emailVerified =
+    !!session.user.email_confirmed_at || !!profile?.email_verified;
+
+  if (!emailVerified) {
+    redirect('/verify-email-sent');
+  }
+
+  return (
+    <DashboardLayoutClient initialSession={session}>
+      {children}
+    </DashboardLayoutClient>
+  );
+}
 
   useEffect(() => {
     const checkAuth = async () => {
