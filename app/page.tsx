@@ -394,25 +394,45 @@ export default function LandingPage() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
+            whileHover={{ scale: 1.02 }}
+            className="transition-transform duration-300"
           >
             <div 
-              className="relative rounded-2xl overflow-hidden"
+              className="relative rounded-2xl overflow-hidden group"
               style={{
                 border: "1px solid rgba(46, 108, 246, 0.2)",
                 boxShadow: "0 0 40px rgba(46, 108, 246, 0.15)"
               }}
             >
-              <video
-                className="w-full h-auto"
-                autoPlay
-                loop
-                muted
-                playsInline
-                poster="/previews/Dashboard.PNG"
-              >
-                <source src="/hero-demo.mp4" type="video/mp4" />
-                Votre navigateur ne supporte pas la lecture de vidéos.
-              </video>
+              {/* Image statique du dashboard */}
+              <div className="relative">
+                <Image
+                  src="/previews/Dashboard.PNG"
+                  alt="Dashboard Comptalyze - Interface moderne de gestion comptable"
+                  width={1920}
+                  height={1080}
+                  className="w-full h-auto"
+                  priority
+                  quality={95}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+                />
+                {/* Overlay subtil au hover */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#00D084]/0 via-transparent to-[#2E6CF6]/0 group-hover:from-[#00D084]/5 group-hover:to-[#2E6CF6]/5 transition-all duration-500 pointer-events-none" />
+              </div>
+              
+              {/* Badge "Live Preview" en haut à droite */}
+              <div className="absolute top-4 right-4 z-10">
+                <div 
+                  className="px-3 py-1.5 rounded-full text-xs font-medium backdrop-blur-sm"
+                  style={{
+                    backgroundColor: "rgba(0, 208, 132, 0.15)",
+                    border: "1px solid rgba(0, 208, 132, 0.3)",
+                    color: "#00D084"
+                  }}
+                >
+                  ✨ Aperçu du dashboard
+                </div>
+              </div>
             </div>
           </motion.div>
 
