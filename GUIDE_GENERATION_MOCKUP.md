@@ -197,3 +197,5 @@ export default function DashboardPreview() {
 - **Canva** : Créer des mockups avec des templates
 - **Adobe Express** : Alternative gratuite à Photoshop
 
+
+

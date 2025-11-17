@@ -406,28 +406,17 @@ export default function LandingPage() {
             >
               {/* GIF du dashboard */}
               <div className="relative">
-                <img
+                <Image
                   src="/hero-demo2.gif"
                   alt="Dashboard Comptalyze - Interface moderne de gestion comptable en action"
+                  width={1200}
+                  height={675}
                   className="w-full h-auto"
-                  loading="eager"
+                  priority
+                  unoptimized
                 />
                 {/* Overlay subtil au hover */}
                 <div className="absolute inset-0 bg-gradient-to-br from-[#00D084]/0 via-transparent to-[#2E6CF6]/0 group-hover:from-[#00D084]/5 group-hover:to-[#2E6CF6]/5 transition-all duration-500 pointer-events-none" />
-              </div>
-              
-              {/* Badge "Live Preview" en haut à droite */}
-              <div className="absolute top-4 right-4 z-10">
-                <div 
-                  className="px-3 py-1.5 rounded-full text-xs font-medium backdrop-blur-sm"
-                  style={{
-                    backgroundColor: "rgba(0, 208, 132, 0.15)",
-                    border: "1px solid rgba(0, 208, 132, 0.3)",
-                    color: "#00D084"
-                  }}
-                >
-                  ✨ Aperçu du dashboard
-                </div>
               </div>
             </div>
           </motion.div>
