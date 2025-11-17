@@ -59,9 +59,26 @@ export default function SignupPage() {
     { text: 'Un caractère spécial', met: /[^a-zA-Z\d]/.test(password) },
   ];
 
-  // Capturer les paramètres UTM au chargement
+  // Capturer les paramètres UTM et le code de parrainage au chargement
+  const [referralCode, setReferralCode] = useState<string | null>(null);
+  
   useEffect(() => {
     captureUTMParams();
+    
+    // Capturer le code de parrainage depuis l'URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const ref = urlParams.get('ref');
+    if (ref) {
+      setReferralCode(ref);
+      // Stocker dans localStorage pour le garder même après redirection
+      localStorage.setItem('referral_code', ref);
+    } else {
+      // Vérifier si un code est déjà stocké
+      const storedRef = localStorage.getItem('referral_code');
+      if (storedRef) {
+        setReferralCode(storedRef);
+      }
+    }
   }, []);
 
   // Charger reCAPTCHA
@@ -230,9 +247,29 @@ export default function SignupPage() {
           data: {
             accepted_terms: true,
             accepted_terms_at: new Date().toISOString(),
+            referral_code: referralCode || null, // Stocker le code de parrainage
           }
         },
       });
+      
+      // Traiter le parrainage si un code est présent
+      if (data.user && referralCode) {
+        try {
+          await fetch('/api/referrals/apply', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userId: data.user.id,
+              referralCode: referralCode,
+            }),
+          }).catch((err) => console.error('Erreur traitement parrainage (non bloquant):', err));
+          
+          // Nettoyer le code après utilisation
+          localStorage.removeItem('referral_code');
+        } catch (err) {
+          console.error('Erreur traitement parrainage:', err);
+        }
+      }
 
       if (error) throw error;
 
@@ -400,6 +437,19 @@ export default function SignupPage() {
             >
               <span className="text-red-400">⚠️</span>
               <span>{error}</span>
+            </div>
+          )}
+
+          {referralCode && (
+            <div 
+              className="mb-4 p-3 rounded-lg text-sm text-[#00D084] flex items-start gap-2"
+              style={{ 
+                backgroundColor: 'rgba(0, 208, 132, 0.1)', 
+                border: '1px solid rgba(0, 208, 132, 0.3)' 
+              }}
+            >
+              <span className="text-[#00D084]">🎁</span>
+              <span>Code de parrainage détecté ! Vous bénéficiez d'un parrainage avec le code <strong>{referralCode}</strong></span>
             </div>
           )}
 

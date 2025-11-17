@@ -174,6 +174,59 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   });
   
   console.log(`✅ User ${userId} mis à jour: plan_status=${planStatus}`);
+  
+  // Traiter le parrainage si l'utilisateur vient de s'abonner
+  await processReferralReward(userId, plan);
+}
+
+/**
+ * Traite les récompenses de parrainage quand un filleul s'abonne
+ */
+async function processReferralReward(userId: string, plan: 'pro' | 'premium') {
+  try {
+    // Chercher un parrainage en attente pour cet utilisateur
+    const { data: referral, error: referralError } = await supabaseAdmin
+      .from('referrals')
+      .select('id, referrer_id, referral_code, status')
+      .eq('referred_id', userId)
+      .eq('status', 'pending')
+      .single();
+
+    if (referralError || !referral) {
+      // Pas de parrainage en attente, c'est normal
+      return;
+    }
+
+    // Calculer la récompense (exemple : 10% du prix du plan)
+    // Vous pouvez ajuster ces montants selon vos besoins
+    const rewardAmounts: Record<'pro' | 'premium', number> = {
+      pro: 0.39, // 10% de 3.90€
+      premium: 0.79, // 10% de 7.90€
+    };
+
+    const rewardAmount = rewardAmounts[plan] || 0;
+
+    // Mettre à jour le parrainage
+    const { error: updateError } = await supabaseAdmin
+      .from('referrals')
+      .update({
+        status: 'completed',
+        reward_type: 'credit',
+        reward_amount: rewardAmount,
+        completed_at: new Date().toISOString(),
+      })
+      .eq('id', referral.id);
+
+    if (updateError) {
+      console.error('❌ Erreur mise à jour parrainage:', updateError);
+      return;
+    }
+
+    console.log(`🎁 Récompense de parrainage attribuée: ${referral.referrer_id} a gagné ${rewardAmount}€ pour avoir parrainé ${userId} (plan ${plan})`);
+  } catch (error) {
+    console.error('❌ Erreur traitement parrainage:', error);
+    // Ne pas bloquer le webhook en cas d'erreur de parrainage
+  }
 }
 
 /**
@@ -335,6 +388,9 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
     }
     
     console.log(`✅ Plan ${plan} activé pour user ${userId}`);
+    
+    // Traiter le parrainage si c'est le premier paiement
+    await processReferralReward(userId, plan);
   }
 }
 
