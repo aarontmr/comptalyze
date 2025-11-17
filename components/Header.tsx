@@ -257,7 +257,7 @@ export default function Header({ user }: HeaderProps) {
             {/* Fonctionnalités */}
             <div
               className="relative"
-              ref={(el) => (dropdownRefs.current["fonctionnalites"] = el)}
+              ref={(el) => { dropdownRefs.current["fonctionnalites"] = el; }}
               onMouseEnter={() => {
                 if (leaveTimeoutRef.current) {
                   clearTimeout(leaveTimeoutRef.current);
@@ -330,7 +330,7 @@ export default function Header({ user }: HeaderProps) {
             {/* Pour qui ? */}
             <div
               className="relative"
-              ref={(el) => (dropdownRefs.current["pourQui"] = el)}
+              ref={(el) => { dropdownRefs.current["pourQui"] = el; }}
               onMouseEnter={() => {
                 if (leaveTimeoutRef.current) {
                   clearTimeout(leaveTimeoutRef.current);
@@ -403,7 +403,7 @@ export default function Header({ user }: HeaderProps) {
             {/* Ressources */}
             <div
               className="relative"
-              ref={(el) => (dropdownRefs.current["ressources"] = el)}
+              ref={(el) => { dropdownRefs.current["ressources"] = el; }}
               onMouseEnter={() => {
                 if (leaveTimeoutRef.current) {
                   clearTimeout(leaveTimeoutRef.current);
