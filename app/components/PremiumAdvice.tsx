@@ -93,7 +93,7 @@ export default function PremiumAdvice({ userId }: PremiumAdviceProps) {
             Conseil IA (Premium)
           </h3>
           <button
-            onClick={loadAdvice}
+            onClick={() => loadAdvice()}
             disabled={loading}
             className="text-xs text-gray-400 hover:text-white transition-colors disabled:opacity-50"
           >
@@ -113,7 +113,7 @@ export default function PremiumAdvice({ userId }: PremiumAdviceProps) {
           <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)' }}>
             <p className="text-sm text-red-400">{error}</p>
             <button
-              onClick={loadAdvice}
+              onClick={() => loadAdvice()}
               className="mt-2 text-xs text-red-300 hover:text-red-200 underline"
             >
               Réessayer
