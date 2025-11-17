@@ -16,7 +16,7 @@ export default function PremiumAdvice({ userId }: PremiumAdviceProps) {
     loadAdvice();
   }, [userId]);
 
-  const loadAdvice = async () => {
+  const loadAdvice = async (retryCount = 0) => {
     try {
       setLoading(true);
       setError(null);
@@ -32,6 +32,20 @@ export default function PremiumAdvice({ userId }: PremiumAdviceProps) {
       
       const response = await fetch('/api/ai/advice', { headers });
       
+      // Gérer les erreurs de rate limiting avec retry automatique
+      if (response.status === 429) {
+        const retryAfter = response.headers.get('Retry-After');
+        const waitTime = retryAfter ? parseInt(retryAfter) * 1000 : 5000; // Attendre 5 secondes par défaut
+        
+        // Retry automatique une seule fois après l'attente
+        if (retryCount === 0) {
+          await new Promise(resolve => setTimeout(resolve, waitTime));
+          return loadAdvice(1); // Retry une fois
+        }
+        
+        throw new Error('Trop de requêtes. Veuillez réessayer dans quelques instants.');
+      }
+      
       // Vérifier que la réponse est bien du JSON
       const contentType = response.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
@@ -43,6 +57,11 @@ export default function PremiumAdvice({ userId }: PremiumAdviceProps) {
       const data = await response.json();
 
       if (!response.ok) {
+        // Ne pas logger les erreurs 403 (Premium requis) comme des erreurs critiques
+        if (response.status === 403) {
+          setError('Fonctionnalité réservée au plan Premium');
+          return;
+        }
         throw new Error(data.error || 'Erreur lors du chargement du conseil');
       }
 

@@ -10,6 +10,7 @@ interface FadeInProps extends MotionProps {
   y?: number;
   duration?: number;
   className?: string;
+  immediate?: boolean; // Si true, s'affiche immédiatement sans attendre le viewport
   variants?: {
     hidden: { opacity: number; y: number };
     show: { opacity: number; y: number };
@@ -23,11 +24,14 @@ export function FadeIn({
   duration = 0.5, 
   className,
   variants,
+  immediate = false,
   ...rest 
 }: FadeInProps) {
+  const [mounted, setMounted] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     setReducedMotion(mediaQuery.matches);
     
@@ -36,7 +40,8 @@ export function FadeIn({
     return () => mediaQuery.removeEventListener("change", handler);
   }, []);
 
-  if (reducedMotion) {
+  // Pendant l'hydratation, rendre sans animation pour éviter les différences
+  if (!mounted || reducedMotion) {
     return <div className={className}>{children}</div>;
   }
 
@@ -53,11 +58,30 @@ export function FadeIn({
     );
   }
 
+  // Si immediate est true, s'affiche immédiatement sans attendre le viewport
+  if (immediate) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ 
+          delay, 
+          duration, 
+          ease: [0.22, 1, 0.36, 1] as [number, number, number, number]
+        }}
+        className={className}
+        {...rest}
+      >
+        {children}
+      </motion.div>
+    );
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-20% 0px" }}
+      viewport={{ once: true, margin: "-100px 0px" }}
       transition={{ 
         delay, 
         duration, 

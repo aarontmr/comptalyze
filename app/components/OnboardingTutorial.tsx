@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/supabaseClient";
 import { getUserSubscription } from "@/lib/subscriptionUtils";
 import { User } from "@supabase/supabase-js";
-import { X, ChevronRight, ChevronLeft, CheckCircle, Calculator, FileText, BarChart3, LayoutDashboard, TrendingUp, DollarSign, PieChart, Percent, Receipt, Download, Calendar as CalendarIcon, Bot } from "lucide-react";
+import { X, ChevronRight, ChevronLeft, CheckCircle, Calculator, FileText, BarChart3, LayoutDashboard, TrendingUp, DollarSign, PieChart, Percent, Receipt, Download, Calendar as CalendarIcon, Bot, Building2, Upload, Target, Gift, HelpCircle, Shield, Users, Sparkles } from "lucide-react";
 
 interface TutorialStep {
   id: string;
@@ -159,6 +159,124 @@ export default function OnboardingTutorial({ user, onComplete }: OnboardingTutor
       targetSelector: "[data-tutorial='statistics']",
       position: "right",
       requiresPremium: true,
+    },
+    {
+      id: "businesses",
+      title: "Multi-comptes / Multi-activités (Pro)",
+      description:
+        "Gérez plusieurs micro-entreprises depuis un seul compte. Parfait si vous avez plusieurs activités ou si vous gérez plusieurs entreprises.",
+      icon: Building2,
+      targetSelector: "[data-tutorial='businesses']",
+      position: "right",
+      requiresPro: true,
+    },
+    {
+      id: "import-bancaire",
+      title: "Import bancaire (Pro)",
+      description:
+        "Importez vos relevés bancaires au format CSV/OFX et réconciliez automatiquement vos transactions. Gagnez du temps sur votre comptabilité !",
+      icon: Upload,
+      targetSelector: "[data-tutorial='import-bancaire']",
+      position: "right",
+      requiresPro: true,
+    },
+    {
+      id: "automations",
+      title: "Règles automatiques (Pro)",
+      description:
+        "Créez des règles pour automatiser vos tâches comptables. Par exemple, catégoriser automatiquement certaines transactions ou créer des alertes personnalisées.",
+      icon: Target,
+      targetSelector: "[data-tutorial='automations']",
+      position: "right",
+      requiresPro: true,
+    },
+    {
+      id: "projections",
+      title: "Projections financières (Premium)",
+      description:
+        "Visualisez vos revenus futurs sur 3, 6 ou 12 mois. Anticipez vos finances et planifiez votre croissance avec des prévisions basées sur vos données réelles.",
+      icon: TrendingUp,
+      targetSelector: "[data-tutorial='projections']",
+      position: "right",
+      requiresPremium: true,
+    },
+    {
+      id: "comparaisons",
+      title: "Comparaisons (Premium)",
+      description:
+        "Comparez vos performances mois par mois ou année par année. Identifiez les tendances et les opportunités d'amélioration.",
+      icon: BarChart3,
+      targetSelector: "[data-tutorial='comparaisons']",
+      position: "right",
+      requiresPremium: true,
+    },
+    {
+      id: "budgets",
+      title: "Planification budgétaire (Premium)",
+      description:
+        "Créez des budgets par catégorie et suivez vos dépenses en temps réel. Recevez des alertes lorsque vous approchez de vos limites.",
+      icon: Target,
+      targetSelector: "[data-tutorial='budgets']",
+      position: "right",
+      requiresPremium: true,
+    },
+    {
+      id: "rapports",
+      title: "Rapports automatisés (Premium)",
+      description:
+        "Générez automatiquement des rapports mensuels, trimestriels ou annuels. Recevez-les par email et partagez-les facilement avec votre comptable.",
+      icon: FileText,
+      targetSelector: "[data-tutorial='rapports']",
+      position: "right",
+      requiresPremium: true,
+    },
+    {
+      id: "comptable",
+      title: "Mode comptable (Premium)",
+      description:
+        "Partagez vos données de manière sécurisée avec votre expert-comptable. Contrôlez ce qui est partagé et simplifiez votre collaboration.",
+      icon: Users,
+      targetSelector: "[data-tutorial='comptable']",
+      position: "right",
+      requiresPremium: true,
+    },
+    {
+      id: "optimisation-fiscale",
+      title: "Optimisation fiscale IA (Premium)",
+      description:
+        "Recevez des suggestions personnalisées pour optimiser votre fiscalité. Découvrez des déductions, des crédits d'impôt et des stratégies adaptées à votre situation.",
+      icon: Sparkles,
+      targetSelector: "[data-tutorial='optimisation-fiscale']",
+      position: "right",
+      requiresPremium: true,
+    },
+    {
+      id: "securite",
+      title: "Sécurité & 2FA (Premium)",
+      description:
+        "Activez l'authentification à deux facteurs pour renforcer la sécurité de votre compte. Consultez l'historique de vos connexions pour surveiller l'accès à votre compte.",
+      icon: Shield,
+      targetSelector: "[data-tutorial='securite']",
+      position: "right",
+      requiresPremium: true,
+    },
+    {
+      id: "help",
+      title: "Centre d'aide",
+      description:
+        "Trouvez rapidement des réponses à vos questions dans notre centre d'aide interactif. Recherchez par mots-clés ou parcourez les catégories.",
+      icon: HelpCircle,
+      targetSelector: "[data-tutorial='help']",
+      position: "right",
+    },
+    {
+      id: "referrals",
+      title: "Programme de parrainage",
+      description:
+        "Parrainez vos amis et gagnez des récompenses ! Partagez votre code unique et bénéficiez d'avantages pour chaque personne que vous invitez.",
+      icon: Gift,
+      targetSelector: "[data-tutorial='referrals']",
+      position: "right",
     },
     {
       id: "chatbot",

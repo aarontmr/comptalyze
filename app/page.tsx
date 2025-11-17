@@ -101,9 +101,9 @@ export default function LandingPage() {
         <div className="mx-auto max-w-7xl relative z-10">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             {/* Colonne gauche - Contenu */}
-            <div className="text-center lg:text-left">
+            <div className="text-center lg:text-left relative z-20">
               {/* Badge premium en haut */}
-              <FadeIn delay={0.05} y={8}>
+              <FadeIn delay={0.05} y={8} immediate={true}>
                 <div className="inline-flex items-center gap-2 rounded-full px-4 py-2 mb-6 sm:mb-8" 
                   style={{
                     backgroundColor: "rgba(46,108,246,0.1)",
@@ -118,36 +118,74 @@ export default function LandingPage() {
               </FadeIn>
 
               {/* Titre principal */}
-              <FadeIn delay={0.1} y={12}>
-                <h1 className="text-4xl font-bold sm:text-5xl md:text-6xl lg:text-7xl leading-tight px-2">
-                  <span className="block mb-2 text-white">Gagnez 10h par mois</span>
-                  <span className="block text-white">
-                    sur votre{" "}
-                    <span 
-                      className="bg-clip-text text-transparent"
-                      style={{
-                        backgroundImage: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                      }}
-                    >
-                      comptabilité
-                    </span>
-                  </span>
-                  <span className="block mt-2 text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white">
-                    grâce à l'IA
+              <FadeIn delay={0.1} y={12} immediate={true}>
+                <h1 className="text-3xl font-bold sm:text-4xl md:text-5xl lg:text-6xl leading-tight px-2" style={{ color: "#ffffff" }}>
+                  <span className="block mb-2" style={{ color: "#ffffff" }}>Votre comptabilité de micro-entrepreneur.</span>
+                  <span 
+                    className="block"
+                    style={{
+                      backgroundImage: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                      color: "transparent",
+                    }}
+                  >
+                    Automatisée de A à Z.
                   </span>
                 </h1>
               </FadeIn>
 
+              {/* Badge N°1 sous le titre */}
+              <FadeIn delay={0.15} y={12} immediate={true}>
+                <div className="mt-4 sm:mt-6 flex justify-center lg:justify-start">
+                  <div className="inline-flex items-center gap-2 rounded-full px-4 py-2 animate-pulse" 
+                    style={{
+                      background: "linear-gradient(135deg, rgba(0, 208, 132, 0.25) 0%, rgba(46, 108, 246, 0.25) 100%)",
+                      border: "2px solid rgba(0, 208, 132, 0.5)",
+                      boxShadow: "0 4px 16px rgba(0, 208, 132, 0.3)",
+                    }}
+                  >
+                    <span className="text-xl font-bold" style={{ color: "#00D084" }}>🏆</span>
+                    <span className="text-xs sm:text-sm font-bold text-white">
+                      N°1 préféré des micro-entrepreneurs & freelances
+                    </span>
+                  </div>
+                </div>
+              </FadeIn>
+
               {/* Sous-titre */}
-              <FadeIn delay={0.2} y={12}>
-                <p className="mt-6 sm:mt-8 text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed px-4 lg:px-0">
-                  <span className="text-white font-semibold">Calculs automatiques</span>, <span className="text-white font-semibold">déclarations pré-remplies</span> et <span className="text-white font-semibold">suivi en temps réel</span>.{" "}
-                  Fini les erreurs et les oublis d'échéances.
+              <FadeIn delay={0.2} y={12} immediate={true}>
+                <p className="mt-5 sm:mt-6 text-sm sm:text-base md:text-lg lg:text-xl max-w-2xl mx-auto lg:mx-0 leading-relaxed px-4 lg:px-0" style={{ color: "#d1d5db" }}>
+                  Comptalyze centralise vos déclarations URSSAF, factures, imports bancaires, TVA, budgets et projections financières.{" "}
+                  <span style={{ color: "#ffffff", fontWeight: "600" }}>L'IA vous aide à éviter les erreurs et à optimiser vos charges</span>, sans tableur ni casse-tête.
                 </p>
               </FadeIn>
 
+              {/* Bullets sous le hero */}
+              <FadeIn delay={0.25} y={12} immediate={true}>
+                <div className="mt-6 sm:mt-8 space-y-2.5 max-w-2xl mx-auto lg:mx-0 px-4 lg:px-0">
+                  <div className="flex items-start gap-2.5" style={{ color: "#d1d5db" }}>
+                    <Check className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                    <span className="text-xs sm:text-sm" style={{ color: "#d1d5db" }}>Calcul automatique des cotisations & pré-remplissage URSSAF</span>
+                  </div>
+                  <div className="flex items-start gap-2.5" style={{ color: "#d1d5db" }}>
+                    <Check className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                    <span className="text-xs sm:text-sm" style={{ color: "#d1d5db" }}>Factures pro, exports comptables & FEC en 1 clic</span>
+                  </div>
+                  <div className="flex items-start gap-2.5" style={{ color: "#d1d5db" }}>
+                    <Check className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                    <span className="text-xs sm:text-sm" style={{ color: "#d1d5db" }}>Imports bancaires, automatisations & intégrations e-commerce</span>
+                  </div>
+                  <div className="flex items-start gap-2.5" style={{ color: "#d1d5db" }}>
+                    <Check className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                    <span className="text-xs sm:text-sm" style={{ color: "#d1d5db" }}>Statistiques avancées, budgets, projections & optimisation fiscale IA</span>
+                  </div>
+                </div>
+              </FadeIn>
+
               {/* Call to Actions */}
-              <FadeIn delay={0.3} y={12}>
+              <FadeIn delay={0.3} y={12} immediate={true}>
                 <div className="mt-8 sm:mt-10 flex flex-col items-center lg:items-start justify-center gap-3 px-4 lg:px-0">
                   {/* Badge de confiance au-dessus du CTA */}
                   <div className="mb-2">
@@ -196,7 +234,7 @@ export default function LandingPage() {
             </div>
 
             {/* Colonne droite - Image des appareils mobiles */}
-            <FadeIn delay={0.15} y={12} duration={0.6}>
+            <FadeIn delay={0.15} y={12} duration={0.6} immediate={true}>
               <div className="relative flex items-center justify-center lg:justify-end mt-8 lg:mt-0">
                 <div className="relative w-full max-w-lg">
                   {/* Container avec effet de profondeur */}
@@ -1024,11 +1062,23 @@ export default function LandingPage() {
                     </li>
                     <li className="flex items-start gap-2 text-gray-200">
                       <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                      <span>Export Excel/CSV/PDF</span>
+                      <span>Export Excel/CSV/PDF + FEC</span>
                     </li>
                     <li className="flex items-start gap-2 text-gray-200">
                       <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                      <span>Factures complètes</span>
+                      <span>Factures + Templates</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-gray-200">
+                      <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                      <span>Multi-comptes</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-gray-200">
+                      <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                      <span>Import bancaire</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-gray-200">
+                      <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                      <span>Règles automatiques</span>
                     </li>
                   </ul>
                 </div>
@@ -1106,15 +1156,29 @@ export default function LandingPage() {
                     <li className="flex items-start gap-2 text-gray-200">
                       <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
                       <div>
-                        <strong>Alertes fiscales intelligentes</strong>
-                        <div className="text-xs text-gray-400">Seuils, échéances, CFE... Zéro pénalité</div>
+                        <strong>Projections & Comparaisons</strong>
+                        <div className="text-xs text-gray-400">Prévisions 3/6/12 mois + analyses</div>
                       </div>
                     </li>
                     <li className="flex items-start gap-2 text-gray-200">
                       <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
                       <div>
-                        <strong>Analytics avancés</strong>
-                        <div className="text-xs text-gray-400">Optimisations fiscales = économies 1000€+/an</div>
+                        <strong>Budgets & Rapports auto</strong>
+                        <div className="text-xs text-gray-400">Planification + génération mensuelle</div>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-2 text-gray-200">
+                      <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                      <div>
+                        <strong>Mode comptable</strong>
+                        <div className="text-xs text-gray-400">Partage sécurisé avec expert-comptable</div>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-2 text-gray-200">
+                      <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                      <div>
+                        <strong>Optimisation fiscale IA</strong>
+                        <div className="text-xs text-gray-400">Suggestions personnalisées = économies</div>
                       </div>
                     </li>
                   </ul>

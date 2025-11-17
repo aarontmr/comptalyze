@@ -103,10 +103,13 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
+      // Utiliser NEXT_PUBLIC_BASE_URL pour éviter d'afficher l'URL Supabase
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || window.location.origin;
+      
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`,
+          redirectTo: `${baseUrl}/dashboard`,
         },
       });
 
@@ -291,7 +294,7 @@ export default function LoginPage() {
                 Adresse email
               </label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none z-10" />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" style={{ zIndex: 1 }} />
                 <input
                   id="email"
                   type="email"
@@ -299,12 +302,14 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   placeholder="votre@email.com"
-                  className="w-full pl-12 pr-4 py-3 rounded-lg text-white placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 relative z-0"
+                  className="w-full pl-12 pr-4 py-3 rounded-lg text-white placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                   style={{ 
                     backgroundColor: '#0e0f12',
                     border: '1px solid #2d3441',
                     fontSize: '16px',
                     WebkitAppearance: 'none',
+                    position: 'relative',
+                    zIndex: 0,
                   }}
                   autoComplete="email"
                 />
@@ -316,7 +321,7 @@ export default function LoginPage() {
                 Mot de passe
               </label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none z-10" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" style={{ zIndex: 1 }} />
                 <input
                   id="password"
                   type="password"
@@ -324,12 +329,14 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   placeholder="••••••••"
-                  className="w-full pl-12 pr-4 py-3 rounded-lg text-white placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 relative z-0"
+                  className="w-full pl-12 pr-4 py-3 rounded-lg text-white placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                   style={{ 
                     backgroundColor: '#0e0f12',
                     border: '1px solid #2d3441',
                     fontSize: '16px',
                     WebkitAppearance: 'none',
+                    position: 'relative',
+                    zIndex: 0,
                   }}
                   autoComplete="current-password"
                 />
@@ -369,7 +376,7 @@ export default function LoginPage() {
               <div className="w-full" style={{ borderTop: '1px solid #1f232b' }} />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 text-gray-500 bg-[#14161b]">ou</span>
+              <span className="px-4 text-gray-500" style={{ backgroundColor: '#14161b' }}>ou</span>
             </div>
           </div>
 
@@ -377,13 +384,16 @@ export default function LoginPage() {
           <button
             onClick={handleGoogleLogin}
             disabled={loading}
+            type="button"
             className="w-full px-4 py-3 rounded-lg text-white font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] hover:brightness-110 active:scale-95 flex items-center justify-center gap-3"
             style={{
               backgroundColor: '#0e0f12',
               border: '1px solid #2d3441',
+              position: 'relative',
+              zIndex: 1,
             }}
           >
-            <svg className="w-5 h-5" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
               <path
                 fill="#4285F4"
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"

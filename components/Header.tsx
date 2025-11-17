@@ -109,7 +109,7 @@ const navigationData = {
       },
       {
         label: "Aide",
-        href: "/faq",
+        href: "/dashboard/help",
         icon: HelpCircle,
         description: "Centre d'aide et support",
       },
@@ -445,8 +445,8 @@ export default function Header({ user }: HeaderProps) {
                   >
                     {navigationData.ressources.items.map((item, idx) => {
                       const Icon = item.icon;
-                      // Les ressources sont publiques
-                      const requiresAuth = false;
+                      // "Aide" nécessite une authentification (dashboard), "FAQ" est publique
+                      const requiresAuth = item.href === "/dashboard/help";
                       return (
                         <Link
                           key={idx}
@@ -640,8 +640,8 @@ export default function Header({ user }: HeaderProps) {
                   <div className="space-y-1">
                     {navigationData.ressources.items.map((item, idx) => {
                       const Icon = item.icon;
-                      // Les ressources sont publiques
-                      const requiresAuth = false;
+                      // "Aide" nécessite une authentification (dashboard), "FAQ" est publique
+                      const requiresAuth = item.href === "/dashboard/help";
                       return (
                         <Link
                           key={idx}

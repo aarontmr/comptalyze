@@ -153,9 +153,9 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* Pricing Cards Section */}
+      {/* Pricing Cards Section - Design compact */}
       <section className="px-4 pb-16">
-        <div className="mx-auto mt-0 grid max-w-6xl gap-8 sm:grid-cols-2 lg:grid-cols-3" style={{ gridAutoRows: 'auto', alignItems: 'start' }}>
+        <div className="mx-auto mt-0 grid max-w-6xl gap-6 sm:grid-cols-2 lg:grid-cols-3" style={{ gridAutoRows: 'auto', alignItems: 'stretch' }}>
           {/* Gratuit */}
           <div className="rounded-2xl p-8 flex flex-col transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
             <div className="mb-3">
@@ -195,6 +195,10 @@ export default function PricingPage() {
                 <li className="flex items-start gap-2 text-gray-300">
                   <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
                   <span>Accès à tous les guides et tutoriels</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-300">
+                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
+                  <span>Authentification 2FA & sécurité du compte</span>
                 </li>
               </ul>
             </div>
@@ -295,6 +299,34 @@ export default function PricingPage() {
                   <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
                   <span>Export CSV/PDF (journal simple)</span>
                 </li>
+                <li className="flex items-start gap-2 text-gray-200">
+                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                  <span>Templates de factures personnalisables</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-200">
+                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                  <span>Export FEC pour expert-comptable</span>
+                </li>
+              </ul>
+              
+              <div className="text-xs font-semibold text-gray-400 mt-5 mb-3 uppercase tracking-wider">Gestion avancée</div>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-start gap-2 text-gray-200">
+                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                  <span>Multi-comptes / Multi-activités</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-200">
+                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                  <span>Import de relevés bancaires (CSV)</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-200">
+                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                  <span>Règles automatiques personnalisées</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-200">
+                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                  <span>Authentification 2FA & sécurité du compte</span>
+                </li>
               </ul>
             </div>
             {(() => {
@@ -374,7 +406,7 @@ export default function PricingPage() {
             })()}
           </div>
 
-          {/* Premium */}
+          {/* Premium - Design compact */}
           <div className="rounded-2xl p-8 relative flex flex-col transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl" style={{ backgroundColor: "#14161b", border: "1px solid rgba(0,208,132,0.4)" }}>
             <div className="absolute right-6 top-6 flex gap-2">
               <span className="rounded-md px-2 py-1 text-xs font-medium" style={{ backgroundColor: "#00D084", color: "#0e0f12" }}>
@@ -416,77 +448,61 @@ export default function PricingPage() {
                 </>
               )}
             </div>
-            <div className="flex-1">
-              <div className="text-xs font-bold text-gray-500 mb-4 uppercase tracking-wider">Tout Pro +</div>
+            
+            {/* ROI Box compact */}
+            <div className="mb-6 p-4 rounded-xl" style={{ background: "linear-gradient(135deg, rgba(0, 208, 132, 0.1), rgba(46, 108, 246, 0.1))", border: "1px solid rgba(0, 208, 132, 0.3)" }}>
+              <div className="text-xs font-bold text-white mb-1">💰 ÉCONOMISEZ 120H/AN</div>
+              <div className="text-xs text-gray-300">
+                Valeur : <span className="text-white font-bold">3 000€/an</span> pour <span className="text-[#00D084] font-bold">94,80€/an</span>
+              </div>
+            </div>
+            
+            <div className="flex-1 mb-4">
+              <div className="text-xs font-bold text-gray-500 mb-3 uppercase tracking-wider">Tout Pro + Fonctionnalités Premium</div>
               
-              {/* ROI Box */}
-              <div className="mb-5 p-4 rounded-xl" style={{ background: "linear-gradient(135deg, rgba(0, 208, 132, 0.1), rgba(46, 108, 246, 0.1))", border: "1px solid rgba(0, 208, 132, 0.3)" }}>
-                <div className="text-xs font-bold text-white mb-2">💰 ÉCONOMISEZ 120H/AN</div>
-                <div className="text-xs text-gray-300">
-                  Valeur : <span className="text-white font-bold">3 000€/an</span> pour seulement <span className="text-[#00D084] font-bold">94,80€/an</span>
+              {/* Liste compacte avec badges */}
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-2 text-gray-200">
+                  <Check className="w-4 h-4 flex-shrink-0" style={{ color: "#00D084" }} />
+                  <span className="text-xs">Import auto Shopify/Stripe</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-200">
+                  <Check className="w-4 h-4 flex-shrink-0" style={{ color: "#00D084" }} />
+                  <span className="text-xs">Pré-remplissage URSSAF</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-200">
+                  <Check className="w-4 h-4 flex-shrink-0" style={{ color: "#00D084" }} />
+                  <span className="text-xs">Calendrier fiscal intelligent</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-200">
+                  <Check className="w-4 h-4 flex-shrink-0" style={{ color: "#00D084" }} />
+                  <span className="text-xs">ComptaBot IA personnalisé</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-200">
+                  <Check className="w-4 h-4 flex-shrink-0" style={{ color: "#00D084" }} />
+                  <span className="text-xs">Optimisation fiscale IA</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-200">
+                  <Check className="w-4 h-4 flex-shrink-0" style={{ color: "#00D084" }} />
+                  <span className="text-xs">Projections & Comparaisons</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-200">
+                  <Check className="w-4 h-4 flex-shrink-0" style={{ color: "#00D084" }} />
+                  <span className="text-xs">Budgets & Rapports auto</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-200">
+                  <Check className="w-4 h-4 flex-shrink-0" style={{ color: "#00D084" }} />
+                  <span className="text-xs">Mode comptable</span>
                 </div>
               </div>
               
-              <div className="text-xs font-semibold text-gray-400 mb-3 uppercase tracking-wider">🤖 Automatisation Totale</div>
-              <ul className="space-y-3 text-sm mb-5">
-                <li className="flex items-start gap-2 text-gray-200">
-                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                  <div>
-                    <strong>Import automatique Shopify/Stripe</strong>
-                    <div className="text-xs text-gray-400 mt-0.5">CA mensuel importé + email récap. Économie : 10h/mois</div>
-                  </div>
-                </li>
-                <li className="flex items-start gap-2 text-gray-200">
-                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                  <div>
-                    <strong>Pré-remplissage URSSAF en 1 clic</strong>
-                    <div className="text-xs text-gray-400 mt-0.5">Plus de saisie manuelle. Économie : 15 min/déclaration</div>
-                  </div>
-                </li>
-                <li className="flex items-start gap-2 text-gray-200">
-                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                  <div>
-                    <strong>Calendrier fiscal intelligent</strong>
-                    <div className="text-xs text-gray-400 mt-0.5">Rappels auto. Plus jamais de retard ni de pénalités</div>
-                  </div>
-                </li>
-              </ul>
-              
-              <div className="text-xs font-semibold text-gray-400 mb-3 uppercase tracking-wider">🧠 Intelligence Artificielle</div>
-              <ul className="space-y-3 text-sm mb-5">
-                <li className="flex items-start gap-2 text-gray-200">
-                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                  <div>
-                    <strong>ComptaBot personnalisé</strong>
-                    <div className="text-xs text-gray-400 mt-0.5">Expert-comptable IA 24/7. Équivaut à 100€/h de conseil</div>
-                  </div>
-                </li>
-                <li className="flex items-start gap-2 text-gray-200">
-                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                  <div>
-                    <strong>Optimisations fiscales sur-mesure</strong>
-                    <div className="text-xs text-gray-400 mt-0.5">ACRE, IR, déductions... Peut vous faire économiser 1000€+/an</div>
-                  </div>
-                </li>
-              </ul>
-              
-              <div className="text-xs font-semibold text-gray-400 mb-3 uppercase tracking-wider">📊 Analytics Pro</div>
-              <ul className="space-y-3 text-sm">
-                <li className="flex items-start gap-2 text-gray-200">
-                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                  <div>
-                    <strong>Tableaux de bord avancés + alertes</strong>
-                    <div className="text-xs text-gray-400 mt-0.5">Anticipez vos seuils TVA, CFE, plafonds CA</div>
-                  </div>
-                </li>
-                <li className="flex items-start gap-2 text-gray-200">
-                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                  <div>
-                    <strong>Export comptable professionnel</strong>
-                    <div className="text-xs text-gray-400 mt-0.5">Compatible expert-comptable. Économie : 200€/an de saisie</div>
-                  </div>
-                </li>
-              </ul>
+              <div className="mt-4 pt-4 border-t" style={{ borderColor: "#1f232b" }}>
+                <p className="text-xs text-gray-400 text-center">
+                  <span className="text-[#00D084] font-semibold">+10 fonctionnalités</span> supplémentaires
+                  <br />
+                  <span className="text-gray-500">Voir le tableau de comparaison ci-dessous</span>
+                </p>
+              </div>
             </div>
             {(() => {
               const subscription = getUserSubscription(user);
@@ -554,26 +570,47 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* Tableau de comparaison des plans */}
+      {/* Tableau de comparaison des plans - Mise en avant */}
       <section className="px-4 pb-16">
-        <div className="mx-auto max-w-6xl">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl sm:text-3xl font-semibold mb-3">Comparer les plans</h2>
-            <p className="text-sm sm:text-base text-gray-400">
-              Choisissez le niveau qui correspond à votre activité de micro-entrepreneur.
+        <div className="mx-auto max-w-7xl">
+          <div className="text-center mb-12">
+            <div className="mb-4">
+              <span className="inline-flex items-center gap-2 text-xs px-4 py-2 rounded-full font-semibold uppercase tracking-wider" style={{ backgroundColor: "rgba(46,108,246,0.15)", color: "#60a5fa", border: "1px solid rgba(46,108,246,0.3)" }}>
+                Comparaison détaillée
+              </span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Comparez toutes les fonctionnalités</h2>
+            <p className="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto">
+              Découvrez en détail ce qui est inclus dans chaque plan pour faire le meilleur choix.
             </p>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left border-collapse" style={{ borderColor: "#1f232b" }}>
-              <thead>
-                <tr>
-                  <th className="px-4 py-3 text-gray-400"></th>
-                  <th className="px-4 py-3 text-gray-200 font-semibold">Free</th>
-                  <th className="px-4 py-3 text-gray-200 font-semibold">Pro</th>
-                  <th className="px-4 py-3 text-gray-200 font-semibold">Premium</th>
-                </tr>
-              </thead>
-              <tbody>
+          <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left border-collapse">
+                <thead>
+                  <tr style={{ backgroundColor: "#161922" }}>
+                    <th className="px-6 py-4 text-left text-gray-300 font-semibold">Fonctionnalité</th>
+                    <th className="px-6 py-4 text-center text-gray-200 font-semibold">
+                      <div className="flex flex-col items-center gap-1">
+                        <span>Free</span>
+                        <span className="text-xs font-normal text-gray-400">0 €/mois</span>
+                      </div>
+                    </th>
+                    <th className="px-6 py-4 text-center text-gray-200 font-semibold" style={{ backgroundColor: "rgba(46,108,246,0.1)" }}>
+                      <div className="flex flex-col items-center gap-1">
+                        <span>Pro</span>
+                        <span className="text-xs font-normal text-gray-400">{billingCycle === "monthly" ? `${pricing.pro.monthly.toFixed(2)} €/mois` : `${pricing.pro.yearlyMonthly.toFixed(2)} €/mois`}</span>
+                      </div>
+                    </th>
+                    <th className="px-6 py-4 text-center text-transparent bg-clip-text font-semibold" style={{ backgroundImage: "linear-gradient(90deg, #00D084, #2E6CF6)", backgroundColor: "rgba(0,208,132,0.1)" }}>
+                      <div className="flex flex-col items-center gap-1">
+                        <span className="text-transparent bg-clip-text" style={{ backgroundImage: "linear-gradient(90deg, #00D084, #2E6CF6)" }}>Premium</span>
+                        <span className="text-xs font-normal text-gray-400">{billingCycle === "monthly" ? `${pricing.premium.monthly.toFixed(2)} €/mois` : `${pricing.premium.yearlyMonthly.toFixed(2)} €/mois`}</span>
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
                 {[
                   { label: "Simulations URSSAF", free: "5 / mois", pro: "Illimitées", premium: "Illimitées" },
                   { label: "Pré-remplissage URSSAF", free: "—", pro: "—", premium: "✔" },
@@ -581,23 +618,66 @@ export default function PricingPage() {
                   { label: "Graphiques CA (3 mois)", free: "✔", pro: "Illimité", premium: "Illimité" },
                   { label: "Factures PDF", free: "1 / mois", pro: "Illimitées", premium: "Illimitées" },
                   { label: "Envoi factures par email", free: "—", pro: "✔", premium: "✔" },
-                  { label: "Personnalisation factures (logo/couleurs)", free: "—", pro: "✔", premium: "✔" },
+                  { label: "Templates factures personnalisables", free: "—", pro: "✔", premium: "✔" },
                   { label: "Simulateur TVA", free: "—", pro: "✔", premium: "✔" },
+                  { label: "Gestion charges déductibles", free: "—", pro: "✔", premium: "✔" },
                   { label: "Exports comptables (Excel/CSV/PDF)", free: "—", pro: "✔", premium: "✔" },
+                  { label: "Export FEC", free: "—", pro: "✔", premium: "✔" },
+                  { label: "Multi-comptes / Multi-activités", free: "—", pro: "✔", premium: "✔" },
+                  { label: "Import relevés bancaires", free: "—", pro: "✔", premium: "✔" },
+                  { label: "Règles automatiques", free: "—", pro: "✔", premium: "✔" },
                   { label: "Statistiques avancées & IA", free: "—", pro: "—", premium: "✔" },
+                  { label: "Projections financières", free: "—", pro: "—", premium: "✔" },
+                  { label: "Comparaisons mois/mois & année/année", free: "—", pro: "—", premium: "✔" },
+                  { label: "Planification budgétaire", free: "—", pro: "—", premium: "✔" },
+                  { label: "Rapports automatisés", free: "—", pro: "—", premium: "✔" },
                   { label: "Calendrier fiscal intelligent", free: "—", pro: "—", premium: "✔" },
+                  { label: "Mode comptable", free: "—", pro: "—", premium: "✔" },
+                  { label: "Optimisation fiscale IA", free: "—", pro: "—", premium: "✔" },
                   { label: "ComptaBot (assistant IA)", free: "—", pro: "—", premium: "✔" },
                   { label: "Alertes & rappels automatiques", free: "—", pro: "—", premium: "✔" },
-                ].map((row) => (
-                  <tr key={row.label} className="border-t" style={{ borderColor: "#1f232b" }}>
-                    <td className="px-4 py-3 text-gray-300">{row.label}</td>
-                    <td className="px-4 py-3 text-gray-200">{row.free}</td>
-                    <td className="px-4 py-3 text-gray-200">{row.pro}</td>
-                    <td className="px-4 py-3 text-gray-200">{row.premium}</td>
+                  { label: "Authentification 2FA", free: "✔", pro: "✔", premium: "✔" },
+                  { label: "Centre d'aide interactif", free: "✔", pro: "✔", premium: "✔" },
+                  { label: "Programme de parrainage", free: "✔", pro: "✔", premium: "✔" },
+                ].map((row, index) => (
+                  <tr 
+                    key={row.label} 
+                    className="border-t transition-colors hover:bg-gray-900/20" 
+                    style={{ borderColor: "#1f232b" }}
+                  >
+                    <td className="px-6 py-4 text-gray-300 font-medium">{row.label}</td>
+                    <td className="px-6 py-4 text-center">
+                      {row.free === "✔" ? (
+                        <Check className="w-5 h-5 mx-auto" style={{ color: "#00D084" }} />
+                      ) : row.free === "—" ? (
+                        <span className="text-gray-600">—</span>
+                      ) : (
+                        <span className="text-gray-200">{row.free}</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-center" style={{ backgroundColor: index % 2 === 0 ? "rgba(46,108,246,0.03)" : "transparent" }}>
+                      {row.pro === "✔" ? (
+                        <Check className="w-5 h-5 mx-auto" style={{ color: "#00D084" }} />
+                      ) : row.pro === "—" ? (
+                        <span className="text-gray-600">—</span>
+                      ) : (
+                        <span className="text-gray-200">{row.pro}</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-center" style={{ backgroundColor: index % 2 === 0 ? "rgba(0,208,132,0.03)" : "transparent" }}>
+                      {row.premium === "✔" ? (
+                        <Check className="w-5 h-5 mx-auto" style={{ color: "#00D084" }} />
+                      ) : row.premium === "—" ? (
+                        <span className="text-gray-600">—</span>
+                      ) : (
+                        <span className="text-gray-200">{row.premium}</span>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+          </div>
           </div>
         </div>
       </section>

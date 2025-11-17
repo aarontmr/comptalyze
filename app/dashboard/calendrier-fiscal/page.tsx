@@ -69,10 +69,27 @@ export default function CalendrierFiscalPage() {
         .eq("user_id", userId)
         .order("date", { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        // Si la table n'existe pas encore, c'est normal (première utilisation)
+        if (error.code === '42P01' || error.message?.includes('does not exist') || error.message?.includes('relation') || error.message?.includes('table')) {
+          console.log("Table custom_fiscal_events n'existe pas encore. Création de la table nécessaire.");
+          setCustomEvents([]);
+          return;
+        }
+        // Pour les autres erreurs, on les log mais on continue
+        console.error("Erreur lors du chargement des événements personnalisés:", error.message || error);
+        setCustomEvents([]);
+        return;
+      }
       setCustomEvents(data || []);
-    } catch (error) {
-      console.error("Erreur lors du chargement des événements personnalisés:", error);
+    } catch (error: any) {
+      // Gestion d'erreur générique
+      const errorMessage = error?.message || error?.code || 'Erreur inconnue';
+      // Ne log que si ce n'est pas une erreur de table manquante
+      if (!errorMessage.includes('does not exist') && !errorMessage.includes('relation') && !errorMessage.includes('table')) {
+        console.error("Erreur lors du chargement des événements personnalisés:", errorMessage);
+      }
+      setCustomEvents([]);
     }
   };
 

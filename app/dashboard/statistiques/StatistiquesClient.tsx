@@ -23,7 +23,8 @@ export function StatistiquesClient({ userId }: StatistiquesClientProps) {
         // Récupérer le token d'authentification
         const { data: { session } } = await supabase.auth.getSession();
         if (!session?.access_token) {
-          setError('Session non disponible');
+          setAdvice('Connectez-vous pour recevoir des conseils personnalisés basés sur votre activité.');
+          setLoading(false);
           return;
         }
 
@@ -34,15 +35,38 @@ export function StatistiquesClient({ userId }: StatistiquesClientProps) {
           },
         });
 
+        // Si l'utilisateur n'est pas Premium, ne pas afficher d'erreur
+        if (response.status === 403) {
+          setAdvice('Cette fonctionnalité est réservée aux utilisateurs Premium. Passez à Premium pour recevoir des conseils personnalisés basés sur votre activité.');
+          setLoading(false);
+          return;
+        }
+
         if (!response.ok) {
-          throw new Error('Erreur lors de la récupération du conseil');
+          // Essayer de récupérer le message d'erreur
+          let errorMessage = 'Erreur lors de la récupération du conseil';
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.error || errorMessage;
+          } catch {
+            // Si la réponse n'est pas du JSON, utiliser le message par défaut
+          }
+          setAdvice('Analysez régulièrement vos enregistrements pour suivre l\'évolution de vos cotisations URSSAF.');
+          // Ne pas afficher l'erreur dans la console si c'est juste une limitation de plan
+          if (response.status !== 403) {
+            console.error('Erreur API:', errorMessage);
+          }
+          setLoading(false);
+          return;
         }
 
         const data = await response.json();
-        setAdvice(data.advice || 'Aucun conseil disponible pour le moment.');
+        setAdvice(data.advice || 'Analysez régulièrement vos enregistrements pour suivre l\'évolution de vos cotisations URSSAF.');
       } catch (err: any) {
-        console.error('Erreur:', err);
-        setError(err.message || 'Une erreur est survenue');
+        // Ne pas afficher d'erreur dans la console pour les erreurs réseau normales
+        if (err.name !== 'TypeError' || !err.message.includes('fetch')) {
+          console.error('Erreur:', err);
+        }
         setAdvice('Analysez régulièrement vos enregistrements pour suivre l\'évolution de vos cotisations URSSAF.');
       } finally {
         setLoading(false);
@@ -94,21 +118,22 @@ export function StatistiquesClient({ userId }: StatistiquesClientProps) {
           </div>
         )}
 
-        {error && !advice && (
-          <div className="text-red-400 text-sm mb-4">
-            {error}
-          </div>
-        )}
-
         {advice && !loading && (
           <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">
             {advice}
+          </p>
+        )}
+        
+        {!advice && !loading && (
+          <p className="text-gray-300 leading-relaxed">
+            Analysez régulièrement vos enregistrements pour suivre l'évolution de vos cotisations URSSAF.
           </p>
         )}
       </div>
     </motion.div>
   );
 }
+
 
 
 

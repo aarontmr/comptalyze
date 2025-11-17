@@ -10,7 +10,7 @@ const RATE_LIMITS: Record<string, { maxRequests: number; windowMs: number }> = {
   '/api/auth/signup': { maxRequests: 3, windowMs: 60000 }, // 3 req/min
   '/api/webhook': { maxRequests: 100, windowMs: 60000 }, // 100 req/min
   '/api/ai/chat': { maxRequests: 20, windowMs: 60000 }, // 20 req/min
-  '/api/ai/advice': { maxRequests: 10, windowMs: 60000 }, // 10 req/min
+  '/api/ai/advice': { maxRequests: 30, windowMs: 60000 }, // 30 req/min (augmenté pour éviter les erreurs)
   '/api/export-pdf': { maxRequests: 10, windowMs: 60000 }, // 10 req/min
   '/api/feedback': { maxRequests: 5, windowMs: 60000 }, // 5 req/min
   default: { maxRequests: 60, windowMs: 60000 }, // 60 req/min par défaut
