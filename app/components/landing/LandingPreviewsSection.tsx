@@ -23,28 +23,21 @@ function FadeCard({ children, delay = 0 }: { children: React.ReactNode; delay?: 
 
 export default function LandingPreviewsSection() {
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const cards = [
     { 
-      src: "/previews/preremp et ca.PNG", 
-      alt: "Simulateur de cotisations URSSAF", 
-      caption: "Simulateur URSSAF — Calculez vos cotisations instantanément" 
+      src: "/previews/hero-control.jpg", 
+      alt: "Contrôle des cotisations URSSAF"
     },
     { 
-      src: "/previews/Dashboard.PNG", 
-      alt: "Dashboard Comptalyze", 
-      caption: "Dashboard — Suivez vos revenus et vos charges" 
+      src: "/previews/hero-errors.jpg", 
+      alt: "Calcul automatique des cotisations"
     },
     { 
-      src: "/previews/Statistiques.PNG", 
-      alt: "Statistiques Comptalyze", 
-      caption: "Statistiques — Visualisez l'évolution de votre activité" 
-    },
-    { 
-      src: "/previews/tx de cr.PNG", 
-      alt: "Facturation Comptalyze", 
-      caption: "Facturation — Créez vos factures en quelques clics" 
-    },
+      src: "/previews/hero-ai.jpg", 
+      alt: "Comptabilité simplifiée par l'IA"
+    }
   ];
 
   const handleImageError = (src: string) => {
@@ -52,62 +45,89 @@ export default function LandingPreviewsSection() {
   };
 
   return (
-    <section className="py-20 bg-[#0e0f12]">
-      <div className="max-w-6xl mx-auto px-6">
-        <h2 className="text-3xl font-semibold text-white text-center mb-3">
-          Découvrez Comptalyze en action
-        </h2>
-        <p className="text-gray-400 text-center max-w-2xl mx-auto mb-10">
-          Un aperçu du simulateur URSSAF, du tableau de bord et des outils de gestion intégrés.
-        </p>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {cards.map((c, i) => (
-            <FadeCard key={c.src} delay={i * 0.08}>
-              <div className="group rounded-xl overflow-hidden border border-gray-800 bg-[#111317] shadow-lg transition-all duration-300 hover:shadow-[0_0_0_2px_rgba(0,208,132,0.1),0_8px_24px_rgba(46,108,246,0.15)] hover:border-gray-700">
-                {imageErrors[c.src] ? (
-                  <div 
-                    className="w-full aspect-video flex items-center justify-center relative overflow-hidden"
+    <section className="py-20 bg-[#0e0f12] overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative">
+          {/* Container avec effet de pile de cartes */}
+          <div className="flex flex-wrap justify-center items-center gap-6 lg:gap-8 min-h-[600px]">
+            {cards.map((card, index) => {
+              // Calcul de la rotation et position pour l'effet de cartes distribuées
+              const rotation = (index - cards.length / 2) * 3;
+              const yOffset = Math.abs(index - cards.length / 2) * 8;
+              const zIndex = cards.length - index;
+              
+              return (
+                <FadeCard key={card.src} delay={index * 0.1}>
+                  <motion.div
+                    className="relative"
                     style={{
-                      background: "linear-gradient(135deg, rgba(0,208,132,0.1) 0%, rgba(46,108,246,0.1) 100%)",
+                      zIndex: hoveredIndex === index ? 100 : zIndex,
+                    }}
+                    onMouseEnter={() => setHoveredIndex(index)}
+                    onMouseLeave={() => setHoveredIndex(null)}
+                    whileHover={{ 
+                      scale: 1.05,
+                      rotate: 0,
+                      y: -20,
+                      transition: { duration: 0.3 }
+                    }}
+                    initial={{ 
+                      rotate: rotation,
+                      y: yOffset
+                    }}
+                    animate={{ 
+                      rotate: hoveredIndex === index ? 0 : rotation,
+                      y: hoveredIndex === index ? -20 : yOffset,
+                      scale: hoveredIndex === index ? 1.05 : 1
+                    }}
+                    transition={{ 
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 30
                     }}
                   >
-                    <div className="text-center px-4">
-                      <p className="text-gray-500 text-sm">Image en cours de chargement...</p>
+                    <div 
+                      className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-800/50 bg-[#111317]"
+                      style={{
+                        boxShadow: hoveredIndex === index 
+                          ? "0 20px 60px rgba(0, 208, 132, 0.3), 0 0 0 1px rgba(0, 208, 132, 0.2)"
+                          : "0 10px 40px rgba(0, 0, 0, 0.5)"
+                      }}
+                    >
+                      {imageErrors[card.src] ? (
+                        <div 
+                          className="w-[400px] h-[500px] sm:w-[450px] sm:h-[550px] flex items-center justify-center"
+                          style={{
+                            background: "linear-gradient(135deg, rgba(0,208,132,0.1) 0%, rgba(46,108,246,0.1) 100%)",
+                          }}
+                        >
+                          <div className="text-center px-4">
+                            <p className="text-gray-500 text-sm">Image en cours de chargement...</p>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="relative w-[400px] h-[500px] sm:w-[450px] sm:h-[550px]">
+                          <Image
+                            src={card.src}
+                            alt={card.alt}
+                            fill
+                            className="object-contain"
+                            loading={index < 3 ? "eager" : "lazy"}
+                            priority={index === 0}
+                            quality={90}
+                            sizes="(max-width: 768px) 400px, 450px"
+                            onError={() => handleImageError(card.src)}
+                          />
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ) : (
-                  <div 
-                    className="relative w-full aspect-video overflow-hidden flex items-center justify-center"
-                    style={{
-                      backgroundColor: "#0e0f12",
-                    }}
-                  >
-                    <Image
-                      src={c.src}
-                      alt={c.alt}
-                      width={1280}
-                      height={800}
-                      className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-[1.02]"
-                      loading={i < 2 ? "eager" : "lazy"}
-                      priority={i === 0}
-                      quality={85}
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      onError={() => handleImageError(c.src)}
-                    />
-                  </div>
-                )}
-                <div className="px-4 py-3 border-t border-gray-800">
-                  <p className="text-gray-400 text-sm text-center">
-                    {c.caption}
-                  </p>
-                </div>
-              </div>
-            </FadeCard>
-          ))}
+                  </motion.div>
+                </FadeCard>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>
   );
 }
-

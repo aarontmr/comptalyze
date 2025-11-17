@@ -120,17 +120,20 @@ export default function LandingPage() {
               {/* Titre principal */}
               <FadeIn delay={0.1} y={12}>
                 <h1 className="text-4xl font-bold sm:text-5xl md:text-6xl lg:text-7xl leading-tight px-2">
-                  <span className="block mb-2">Simplifiez votre</span>
-                  <span 
-                    className="block bg-clip-text text-transparent"
-                    style={{
-                      backgroundImage: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                    }}
-                  >
-                    comptabilité
+                  <span className="block mb-2 text-white">Gagnez 10h par mois</span>
+                  <span className="block text-white">
+                    sur votre{" "}
+                    <span 
+                      className="bg-clip-text text-transparent"
+                      style={{
+                        backgroundImage: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                      }}
+                    >
+                      comptabilité
+                    </span>
                   </span>
-                  <span className="block mt-2 text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
-                    de micro-entrepreneur
+                  <span className="block mt-2 text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white">
+                    grâce à l'IA
                   </span>
                 </h1>
               </FadeIn>
@@ -138,8 +141,8 @@ export default function LandingPage() {
               {/* Sous-titre */}
               <FadeIn delay={0.2} y={12}>
                 <p className="mt-6 sm:mt-8 text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed px-4 lg:px-0">
-                  Calculez automatiquement vos <span className="text-white font-semibold">cotisations URSSAF</span> et vos{" "}
-                  <span className="text-white font-semibold">projections de revenus</span> en quelques secondes.
+                  <span className="text-white font-semibold">Calculs automatiques</span>, <span className="text-white font-semibold">déclarations pré-remplies</span> et <span className="text-white font-semibold">suivi en temps réel</span>.{" "}
+                  Fini les erreurs et les oublis d'échéances.
                 </p>
               </FadeIn>
 
