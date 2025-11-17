@@ -48,19 +48,30 @@ export default function LandingPreviewsSection() {
           {/* Colonne droite - Texte */}
           <FadeIn delay={0} y={12} duration={0.5}>
             <div className="order-1 lg:order-2">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" 
+                style={{
+                  backgroundColor: "rgba(0, 208, 132, 0.1)",
+                  border: "1px solid rgba(0, 208, 132, 0.3)"
+                }}
+              >
+                <span className="text-sm font-medium" style={{ color: "#00D084" }}>
+                  ✨ PLUS DE 30 FONCTIONNALITÉS
+                </span>
+              </div>
+              
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 lg:text-left text-center">
-                Votre comptabilité,{" "}
+                Une solution complète{" "}
                 <span
                   className="bg-clip-text text-transparent"
                   style={{
                     backgroundImage: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
                   }}
                 >
-                  partout et en temps réel
+                  pour votre comptabilité
                 </span>
               </h2>
               <p className="text-lg sm:text-xl text-gray-400 mb-8 leading-relaxed lg:text-left text-center">
-                Une interface intuitive qui s'adapte à tous vos appareils. Consultez vos métriques sur mobile, analysez vos projections sur desktop.
+                Avec plus de <strong className="text-white">30 fonctionnalités incluses</strong> dans le plan Premium, gérez toute votre comptabilité depuis une seule plateforme intuitive et puissante.
               </p>
               
               {/* Points clés */}
@@ -70,9 +81,9 @@ export default function LandingPreviewsSection() {
                     <Check className="w-4 h-4" style={{ color: "#00D084" }} />
                   </div>
                   <div>
-                    <p className="text-white font-medium mb-1">Vue d'ensemble sur mobile</p>
+                    <p className="text-white font-medium mb-1">Toutes les fonctionnalités essentielles</p>
                     <p className="text-sm text-gray-400">
-                      CA du mois, cotisations, revenu net et croissance visibles en un instant sur votre tablette ou smartphone
+                      Calculs automatiques, factures, projections, analytics, ComptaBot IA, export FEC, intégrations bancaires et bien plus encore
                     </p>
                   </div>
                 </div>
@@ -82,9 +93,9 @@ export default function LandingPreviewsSection() {
                     <Check className="w-4 h-4" style={{ color: "#2E6CF6" }} />
                   </div>
                   <div>
-                    <p className="text-white font-medium mb-1">Projections financières sur desktop</p>
+                    <p className="text-white font-medium mb-1">Interface responsive et moderne</p>
                     <p className="text-sm text-gray-400">
-                      Visualisez l'évolution de votre CA et revenu net sur 6 mois avec des graphiques détaillés et des métriques projetées
+                      Accédez à toutes vos fonctionnalités depuis n'importe quel appareil : mobile, tablette ou ordinateur
                     </p>
                   </div>
                 </div>
@@ -94,12 +105,23 @@ export default function LandingPreviewsSection() {
                     <Check className="w-4 h-4" style={{ color: "#00D084" }} />
                   </div>
                   <div>
-                    <p className="text-white font-medium mb-1">ComptaBot Premium toujours disponible</p>
+                    <p className="text-white font-medium mb-1">Mises à jour régulières</p>
                     <p className="text-sm text-gray-400">
-                      Votre assistant IA répond à toutes vos questions comptables, que vous soyez sur mobile ou desktop
+                      De nouvelles fonctionnalités sont ajoutées régulièrement pour améliorer votre expérience comptable
                     </p>
                   </div>
                 </div>
+              </div>
+              
+              {/* Badge avec nombre de fonctionnalités */}
+              <div className="mb-8 p-4 rounded-xl" style={{ 
+                background: "linear-gradient(135deg, rgba(0, 208, 132, 0.1), rgba(46, 108, 246, 0.1))",
+                border: "1px solid rgba(0, 208, 132, 0.3)"
+              }}>
+                <p className="text-center text-sm text-gray-300">
+                  <span className="text-2xl font-bold text-white">30+</span> fonctionnalités Premium incluses pour{" "}
+                  <span className="text-white font-semibold">7,90€/mois</span>
+                </p>
               </div>
 
               {/* Call to action */}
