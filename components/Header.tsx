@@ -220,13 +220,27 @@ export default function Header({ user }: HeaderProps) {
     return originalHref;
   };
 
+  // Vérifier si la bannière est visible
+  const [bannerVisible, setBannerVisible] = useState(false);
+  
+  useEffect(() => {
+    const checkBanner = () => {
+      const banner = document.querySelector('[data-google-ads-banner]');
+      setBannerVisible(banner !== null && banner.getBoundingClientRect().height > 0);
+    };
+    
+    checkBanner();
+    const interval = setInterval(checkBanner, 100);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
           ? "backdrop-blur-xl border-b"
           : "border-b"
-      }`}
+      } ${bannerVisible ? "top-[48px] sm:top-[56px]" : "top-0"}`}
       style={{
         backgroundColor: scrolled
           ? "rgba(13, 15, 20, 0.8)"
@@ -552,7 +566,7 @@ export default function Header({ user }: HeaderProps) {
               transition={{ duration: 0.2 }}
               className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
               onClick={() => setMobileMenuOpen(false)}
-              style={{ top: "64px" }}
+              style={{ top: bannerVisible ? "112px" : "64px" }}
             />
             {/* Menu Drawer */}
             <motion.div
@@ -560,7 +574,7 @@ export default function Header({ user }: HeaderProps) {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-16 right-0 bottom-0 w-full max-w-sm bg-[#0D0F14] border-l z-50 lg:hidden overflow-y-auto"
+              className={`fixed right-0 bottom-0 w-full max-w-sm bg-[#0D0F14] border-l z-50 lg:hidden overflow-y-auto ${bannerVisible ? "top-[112px]" : "top-16"}`}
               style={{ borderColor: "#1f232b" }}
             >
               <div className="p-6 space-y-6">

@@ -95,7 +95,7 @@ export default function LandingPage() {
       </div>
 
       {/* HERO */}
-      <section className="relative px-4 pt-20 pb-12 sm:pt-24 sm:pb-16 md:pt-32 md:pb-20 overflow-hidden">
+      <section className="relative px-4 pt-28 pb-12 sm:pt-36 sm:pb-16 md:pt-40 md:pb-20 overflow-hidden">
         <GradientBlob />
         
         <div className="mx-auto max-w-7xl relative z-10">
