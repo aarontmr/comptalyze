@@ -404,17 +404,13 @@ export default function LandingPage() {
                 boxShadow: "0 0 40px rgba(46, 108, 246, 0.15)"
               }}
             >
-              {/* Image statique du dashboard */}
+              {/* GIF du dashboard */}
               <div className="relative">
-                <Image
-                  src="/previews/Dashboard.PNG"
-                  alt="Dashboard Comptalyze - Interface moderne de gestion comptable"
-                  width={1920}
-                  height={1080}
+                <img
+                  src="/hero-demo2.gif"
+                  alt="Dashboard Comptalyze - Interface moderne de gestion comptable en action"
                   className="w-full h-auto"
-                  priority
-                  quality={95}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+                  loading="eager"
                 />
                 {/* Overlay subtil au hover */}
                 <div className="absolute inset-0 bg-gradient-to-br from-[#00D084]/0 via-transparent to-[#2E6CF6]/0 group-hover:from-[#00D084]/5 group-hover:to-[#2E6CF6]/5 transition-all duration-500 pointer-events-none" />
