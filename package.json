@@ -20,7 +20,9 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:integration": "jest --testPathPattern=tests/integration",
-    "test:all": "npm run test:integration && npm run test:e2e"
+    "test:all": "npm run test:integration && npm run test:e2e",
+    "screenshot:dashboard": "node scripts/generate-dashboard-screenshot.js",
+    "screenshot:dashboard:auth": "node scripts/generate-dashboard-screenshot-with-auth.js"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",
