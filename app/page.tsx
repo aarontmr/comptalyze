@@ -99,7 +99,7 @@ export default function LandingPage() {
         <GradientBlob />
         
         <div className="mx-auto max-w-7xl relative z-10">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center lg:items-start">
             {/* Colonne gauche - Contenu */}
             <div className="text-center lg:text-left relative z-20">
               {/* Badge premium en haut */}
@@ -164,22 +164,22 @@ export default function LandingPage() {
 
               {/* Bullets sous le hero */}
               <FadeIn delay={0.25} y={12} immediate={true}>
-                <div className="mt-6 sm:mt-8 space-y-2.5 max-w-2xl mx-auto lg:mx-0 px-4 lg:px-0">
-                  <div className="flex items-start gap-2.5" style={{ color: "#d1d5db" }}>
-                    <Check className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                    <span className="text-xs sm:text-sm" style={{ color: "#d1d5db" }}>Calcul automatique des cotisations & pré-remplissage URSSAF</span>
+                <div className="mt-6 sm:mt-8 space-y-2.5 sm:space-y-3 max-w-2xl mx-auto lg:mx-0 px-4 sm:px-6 lg:px-0">
+                  <div className="flex items-start gap-2.5 sm:gap-3">
+                    <Check className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                    <span className="text-xs sm:text-sm md:text-base leading-relaxed" style={{ color: "#d1d5db" }}>Calcul automatique des cotisations & pré-remplissage URSSAF</span>
                   </div>
-                  <div className="flex items-start gap-2.5" style={{ color: "#d1d5db" }}>
-                    <Check className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                    <span className="text-xs sm:text-sm" style={{ color: "#d1d5db" }}>Factures pro, exports comptables & FEC en 1 clic</span>
+                  <div className="flex items-start gap-2.5 sm:gap-3">
+                    <Check className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                    <span className="text-xs sm:text-sm md:text-base leading-relaxed" style={{ color: "#d1d5db" }}>Factures pro, exports comptables & FEC en 1 clic</span>
                   </div>
-                  <div className="flex items-start gap-2.5" style={{ color: "#d1d5db" }}>
-                    <Check className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                    <span className="text-xs sm:text-sm" style={{ color: "#d1d5db" }}>Imports bancaires, automatisations & intégrations e-commerce</span>
+                  <div className="flex items-start gap-2.5 sm:gap-3">
+                    <Check className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                    <span className="text-xs sm:text-sm md:text-base leading-relaxed" style={{ color: "#d1d5db" }}>Imports bancaires, automatisations & intégrations e-commerce</span>
                   </div>
-                  <div className="flex items-start gap-2.5" style={{ color: "#d1d5db" }}>
-                    <Check className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                    <span className="text-xs sm:text-sm" style={{ color: "#d1d5db" }}>Statistiques avancées, budgets, projections & optimisation fiscale IA</span>
+                  <div className="flex items-start gap-2.5 sm:gap-3">
+                    <Check className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
+                    <span className="text-xs sm:text-sm md:text-base leading-relaxed" style={{ color: "#d1d5db" }}>Statistiques avancées, budgets, projections & optimisation fiscale IA</span>
                   </div>
                 </div>
               </FadeIn>
@@ -235,8 +235,8 @@ export default function LandingPage() {
 
             {/* Colonne droite - Image des appareils mobiles */}
             <FadeIn delay={0.15} y={12} duration={0.6} immediate={true}>
-              <div className="relative flex items-center justify-center lg:justify-end mt-8 lg:mt-0">
-                <div className="relative w-full max-w-lg">
+              <div className="relative flex items-center justify-center lg:justify-end mt-8 lg:mt-0 order-first lg:order-last">
+                <div className="relative w-full max-w-lg mx-auto lg:mx-0">
                   {/* Container avec effet de profondeur */}
                   <motion.div
                     className="relative"
@@ -246,7 +246,7 @@ export default function LandingPage() {
                   >
                     {/* Effet de lueur derrière les appareils */}
                     <div 
-                      className="absolute inset-0 rounded-3xl blur-3xl opacity-30"
+                      className="absolute inset-0 rounded-3xl blur-3xl opacity-30 -z-10"
                       style={{
                         background: "linear-gradient(135deg, rgba(0,208,132,0.4) 0%, rgba(46,108,246,0.4) 100%)",
                         transform: "scale(1.2)",
@@ -254,13 +254,13 @@ export default function LandingPage() {
                     />
                     
                     {/* Image des appareils mobiles */}
-                    <div className="relative">
+                    <div className="relative z-10">
                       <Image
                         src="/devices-mockup.png"
                         alt="Application Comptalyze sur smartphone et tablette"
                         width={800}
                         height={600}
-                        className="w-full h-auto rounded-2xl drop-shadow-2xl"
+                        className="w-full h-auto rounded-2xl drop-shadow-2xl object-contain"
                         priority
                         style={{
                           filter: "drop-shadow(0 25px 50px rgba(0,0,0,0.5))",
