@@ -79,10 +79,10 @@ export default function IntegrationsPage() {
                   className="p-3 rounded-lg"
                   style={{ backgroundColor: "#00D08420" }}
                 >
-                  <Icon className="w-6 h-6" style={{ color: "#00D084" }} />
+                  <Icon className="w-6 h-6 text-[#00D084]" />
                 </div>
                 {integration.connected && (
-                  <CheckCircle2 className="w-5 h-5" style={{ color: "#00D084" }} />
+                  <CheckCircle2 className="w-5 h-5 text-[#00D084]" />
                 )}
               </div>
 
