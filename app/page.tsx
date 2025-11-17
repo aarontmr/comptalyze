@@ -157,29 +157,36 @@ export default function LandingPage() {
               {/* Sous-titre */}
               <FadeIn delay={0.2} y={12} immediate={true}>
                 <p className="mt-5 sm:mt-6 text-sm sm:text-base md:text-lg lg:text-xl max-w-2xl mx-auto lg:mx-0 leading-relaxed px-4 lg:px-0" style={{ color: "#d1d5db" }}>
-                  Comptalyze centralise vos déclarations URSSAF, factures, imports bancaires, TVA, budgets et projections financières.{" "}
-                  <span style={{ color: "#ffffff", fontWeight: "600" }}>L'IA vous aide à éviter les erreurs et à optimiser vos charges</span>, sans tableur ni casse-tête.
+                  <span style={{ color: "#ffffff", fontWeight: "600" }}>L'IA vous aide à optimiser vos charges et éviter les erreurs</span>, sans tableur ni casse-tête.
                 </p>
               </FadeIn>
 
               {/* Bullets sous le hero */}
               <FadeIn delay={0.25} y={12} immediate={true}>
-                <div className="mt-6 sm:mt-8 space-y-2.5 sm:space-y-3 max-w-2xl mx-auto lg:mx-0 px-4 sm:px-6 lg:px-0">
-                  <div className="flex items-start gap-2.5 sm:gap-3">
-                    <Check className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                    <span className="text-xs sm:text-sm md:text-base leading-relaxed" style={{ color: "#d1d5db" }}>Calcul automatique des cotisations & pré-remplissage URSSAF</span>
+                <div className="mt-4 sm:mt-6 space-y-2 sm:space-y-2.5 max-w-2xl mx-auto lg:mx-0 px-4 sm:px-6 lg:px-0">
+                  <div className="flex items-center gap-2.5 sm:gap-3">
+                    <div className="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: "rgba(0, 208, 132, 0.15)" }}>
+                      <Zap className="w-3 h-3 sm:w-3.5 sm:h-3.5" style={{ color: "#00D084" }} />
+                    </div>
+                    <span className="text-sm sm:text-base leading-snug flex-1" style={{ color: "#d1d5db" }}>Calcul automatique des cotisations & pré-remplissage URSSAF</span>
                   </div>
-                  <div className="flex items-start gap-2.5 sm:gap-3">
-                    <Check className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                    <span className="text-xs sm:text-sm md:text-base leading-relaxed" style={{ color: "#d1d5db" }}>Factures pro, exports comptables & FEC en 1 clic</span>
+                  <div className="flex items-center gap-2.5 sm:gap-3">
+                    <div className="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: "rgba(46, 108, 246, 0.15)" }}>
+                      <FileText className="w-3 h-3 sm:w-3.5 sm:h-3.5" style={{ color: "#2E6CF6" }} />
+                    </div>
+                    <span className="text-sm sm:text-base leading-snug flex-1" style={{ color: "#d1d5db" }}>Factures pro, exports comptables & FEC en 1 clic</span>
                   </div>
-                  <div className="flex items-start gap-2.5 sm:gap-3">
-                    <Check className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                    <span className="text-xs sm:text-sm md:text-base leading-relaxed" style={{ color: "#d1d5db" }}>Imports bancaires, automatisations & intégrations e-commerce</span>
+                  <div className="flex items-center gap-2.5 sm:gap-3">
+                    <div className="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: "rgba(0, 208, 132, 0.15)" }}>
+                      <TrendingUp className="w-3 h-3 sm:w-3.5 sm:h-3.5" style={{ color: "#00D084" }} />
+                    </div>
+                    <span className="text-sm sm:text-base leading-snug flex-1" style={{ color: "#d1d5db" }}>Imports bancaires, automatisations & intégrations e-commerce</span>
                   </div>
-                  <div className="flex items-start gap-2.5 sm:gap-3">
-                    <Check className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                    <span className="text-xs sm:text-sm md:text-base leading-relaxed" style={{ color: "#d1d5db" }}>Statistiques avancées, budgets, projections & optimisation fiscale IA</span>
+                  <div className="flex items-center gap-2.5 sm:gap-3">
+                    <div className="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: "rgba(46, 108, 246, 0.15)" }}>
+                      <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5" style={{ color: "#2E6CF6" }} />
+                    </div>
+                    <span className="text-sm sm:text-base leading-snug flex-1" style={{ color: "#d1d5db" }}>Statistiques avancées, budgets, projections & optimisation fiscale IA</span>
                   </div>
                 </div>
               </FadeIn>
@@ -235,7 +242,7 @@ export default function LandingPage() {
 
             {/* Colonne droite - Image des appareils mobiles */}
             <FadeIn delay={0.15} y={12} duration={0.6} immediate={true}>
-              <div className="relative flex items-center justify-center lg:justify-end mt-8 lg:mt-0 order-first lg:order-last">
+              <div className="relative hidden lg:flex items-center justify-center lg:justify-end mt-8 lg:mt-0 order-first lg:order-last">
                 <div className="relative w-full max-w-lg mx-auto lg:mx-0">
                   {/* Container avec effet de profondeur */}
                   <motion.div
@@ -354,25 +361,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CALCULATEUR URSSAF DEMO */}
-      <section id="demo" className="relative px-4 py-12 sm:py-16 md:py-20">
-        <div className="mx-auto max-w-7xl">
-          <FadeIn delay={0} y={12} duration={0.5}>
-            <div className="text-center mb-8 sm:mb-12">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 text-white">
-                Testez notre calculateur URSSAF
-              </h2>
-              <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto">
-                Calculez vos cotisations et votre net en quelques secondes. Aucune inscription requise pour cette démo.
-              </p>
-            </div>
-          </FadeIn>
-
-          <UrssafCalculatorDemo />
-        </div>
-      </section>
-
-      {/* TRUST BADGES - Nouveauté */}
+      {/* TRUST BADGES - Crédibilité immédiate */}
       <TrustBadges />
 
       {/* DEMO VIDEO HERO */}
@@ -457,6 +446,24 @@ export default function LandingPage() {
               </div>
             </FadeIn>
           </div>
+        </div>
+      </section>
+
+      {/* CALCULATEUR URSSAF DEMO */}
+      <section id="demo" className="relative px-4 py-12 sm:py-16 md:py-20">
+        <div className="mx-auto max-w-7xl">
+          <FadeIn delay={0} y={12} duration={0.5}>
+            <div className="text-center mb-8 sm:mb-12">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 text-white">
+                Testez notre calculateur URSSAF
+              </h2>
+              <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto">
+                Calculez vos cotisations et votre net en quelques secondes. Aucune inscription requise pour cette démo.
+              </p>
+            </div>
+          </FadeIn>
+
+          <UrssafCalculatorDemo />
         </div>
       </section>
 
@@ -962,20 +969,23 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* BEFORE/AFTER COMPARISON */}
+      <BeforeAfterSection />
+
       {/* PRICING PREVIEW */}
       <section className="relative px-4 py-12 sm:py-16 md:py-20">
         <div className="mx-auto max-w-5xl text-center">
           <FadeIn delay={0} y={8} duration={0.5}>
-            {/* Badge Offre Black Friday */}
+            {/* Badge Offre spéciale */}
             <div className="mb-6">
               <span className="inline-flex items-center gap-2 text-sm px-5 py-2.5 rounded-full font-medium animate-pulse" style={{ backgroundColor: "rgba(0, 208, 132, 0.15)", color: "#00D084", border: "1px solid rgba(0, 208, 132, 0.3)" }}>
-                🚀 Offre Black Friday exclusive - Jusqu'à -34% !
+                🚀 Offre de lancement - Jusqu'à -60% !
               </span>
             </div>
             <h2 className="text-3xl font-semibold sm:text-4xl">
               Des plans adaptés à votre activité
             </h2>
-            <p className="mt-3 text-gray-300">Profitez de nos prix Black Friday réduits pour nos premiers clients.</p>
+            <p className="mt-3 text-gray-300">Profitez de nos prix réduits pour nos premiers clients.</p>
           </FadeIn>
         </div>
 
@@ -984,36 +994,69 @@ export default function LandingPage() {
           <motion.div variants={fadeInVariant}>
             <ScaleOnHover>
               <div className="rounded-2xl p-6" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
-                <div className="mb-2 text-sm text-gray-400">Gratuit</div>
+                <div className="mb-3">
+                  <div className="mb-2 text-sm font-semibold text-gray-400 uppercase tracking-wide">Gratuit</div>
+                  <div className="text-xs font-medium" style={{ color: "#00D084" }}>Free forever</div>
+                </div>
                 <div className="mb-4">
                   <span className="text-4xl font-bold">0 €</span>
                   <span className="text-gray-400">/mois</span>
+                  <p className="text-xs text-gray-500 mt-2">Parfait pour commencer à suivre vos charges URSSAF en quelques clics.</p>
                 </div>
-                <ul className="space-y-3 text-sm">
-                  <li className="flex items-start gap-2 text-gray-300">
-                    <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
-                    <span>3 simulations par mois</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-gray-300">
-                    <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
-                    <span>Accès au simulateur URSSAF</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-gray-300">
-                    <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
-                    <span>Calcul des cotisations</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-gray-300">
-                    <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
-                    <span>Projection annuelle</span>
-                  </li>
-                </ul>
-                <Link
-                  href="/signup"
-                  className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm transition-transform duration-200 hover:scale-[1.02]"
-                  style={{ border: "1px solid #2b2f36", backgroundColor: "#0e0f12" }}
-                >
-                  Commencer gratuitement
-                </Link>
+                <div className="mb-4">
+                  <div className="text-xs font-bold text-gray-400 mb-3 uppercase tracking-wider">Fonctionnalités incluses</div>
+                  <ul className="space-y-2.5 text-sm">
+                    <li className="flex items-start gap-2 text-gray-300">
+                      <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
+                      <span>5 simulations URSSAF sauvegardées / mois</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-gray-300">
+                      <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
+                      <span>Calcul en temps réel des cotisations et revenu net</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-gray-300">
+                      <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
+                      <span>Dashboard basique : CA, cotisations, revenu net (30 derniers jours)</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-gray-300">
+                      <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
+                      <span>1 graphique CA (3 derniers mois)</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-gray-300">
+                      <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
+                      <span>1 facture / mois (PDF téléchargeable)</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-gray-300">
+                      <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
+                      <span>Accès à tous les guides et tutoriels</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-gray-300">
+                      <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
+                      <span>Authentification 2FA & sécurité du compte</span>
+                    </li>
+                  </ul>
+                </div>
+                <div className="mt-6 space-y-2">
+                  <Link
+                    href="/signup"
+                    className="inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-[1.05] hover:shadow-lg"
+                    style={{ 
+                      border: "1px solid rgba(0, 208, 132, 0.3)", 
+                      backgroundColor: "rgba(0, 208, 132, 0.1)",
+                      color: "#00D084"
+                    }}
+                  >
+                    Créer un compte gratuit
+                  </Link>
+                  <p className="text-xs text-center text-gray-500">
+                    <span className="inline-flex items-center gap-1">
+                      <span style={{ color: "#00D084" }}>✓</span>
+                      Sans carte bancaire
+                    </span>
+                    {' • '}
+                    <span>Création en moins de 30 secondes</span>
+                  </p>
+                </div>
               </div>
             </ScaleOnHover>
           </motion.div>
@@ -1031,7 +1074,7 @@ export default function LandingPage() {
               >
                 <div className="absolute right-4 top-4 flex gap-2">
                   <span className="rounded-md px-2 py-1 text-xs font-medium" style={{ backgroundColor: "#00D084", color: "#0e0f12" }}>
-                    🚀 Offre Black Friday
+                    🚀 -60%
                   </span>
                   <span className="rounded-md px-2 py-1 text-xs font-medium" style={{ backgroundColor: "#2E6CF6" }}>
                     Recommandé
@@ -1106,7 +1149,7 @@ export default function LandingPage() {
               <div className="rounded-2xl p-6 relative" style={{ backgroundColor: "#14161b", border: "1px solid rgba(0,208,132,0.3)" }}>
                 <div className="absolute right-4 top-4 flex gap-2">
                   <span className="rounded-md px-2 py-1 text-xs font-medium" style={{ backgroundColor: "#00D084", color: "#0e0f12" }}>
-                    🚀 Offre Black Friday
+                    🚀 -56%
                   </span>
                   <span className="rounded-md px-2 py-1 text-xs font-medium" style={{ background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)" }}>
                     Premium
@@ -1401,9 +1444,6 @@ export default function LandingPage() {
           </FadeIn>
         </div>
       </section>
-
-      {/* BEFORE/AFTER COMPARISON */}
-      <BeforeAfterSection />
 
       {/* TESTIMONIALS */}
       <TestimonialsSection />
