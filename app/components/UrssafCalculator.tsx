@@ -47,7 +47,7 @@ interface UrssafCalculatorProps {
   user?: User | null;
 }
 
-const FREE_PLAN_LIMIT = 3;
+const FREE_PLAN_LIMIT = 5; // 5 enregistrements URSSAF par mois pour le plan FREE
 
 export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
   const [ca, setCa] = useState<string>('');
@@ -250,10 +250,20 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
   const saveToHistory = async () => {
     if (!caValue || !selectedActivity || !user) return;
     
-    // Vérifier la limite pour les utilisateurs gratuits
-    if (!hasUnlimitedAccess && records.length >= FREE_PLAN_LIMIT) {
-      showToastMessage('Limite atteinte. Passez au plan Pro pour enregistrer sans limite.');
-      return;
+    // Vérifier la limite pour les utilisateurs gratuits (par mois calendaire)
+    if (!hasUnlimitedAccess) {
+      // Compter les enregistrements du mois actuel
+      const currentMonthRecords = records.filter(
+        r => r.year === selectedYear && r.month === selectedMonth
+      );
+      
+      if (currentMonthRecords.length >= FREE_PLAN_LIMIT) {
+        showToastMessage(
+          `Vous avez atteint la limite de ${FREE_PLAN_LIMIT} enregistrements pour ce mois. ` +
+          `Passez à Pro pour des enregistrements illimités !`
+        );
+        return;
+      }
     }
 
     try {
@@ -455,8 +465,13 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
     return value.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
-  // Calculer le nombre d'enregistrements pour les utilisateurs gratuits
-  const remainingCalculations = hasUnlimitedAccess ? Infinity : Math.max(0, FREE_PLAN_LIMIT - records.length);
+  // Calculer le nombre d'enregistrements restants pour les utilisateurs gratuits (pour le mois actuel)
+  const currentMonthRecords = !hasUnlimitedAccess 
+    ? records.filter(r => r.year === selectedYear && r.month === selectedMonth)
+    : [];
+  const remainingCalculations = hasUnlimitedAccess 
+    ? Infinity 
+    : Math.max(0, FREE_PLAN_LIMIT - currentMonthRecords.length);
   const canSave = hasUnlimitedAccess || remainingCalculations > 0;
 
   return (
@@ -483,11 +498,14 @@ export default function UrssafCalculator({ user }: UrssafCalculatorProps) {
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <p className="text-sm font-medium text-green-400 mb-1">
-                  Plan Free • {records.length} / {FREE_PLAN_LIMIT} enregistrements utilisés
+                  Plan Gratuit • {currentMonthRecords.length} / {FREE_PLAN_LIMIT} enregistrements ce mois
                 </p>
                 <p className="text-xs text-gray-400 mb-3">
-                  Vous avez {remainingCalculations} enregistrement{remainingCalculations !== 1 ? 's' : ''} restant{remainingCalculations !== 1 ? 's' : ''}.
-                  {records.length > 0 && ' Passez à Pro pour des enregistrements illimités !'}
+                  {remainingCalculations > 0 
+                    ? `Vous avez ${remainingCalculations} enregistrement${remainingCalculations !== 1 ? 's' : ''} restant${remainingCalculations !== 1 ? 's' : ''} ce mois.`
+                    : 'Limite mensuelle atteinte.'
+                  }
+                  {' '}Passez à Pro pour des enregistrements illimités !
                 </p>
               </div>
               <Link

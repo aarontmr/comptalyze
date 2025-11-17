@@ -2,6 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { getUserPlan } from "@/lib/plan";
+import Breadcrumbs from "@/app/components/Breadcrumbs";
+import FeaturePreview from "@/app/components/FeaturePreview";
+import PlanBadge from "@/app/components/PlanBadge";
 import { Plus, Trash2, Receipt, TrendingDown, AlertCircle } from "lucide-react";
 import { User } from "@supabase/supabase-js";
 
@@ -33,6 +37,7 @@ export default function ChargesPage() {
   const [charges, setCharges] = useState<Charge[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [plan, setPlan] = useState<"free" | "pro" | "premium">("free");
   
   // Form states
   const [description, setDescription] = useState("");
@@ -45,7 +50,11 @@ export default function ChargesPage() {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
         setUser(session.user);
-        loadCharges(session.user.id);
+        const userPlan = await getUserPlan(supabase, session.user.id);
+        setPlan(userPlan);
+        if (userPlan !== "free") {
+          loadCharges(session.user.id);
+        }
       }
       setLoading(false);
     };
@@ -116,10 +125,59 @@ export default function ChargesPage() {
     );
   }
 
+  if (plan === "free") {
+    return (
+      <div>
+        <Breadcrumbs items={[{ label: "Aperçu", href: "/dashboard" }, { label: "Charges déductibles" }]} />
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold text-white">Charges déductibles</h1>
+          <PlanBadge plan="pro" size="lg" />
+        </div>
+        <FeaturePreview
+          title="Centralisez toutes vos charges pro"
+          description="Notez vos dépenses (abonnements, matériel, déplacements...) et mesurez leur impact sur votre activité."
+          benefits={[
+            "Suivi catégorisé de toutes vos charges",
+            "Vue annuelle de vos dépenses",
+            "Préparation idéale en cas de changement de régime",
+          ]}
+          plan="pro"
+          ctaText="Débloquer le suivi des charges - 3,90€/mois"
+          showPreview
+          previewOpacity={0.15}
+        >
+          <div className="p-6 space-y-4">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-sm text-gray-400 mb-1">Total des charges (exemple)</p>
+                <p className="text-2xl font-bold" style={{ color: "#00D084" }}>3 250,00 €</p>
+              </div>
+            </div>
+            <div className="space-y-2 text-sm text-gray-300">
+              <div className="flex items-center justify-between">
+                <span>Matériel informatique</span>
+                <span>1 500,00 €</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Logiciels & abonnements</span>
+                <span>980,00 €</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Déplacements</span>
+                <span>420,00 €</span>
+              </div>
+            </div>
+          </div>
+        </FeaturePreview>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="max-w-5xl mx-auto">
         {/* Header */}
+        <Breadcrumbs items={[{ label: "Aperçu", href: "/dashboard" }, { label: "Charges déductibles" }]} />
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">

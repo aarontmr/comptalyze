@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
-import { trackEvent } from '@/lib/analytics';
+import { trackEvent, getStoredUTMParams, captureUTMParams } from '@/lib/analytics';
 import Link from 'next/link';
 import Image from 'next/image';
 import logo from '@/public/logo.png';
@@ -58,6 +58,11 @@ export default function SignupPage() {
     { text: 'Un chiffre', met: /\d/.test(password) },
     { text: 'Un caractère spécial', met: /[^a-zA-Z\d]/.test(password) },
   ];
+
+  // Capturer les paramètres UTM au chargement
+  useEffect(() => {
+    captureUTMParams();
+  }, []);
 
   // Charger reCAPTCHA
   useEffect(() => {
@@ -236,6 +241,20 @@ export default function SignupPage() {
           verification_required: true 
         });
         
+        // Tracker la conversion Google Ads si applicable
+        const utmParams = getStoredUTMParams();
+        if (utmParams.utm_source === 'google' || utmParams.utm_medium === 'cpc') {
+          fetch('/api/track-conversion', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userId: data.user.id,
+              eventType: 'free_signup',
+              utmParams,
+            }),
+          }).catch((err) => console.error('Erreur tracking Google Ads (non bloquant):', err));
+        }
+        
         // Envoyer l'événement CompleteRegistration à Facebook (non bloquant)
         fetch('/api/facebook-events/complete-registration', {
           method: 'POST',
@@ -246,10 +265,24 @@ export default function SignupPage() {
         setShowVerificationMessage(true);
         setSuccessMessage('Inscription réussie. Un email de confirmation vous a été envoyé.');
         
-        await trackEvent('signup_completed', { 
+        await trackEvent('signup_completed', {
           email,
           verification_required: false 
         });
+        
+        // Tracker la conversion Google Ads si applicable
+        const utmParams2 = getStoredUTMParams();
+        if (utmParams2.utm_source === 'google' || utmParams2.utm_medium === 'cpc') {
+          fetch('/api/track-conversion', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userId: data.user.id,
+              eventType: 'free_signup',
+              utmParams: utmParams2,
+            }),
+          }).catch((err) => console.error('Erreur tracking Google Ads (non bloquant):', err));
+        }
         
         // Envoyer l'événement CompleteRegistration à Facebook (non bloquant)
         if (data.user?.id) {

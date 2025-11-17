@@ -79,7 +79,7 @@ export default function Chatbot({ user }: ChatbotProps) {
   const [isListening, setIsListening] = useState(false);
   const [showQuickActions, setShowQuickActions] = useState(true);
   const [messageCount, setMessageCount] = useState(0);
-  const [monthlyLimit] = useState(30); // Limite pour les utilisateurs gratuits
+  const [dailyLimit] = useState(5); // Limite quotidienne pour les utilisateurs gratuits
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -94,6 +94,27 @@ export default function Chatbot({ user }: ChatbotProps) {
       loadMessageHistory();
     }
   }, [user, isOpen]);
+
+  // Vérifier et mettre à jour le compteur quotidien à chaque ouverture
+  useEffect(() => {
+    if (user && plan === 'free') {
+      const today = new Date().toDateString();
+      const countKey = `chatbot_message_count_${user.id}`;
+      const countDateKey = `chatbot_message_count_date_${user.id}`;
+      const lastCountDate = localStorage.getItem(countDateKey);
+      
+      if (lastCountDate !== today) {
+        // Nouveau jour, réinitialiser le compteur
+        localStorage.setItem(countKey, '0');
+        localStorage.setItem(countDateKey, today);
+        setMessageCount(0);
+      } else {
+        // Même jour, charger le compteur depuis localStorage
+        const storedCount = localStorage.getItem(countKey);
+        setMessageCount(storedCount ? parseInt(storedCount, 10) : 0);
+      }
+    }
+  }, [user, plan, isOpen]);
 
   // Auto-scroll vers le bas
   const scrollToBottom = () => {
@@ -160,13 +181,29 @@ export default function Chatbot({ user }: ChatbotProps) {
       } else {
         // Pour les autres, charger depuis localStorage
         const stored = localStorage.getItem(`chatbot_messages_${user?.id || 'guest'}`);
+        const today = new Date().toDateString();
+        const countKey = `chatbot_message_count_${user?.id || 'guest'}`;
+        const countDateKey = `chatbot_message_count_date_${user?.id || 'guest'}`;
+        
+        // Vérifier si le compteur date d'aujourd'hui
+        const lastCountDate = localStorage.getItem(countDateKey);
+        if (lastCountDate !== today) {
+          // Nouveau jour, réinitialiser le compteur
+          localStorage.setItem(countKey, '0');
+          localStorage.setItem(countDateKey, today);
+          setMessageCount(0);
+        } else {
+          // Même jour, charger le compteur
+          const storedCount = localStorage.getItem(countKey);
+          setMessageCount(storedCount ? parseInt(storedCount, 10) : 0);
+        }
+        
         if (stored) {
           const parsed = JSON.parse(stored);
           setMessages(parsed.map((m: any) => ({
             ...m,
             timestamp: new Date(m.timestamp)
           })));
-          setMessageCount(parsed.filter((m: any) => m.role === 'user').length);
         }
       }
     } catch (err) {
@@ -195,10 +232,33 @@ export default function Chatbot({ user }: ChatbotProps) {
     const messageText = customMessage || input.trim();
     if (!messageText || loading) return;
 
-    // Vérifier la limite pour les utilisateurs gratuits
-    if (plan === 'free' && messageCount >= monthlyLimit) {
-      setError(`Limite de ${monthlyLimit} messages/mois atteinte. Passez à Pro ou Premium pour continuer !`);
-      return;
+    // Vérifier la limite quotidienne pour les utilisateurs gratuits
+    if (plan === 'free') {
+      const today = new Date().toDateString();
+      const countKey = `chatbot_message_count_${user?.id || 'guest'}`;
+      const countDateKey = `chatbot_message_count_date_${user?.id || 'guest'}`;
+      
+      // Vérifier si c'est un nouveau jour
+      const lastCountDate = localStorage.getItem(countDateKey);
+      let currentCount = 0;
+      
+      if (lastCountDate !== today) {
+        // Nouveau jour, réinitialiser le compteur
+        localStorage.setItem(countKey, '0');
+        localStorage.setItem(countDateKey, today);
+        setMessageCount(0);
+        currentCount = 0;
+      } else {
+        // Même jour, récupérer le compteur actuel depuis localStorage
+        const storedCount = localStorage.getItem(countKey);
+        currentCount = storedCount ? parseInt(storedCount, 10) : 0;
+      }
+      
+      // Vérifier la limite
+      if (currentCount >= dailyLimit) {
+        setError(`Limite de ${dailyLimit} messages/jour atteinte. Passez à Pro ou Premium pour continuer !`);
+        return;
+      }
     }
 
     const userMessage: Message = {
@@ -215,9 +275,17 @@ export default function Chatbot({ user }: ChatbotProps) {
     setError(null);
     setShowQuickActions(false);
 
-    // Incrémenter le compteur pour les utilisateurs gratuits
+    // Incrémenter le compteur quotidien pour les utilisateurs gratuits
     if (plan === 'free') {
-      setMessageCount(prev => prev + 1);
+      const today = new Date().toDateString();
+      const countKey = `chatbot_message_count_${user?.id || 'guest'}`;
+      const countDateKey = `chatbot_message_count_date_${user?.id || 'guest'}`;
+      const storedCount = localStorage.getItem(countKey);
+      const currentCount = storedCount ? parseInt(storedCount, 10) : 0;
+      const newCount = currentCount + 1;
+      setMessageCount(newCount);
+      localStorage.setItem(countKey, newCount.toString());
+      localStorage.setItem(countDateKey, today);
     }
 
     try {
@@ -534,7 +602,7 @@ export default function Chatbot({ user }: ChatbotProps) {
                 {plan === 'free' && (
                   <div className="mb-3 flex items-center justify-between text-xs">
                     <span className="text-gray-500">
-                      {messageCount}/{monthlyLimit} messages ce mois
+                      {messageCount}/{dailyLimit} messages aujourd'hui
                     </span>
                     <Link 
                       href="/pricing" 
@@ -554,7 +622,7 @@ export default function Chatbot({ user }: ChatbotProps) {
                       onKeyPress={handleKeyPress}
                       placeholder="Pose ta question ici..."
                       rows={2}
-                      disabled={loading || (plan === 'free' && messageCount >= monthlyLimit)}
+                      disabled={loading || (plan === 'free' && messageCount >= dailyLimit)}
                       className="w-full px-3 sm:px-4 py-2 sm:py-3 pr-10 sm:pr-12 rounded-xl text-sm text-white placeholder-gray-500 resize-none transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#2E6CF6] bg-[#1A1D24] border border-gray-800 focus:border-[#2E6CF6]/50"
                       style={{ fontSize: '16px' }}
                     />
@@ -575,10 +643,10 @@ export default function Chatbot({ user }: ChatbotProps) {
                   </div>
                   <button
                     onClick={() => sendMessage()}
-                    disabled={loading || !input.trim() || (plan === 'free' && messageCount >= monthlyLimit)}
+                    disabled={loading || !input.trim() || (plan === 'free' && messageCount >= dailyLimit)}
                     className="px-4 sm:px-5 py-2 sm:py-3 rounded-xl text-white font-medium transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center min-h-[44px] min-w-[44px]"
                     style={{
-                      background: loading || !input.trim() || (plan === 'free' && messageCount >= monthlyLimit)
+                      background: loading || !input.trim() || (plan === 'free' && messageCount >= dailyLimit)
                         ? '#374151'
                         : 'linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)',
                       boxShadow: loading || !input.trim() 

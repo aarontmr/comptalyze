@@ -62,7 +62,7 @@ ${userData ? `\n\nDONNÉES UTILISATEUR :\n${JSON.stringify(userData, null, 2)}` 
 - Répondre aux questions générales sur la micro-entreprise
 - Expliquer le fonctionnement de Comptalyze
 - Suggérer gentiment les plans Pro (7,90€/mois) ou Premium (15,90€/mois) pour des fonctionnalités avancées
-- Rappeler qu'il a une limite de 30 messages/mois sur le plan gratuit`;
+- Rappeler qu'il a une limite de 5 messages/jour sur le plan gratuit`;
   }
 };
 
@@ -193,7 +193,7 @@ function generateFallbackResponse(message: string, plan: string): string {
   
   // Questions sur les plans Comptalyze
   if (lowerMessage.includes('prix') || lowerMessage.includes('plan') || lowerMessage.includes('premium') || lowerMessage.includes('pro')) {
-    return `💎 **Plans Comptalyze** :\n\n🌱 **Gratuit** : Calculateur de base, 30 messages/mois\n⚡ **Pro** (7,90€/mois) : Factures, historique illimité, exports PDF\n✨ **Premium** (15,90€/mois) : Tout Pro + Assistant IA illimité + Analytics avancés + Pré-remplissage URSSAF\n\nDécouvrez les plans sur : comptalyze.com/pricing`;
+    return `💎 **Plans Comptalyze** :\n\n🌱 **Gratuit** : Calculateur de base, 5 messages/jour\n⚡ **Pro** (7,90€/mois) : Factures, historique illimité, exports PDF\n✨ **Premium** (15,90€/mois) : Tout Pro + Assistant IA illimité + Analytics avancés + Pré-remplissage URSSAF\n\nDécouvrez les plans sur : comptalyze.com/pricing`;
   }
   
   // Questions sur les seuils

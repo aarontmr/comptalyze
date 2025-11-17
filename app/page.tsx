@@ -2,17 +2,17 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import logo from "@/public/logo.png";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { LayoutDashboard, LogIn, UserPlus, Shield, TrendingUp, Percent, BarChart3, FileText, Calculator, Lock, Info, Check, Menu, X, Sparkles, Zap } from "lucide-react";
+import { Shield, TrendingUp, Percent, BarChart3, FileText, Calculator, Lock, Info, Check, Sparkles, Zap, UserPlus } from "lucide-react";
 import { FadeIn, Stagger, ScaleOnHover, fadeInVariant } from "@/app/components/anim/Motion";
 import Counter from "@/app/components/anim/Counter";
 import GradientBlob from "@/app/components/anim/GradientBlob";
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
 import UrssafCalculatorDemo from "@/app/components/UrssafCalculatorDemo";
+import Header from "@/components/Header";
 
 // Dynamic imports pour les composants lourds (chargés uniquement quand visibles)
 const TrustBadges = dynamic(() => import("@/app/components/TrustBadges"), {
@@ -36,12 +36,14 @@ const FaqSection = dynamic(() => import("@/app/components/FaqSection"), {
 const FeedbackButton = dynamic(() => import("@/app/components/FeedbackButton"), {
   ssr: false,
 });
+const GoogleAdsBanner = dynamic(() => import("@/app/components/GoogleAdsBanner"), {
+  ssr: false,
+});
 
 export default function LandingPage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState<string | null>(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -59,51 +61,14 @@ export default function LandingPage() {
     };
   }, []);
 
-  const handleCheckout = async (plan: "pro" | "premium") => {
-    // Vérifier que l'utilisateur est connecté
+  const handleCheckout = (plan: "pro" | "premium") => {
     if (!user) {
-      window.location.href = "/login";
+      router.push("/login");
       return;
     }
 
     setLoading(plan);
-
-    try {
-      // Obtenir le token de session
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        window.location.href = "/login";
-        return;
-      }
-
-      // Appeler l'API checkout pour créer une session Stripe Checkout hébergée
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({ 
-          plan,
-          userId: user.id 
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.error || "Une erreur est survenue");
-        setLoading(null);
-        return;
-      }
-
-      // Rediriger vers Stripe Checkout hébergé (Apple Pay disponible!)
-      window.location.href = data.url;
-    } catch (error) {
-      console.error("Erreur checkout:", error);
-      alert("Une erreur est survenue");
-      setLoading(null);
-    }
+    router.push(`/checkout/${plan}`);
   };
 
   return (
@@ -111,193 +76,11 @@ export default function LandingPage() {
       className="min-h-screen w-full text-white"
       style={{ backgroundColor: "#0e0f12", fontFamily: "Poppins, sans-serif" }}
     >
+      {/* Google Ads Banner */}
+      <GoogleAdsBanner />
+      
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 border-b" style={{ backgroundColor: "#0e0f12", borderColor: "#1f232b" }}>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <Link href="/" className="flex items-center">
-              <Image
-                src={logo}
-                alt="Comptalyze"
-                width={180}
-                height={45}
-                className="h-10 sm:h-12 w-auto"
-                priority
-              />
-            </Link>
-            
-            {/* Desktop Menu */}
-            <div className="hidden md:flex items-center gap-3">
-              {user ? (
-                <Link
-                  href="/dashboard"
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-[1.08] hover:brightness-110 hover:shadow-2xl cursor-pointer active:scale-95"
-                  style={{
-                    background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                    boxShadow: "0 4px 15px rgba(46,108,246,0.3)",
-                  }}
-                >
-                  <LayoutDashboard className="w-4 h-4" />
-                  Dashboard
-                </Link>
-              ) : (
-                <>
-                  <Link
-                    href="/pricing"
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-[1.05] hover:bg-gray-800/50 hover:shadow-lg cursor-pointer active:scale-95"
-                    style={{
-                      border: "1px solid #2b2f36",
-                      backgroundColor: "#14161b",
-                    }}
-                  >
-                    <Percent className="w-4 h-4" />
-                    Tarifs
-                  </Link>
-                  <Link
-                    href="/login"
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-[1.05] hover:bg-gray-800/50 hover:shadow-lg cursor-pointer active:scale-95"
-                    style={{
-                      border: "1px solid #2b2f36",
-                      backgroundColor: "#14161b",
-                    }}
-                  >
-                    <LogIn className="w-4 h-4" />
-                    Se connecter
-                  </Link>
-                  <Link
-                    href="/signup"
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white transition-all duration-300 hover:scale-[1.08] hover:brightness-110 hover:shadow-2xl cursor-pointer active:scale-95"
-                    style={{
-                      background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                      boxShadow: "0 4px 15px rgba(46,108,246,0.3)",
-                    }}
-                  >
-                    <UserPlus className="w-4 h-4" />
-                    S'inscrire
-                  </Link>
-                </>
-              )}
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg transition-all hover:bg-gray-800"
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? (
-                <X className="w-6 h-6 text-white" />
-              ) : (
-                <Menu className="w-6 h-6 text-white" />
-              )}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Mega Menu */}
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <>
-              {/* Overlay */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="fixed inset-0 bg-black/50 z-40 md:hidden"
-                onClick={() => setMobileMenuOpen(false)}
-                style={{ top: '64px' }}
-              />
-              {/* Menu */}
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3 }}
-                className="md:hidden border-t relative z-50" style={{ borderColor: "#1f232b", backgroundColor: "#0e0f12" }}
-              >
-            <div className="px-4 py-4 space-y-2">
-              {user ? (
-                <>
-                  <Link
-                    href="/dashboard"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all hover:scale-[1.02]"
-                    style={{
-                      background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                      boxShadow: "0 4px 15px rgba(46,108,246,0.3)",
-                    }}
-                  >
-                    <LayoutDashboard className="w-5 h-5" />
-                    Dashboard
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link
-                    href="/pricing"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-colors"
-                    style={{
-                      border: "1px solid #2b2f36",
-                      backgroundColor: "#14161b",
-                    }}
-                  >
-                    <Percent className="w-5 h-5" />
-                    Tarifs
-                  </Link>
-                  <Link
-                    href="/login"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-colors"
-                    style={{
-                      border: "1px solid #2b2f36",
-                      backgroundColor: "#14161b",
-                    }}
-                  >
-                    <LogIn className="w-5 h-5" />
-                    Se connecter
-                  </Link>
-                  <Link
-                    href="/signup"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-white transition-all"
-                    style={{
-                      background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                      boxShadow: "0 4px 15px rgba(46,108,246,0.3)",
-                    }}
-                  >
-                    <UserPlus className="w-5 h-5" />
-                    S'inscrire
-                  </Link>
-                </>
-              )}
-              
-              {/* Additional links */}
-              <div className="pt-2 border-t" style={{ borderColor: "#1f232b" }}>
-                <Link
-                  href="/pricing"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-gray-300 transition-colors hover:text-white"
-                >
-                  <Percent className="w-5 h-5" />
-                  Tarifs
-                </Link>
-                <Link
-                  href="/a-propos"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-gray-300 transition-colors hover:text-white"
-                >
-                  <Info className="w-5 h-5" />
-                  À propos
-                </Link>
-              </div>
-            </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
-      </header>
+      <Header user={user} />
 
       {/* Accent gradient background */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden>
@@ -315,85 +98,143 @@ export default function LandingPage() {
       <section className="relative px-4 pt-20 pb-12 sm:pt-24 sm:pb-16 md:pt-32 md:pb-20 overflow-hidden">
         <GradientBlob />
         
-        <div className="mx-auto max-w-6xl text-center relative z-10">
-          {/* Badge premium en haut */}
-          <FadeIn delay={0.05} y={8}>
-            <div className="inline-flex items-center gap-2 rounded-full px-4 py-2 mb-6 sm:mb-8" 
-              style={{
-                backgroundColor: "rgba(46,108,246,0.1)",
-                border: "1px solid rgba(46,108,246,0.2)",
-              }}
-            >
-              <Sparkles className="w-4 h-4" style={{ color: "#00D084" }} />
-              <span className="text-xs sm:text-sm font-medium text-gray-300">
-                La solution comptable des micro-entrepreneurs
-              </span>
-            </div>
-          </FadeIn>
-
-          {/* Titre principal */}
-          <FadeIn delay={0.1} y={12}>
-            <h1 className="text-4xl font-bold sm:text-5xl md:text-6xl lg:text-7xl leading-tight px-2">
-              <span className="block mb-2">Simplifiez votre</span>
-              <span 
-                className="block bg-clip-text text-transparent"
-                style={{
-                  backgroundImage: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                }}
-              >
-                comptabilité
-              </span>
-              <span className="block mt-2 text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
-                de micro-entrepreneur
-              </span>
-            </h1>
-          </FadeIn>
-
-          {/* Sous-titre */}
-          <FadeIn delay={0.2} y={12}>
-            <p className="mt-6 sm:mt-8 text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed px-4">
-              Calculez automatiquement vos <span className="text-white font-semibold">cotisations URSSAF</span> et vos{" "}
-              <span className="text-white font-semibold">projections de revenus</span> en quelques secondes.
-            </p>
-          </FadeIn>
-
-          {/* Call to Actions */}
-          <FadeIn delay={0.3} y={12}>
-            <div className="mt-8 sm:mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4 px-4">
-              <ScaleOnHover>
-                <Link
-                  href="/signup"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-8 py-4 text-base sm:text-lg font-semibold text-white transition-all duration-300 hover:scale-[1.10] hover:brightness-110 hover:shadow-2xl cursor-pointer active:scale-95 glow shadow-xl"
+        <div className="mx-auto max-w-7xl relative z-10">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            {/* Colonne gauche - Contenu */}
+            <div className="text-center lg:text-left">
+              {/* Badge premium en haut */}
+              <FadeIn delay={0.05} y={8}>
+                <div className="inline-flex items-center gap-2 rounded-full px-4 py-2 mb-6 sm:mb-8" 
                   style={{
-                    background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                    boxShadow: "0 12px 40px rgba(46,108,246,0.4)",
+                    backgroundColor: "rgba(46,108,246,0.1)",
+                    border: "1px solid rgba(46,108,246,0.2)",
                   }}
                 >
-                  <UserPlus className="w-5 h-5" />
-                  Commencer gratuitement
-                </Link>
-              </ScaleOnHover>
-              <ScaleOnHover>
-                <Link
-                  href="/pricing"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-8 py-4 text-base sm:text-lg font-medium transition-all duration-300 hover:scale-[1.05] hover:bg-gray-800/50 hover:shadow-lg cursor-pointer active:scale-95"
-                  style={{ border: "1px solid #2b2f36", backgroundColor: "#14161b" }}
-                >
-                  <Percent className="w-5 h-5" />
-                  Voir les tarifs
-                </Link>
-              </ScaleOnHover>
+                  <Sparkles className="w-4 h-4" style={{ color: "#00D084" }} />
+                  <span className="text-xs sm:text-sm font-medium text-gray-300">
+                    La solution comptable des micro-entrepreneurs
+                  </span>
+                </div>
+              </FadeIn>
+
+              {/* Titre principal */}
+              <FadeIn delay={0.1} y={12}>
+                <h1 className="text-4xl font-bold sm:text-5xl md:text-6xl lg:text-7xl leading-tight px-2">
+                  <span className="block mb-2">Simplifiez votre</span>
+                  <span 
+                    className="block bg-clip-text text-transparent"
+                    style={{
+                      backgroundImage: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                    }}
+                  >
+                    comptabilité
+                  </span>
+                  <span className="block mt-2 text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
+                    de micro-entrepreneur
+                  </span>
+                </h1>
+              </FadeIn>
+
+              {/* Sous-titre */}
+              <FadeIn delay={0.2} y={12}>
+                <p className="mt-6 sm:mt-8 text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed px-4 lg:px-0">
+                  Calculez automatiquement vos <span className="text-white font-semibold">cotisations URSSAF</span> et vos{" "}
+                  <span className="text-white font-semibold">projections de revenus</span> en quelques secondes.
+                </p>
+              </FadeIn>
+
+              {/* Call to Actions */}
+              <FadeIn delay={0.3} y={12}>
+                <div className="mt-8 sm:mt-10 flex flex-col items-center lg:items-start justify-center gap-3 px-4 lg:px-0">
+                  {/* Badge de confiance au-dessus du CTA */}
+                  <div className="mb-2">
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium" style={{ 
+                      backgroundColor: "rgba(0, 208, 132, 0.15)", 
+                      color: "#00D084", 
+                      border: "1px solid rgba(0, 208, 132, 0.3)" 
+                    }}>
+                      <span>✓</span>
+                      <span>Plan gratuit – sans carte bancaire</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto">
+                    <ScaleOnHover>
+                      <Link
+                        href="/signup"
+                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-8 py-4 text-base sm:text-lg font-semibold text-white transition-all duration-300 hover:scale-[1.10] hover:brightness-110 hover:shadow-2xl cursor-pointer active:scale-95 glow shadow-xl"
+                        style={{
+                          background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                          boxShadow: "0 12px 40px rgba(46,108,246,0.4)",
+                        }}
+                      >
+                        <UserPlus className="w-5 h-5" />
+                        Créer un compte gratuit
+                      </Link>
+                    </ScaleOnHover>
+                    <ScaleOnHover>
+                      <Link
+                        href="#demo"
+                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-8 py-4 text-base sm:text-lg font-medium transition-all duration-300 hover:scale-[1.05] hover:bg-gray-800/50 hover:shadow-lg cursor-pointer active:scale-95"
+                        style={{ border: "1px solid #2b2f36", backgroundColor: "#14161b" }}
+                      >
+                        <Percent className="w-5 h-5" />
+                        Voir une démo
+                      </Link>
+                    </ScaleOnHover>
+                  </div>
+                  
+                  {/* Micro text sous les boutons */}
+                  <p className="mt-2 text-xs sm:text-sm text-gray-500 px-4 lg:px-0 text-center lg:text-left">
+                    Créez votre compte en moins de 30 secondes • 5 simulations gratuites / mois
+                  </p>
+                </div>
+              </FadeIn>
             </div>
-            
-            {/* Micro text sous les boutons */}
-            <p className="mt-4 text-xs sm:text-sm text-gray-500 px-4">
-              Sans carte bancaire • 3 simulations gratuites • Annulable à tout moment
-            </p>
-          </FadeIn>
+
+            {/* Colonne droite - Image des appareils mobiles */}
+            <FadeIn delay={0.15} y={12} duration={0.6}>
+              <div className="relative flex items-center justify-center lg:justify-end mt-8 lg:mt-0">
+                <div className="relative w-full max-w-lg">
+                  {/* Container avec effet de profondeur */}
+                  <motion.div
+                    className="relative"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.3, duration: 0.6 }}
+                  >
+                    {/* Effet de lueur derrière les appareils */}
+                    <div 
+                      className="absolute inset-0 rounded-3xl blur-3xl opacity-30"
+                      style={{
+                        background: "linear-gradient(135deg, rgba(0,208,132,0.4) 0%, rgba(46,108,246,0.4) 100%)",
+                        transform: "scale(1.2)",
+                      }}
+                    />
+                    
+                    {/* Image des appareils mobiles */}
+                    <div className="relative">
+                      <Image
+                        src="/devices-mockup.png"
+                        alt="Application Comptalyze sur smartphone et tablette"
+                        width={800}
+                        height={600}
+                        className="w-full h-auto rounded-2xl drop-shadow-2xl"
+                        priority
+                        style={{
+                          filter: "drop-shadow(0 25px 50px rgba(0,0,0,0.5))",
+                        }}
+                      />
+                    </div>
+                  </motion.div>
+                </div>
+              </div>
+            </FadeIn>
+          </div>
 
           {/* Social Proof */}
           <FadeIn delay={0.4} y={12} duration={0.5}>
-            <div className="mt-12 mx-auto max-w-4xl">
+            <div className="mt-12 mx-auto max-w-4xl text-center">
               <div 
                 className="relative rounded-2xl p-6 sm:p-8 overflow-hidden"
                 style={{
@@ -473,7 +314,7 @@ export default function LandingPage() {
       </section>
 
       {/* CALCULATEUR URSSAF DEMO */}
-      <section className="relative px-4 py-12 sm:py-16 md:py-20">
+      <section id="demo" className="relative px-4 py-12 sm:py-16 md:py-20">
         <div className="mx-auto max-w-7xl">
           <FadeIn delay={0} y={12} duration={0.5}>
             <div className="text-center mb-8 sm:mb-12">
@@ -690,108 +531,6 @@ export default function LandingPage() {
               </ScaleOnHover>
             </motion.div>
           </Stagger>
-        </div>
-      </section>
-
-      {/* Évolution continue */}
-      <section className="relative px-4 py-12 sm:py-16">
-        <div className="mx-auto max-w-5xl">
-          <FadeIn delay={0} y={12} duration={0.6}>
-            <div 
-              className="rounded-2xl p-8 sm:p-12 relative overflow-hidden"
-              style={{
-                background: "linear-gradient(135deg, rgba(0,208,132,0.08) 0%, rgba(46,108,246,0.08) 100%)",
-                border: "1px solid rgba(46,108,246,0.2)",
-              }}
-            >
-              {/* Gradient accent top */}
-              <div 
-                className="absolute top-0 left-0 right-0 h-1"
-                style={{
-                  background: "linear-gradient(90deg, #00D084 0%, #2E6CF6 100%)",
-                }}
-              />
-
-              <div className="text-center relative z-10">
-                <motion.div 
-                  className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-6"
-                  style={{
-                    background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                    boxShadow: "0 0 40px rgba(0, 208, 132, 0.3)",
-                  }}
-                  animate={{ 
-                    rotate: [0, 360],
-                    scale: [1, 1.05, 1]
-                  }}
-                  transition={{ 
-                    rotate: { duration: 20, repeat: Infinity, ease: "linear" },
-                    scale: { duration: 2, repeat: Infinity, ease: "easeInOut" }
-                  }}
-                >
-                  <Sparkles className="w-8 h-8 text-white" />
-                </motion.div>
-
-                <h2 className="text-2xl sm:text-3xl font-bold mb-4">
-                  Un outil en <span className="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">constante évolution</span>
-                </h2>
-                
-                <p className="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto mb-8">
-                  Comptalyze s&apos;améliore continuellement grâce à vos retours. De nouvelles fonctionnalités sont ajoutées régulièrement pour répondre encore mieux à vos besoins de micro-entrepreneur.
-                </p>
-
-                {/* Récentes améliorations */}
-                <div className="grid sm:grid-cols-3 gap-4 mt-8 max-w-3xl mx-auto">
-                  <motion.div 
-                    className="rounded-xl p-4"
-                    style={{
-                      backgroundColor: "#14161b",
-                      border: "1px solid #1f232b",
-                    }}
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    <div className="text-2xl mb-2">🎯</div>
-                    <div className="text-sm font-semibold text-white mb-1">Simulateur TVA</div>
-                    <div className="text-xs text-gray-400">Ajouté récemment</div>
-                  </motion.div>
-
-                  <motion.div 
-                    className="rounded-xl p-4"
-                    style={{
-                      backgroundColor: "#14161b",
-                      border: "1px solid #1f232b",
-                    }}
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    <div className="text-2xl mb-2">📅</div>
-                    <div className="text-sm font-semibold text-white mb-1">Calendrier fiscal</div>
-                    <div className="text-xs text-gray-400">Nouveauté 2025</div>
-                  </motion.div>
-
-                  <motion.div 
-                    className="rounded-xl p-4"
-                    style={{
-                      backgroundColor: "#14161b",
-                      border: "1px solid #1f232b",
-                    }}
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    <div className="text-2xl mb-2">🤖</div>
-                    <div className="text-sm font-semibold text-white mb-1">Assistant IA</div>
-                    <div className="text-xs text-gray-400">En amélioration continue</div>
-                  </motion.div>
-                </div>
-
-                <div className="mt-8 pt-6 border-t" style={{ borderColor: "#2d3441" }}>
-                  <p className="text-sm text-gray-400">
-                    💡 <span className="font-medium text-gray-300">Votre avis compte !</span> Vos suggestions nous aident à créer l&apos;outil parfait pour les micro-entrepreneurs.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </FadeIn>
         </div>
       </section>
 

@@ -43,7 +43,8 @@ export default function NewInvoicePage() {
         }
 
         const userPlan = await getUserPlan(supabase, session.user.id);
-        const canAccess = userPlan === 'pro' || userPlan === 'premium';
+        // FREE peut créer 1 facture/mois, Pro et Premium sont illimités
+        const canAccess = userPlan === 'free' || userPlan === 'pro' || userPlan === 'premium';
         setHasAccess(canAccess);
 
         if (canAccess) {
@@ -177,6 +178,35 @@ export default function NewInvoicePage() {
         alert('Vous devez être connecté pour créer une facture');
         router.push('/login');
         return;
+      }
+
+      // Vérifier les limites pour les utilisateurs FREE
+      const userPlan = await getUserPlan(supabase, session.user.id);
+      if (userPlan === 'free') {
+        const { data: { session: authSession } } = await supabase.auth.getSession();
+        if (authSession?.access_token) {
+          const checkResponse = await fetch('/api/check-limits', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${authSession.access_token}`,
+            },
+            body: JSON.stringify({ type: 'invoice' }),
+          });
+
+          if (checkResponse.ok) {
+            const limitData = await checkResponse.json();
+            if (!limitData.allowed) {
+              alert(
+                `Vous avez atteint la limite de ${limitData.limit} facture${limitData.limit > 1 ? 's' : ''} par mois sur le plan gratuit. ` +
+                `Passez à Pro pour créer des factures illimitées !`
+              );
+              setLoading(false);
+              router.push('/pricing');
+              return;
+            }
+          }
+        }
       }
 
       // Générer le numéro de facture

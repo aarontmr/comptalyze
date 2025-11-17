@@ -56,10 +56,20 @@ export default function DashboardOverview() {
         const subscription = getUserSubscription(session.user);
 
         // Charger les enregistrements CA
-        const { data: caRecords } = await supabase
+        // Pour FREE : limiter à 30 derniers jours
+        let query = supabase
           .from('ca_records')
-          .select('amount_eur, computed_net_eur, computed_contrib_eur, year, month, activity_type')
-          .eq('user_id', session.user.id)
+          .select('amount_eur, computed_net_eur, computed_contrib_eur, year, month, activity_type, created_at')
+          .eq('user_id', session.user.id);
+        
+        // Limiter à 30 jours pour FREE
+        if (subscription.plan === 'free') {
+          const thirtyDaysAgo = new Date();
+          thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+          query = query.gte('created_at', thirtyDaysAgo.toISOString());
+        }
+        
+        const { data: caRecords } = await query
           .order('year', { ascending: false })
           .order('month', { ascending: false })
           .order('created_at', { ascending: false });
@@ -152,44 +162,81 @@ export default function DashboardOverview() {
 
   // Desktop version (hidden on mobile) - uses existing Card from app/components
   const DesktopView = () => (
-    <div>
+    <div className="relative z-10">
       <Breadcrumbs items={[{ label: 'Aperçu' }]} />
       <h1 className="text-3xl font-semibold text-white mb-8" data-tutorial="overview">Aperçu</h1>
 
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8" data-tutorial="stats-cards">
+      {/* Cartes principales - CA Total et Revenu Net (grandes cartes) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8" data-tutorial="stats-cards">
         {/* Chiffre d'affaires total */}
-        <DesktopCard>
-          <div className="flex items-center justify-between mb-4">
-            <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(0, 208, 132, 0.1)' }}>
-              <DollarSign className="w-6 h-6" style={{ color: '#00D084' }} />
+        <div
+          className="rounded-xl p-6 relative"
+          style={{
+            backgroundColor: '#16181d',
+            border: '1px solid rgba(0, 208, 132, 0.3)',
+            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 208, 132, 0.1), 0 0 20px rgba(0, 208, 132, 0.1)',
+          }}
+        >
+          {/* Effet de bordure éclairée verte */}
+          <div
+            className="absolute inset-0 rounded-xl pointer-events-none"
+            style={{
+              border: '1px solid rgba(0, 208, 132, 0.2)',
+              boxShadow: 'inset 0 0 30px rgba(0, 208, 132, 0.05)',
+            }}
+          />
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(0, 208, 132, 0.1)' }}>
+                <DollarSign className="w-6 h-6" style={{ color: '#00D084' }} />
+              </div>
             </div>
+            <h3 className="text-sm font-medium text-gray-400 mb-1">CA Total</h3>
+            <p className="text-2xl font-semibold text-white">
+              {formatEuro(stats.totalCA)} €
+            </p>
+            <p className="text-xs text-gray-500 mt-2">
+              {stats.recordCount} enregistrement{stats.recordCount !== 1 ? 's' : ''}
+            </p>
           </div>
-          <h3 className="text-sm font-medium text-gray-400 mb-1">CA Total</h3>
-          <p className="text-2xl font-semibold text-white">
-            {formatEuro(stats.totalCA)} €
-          </p>
-          <p className="text-xs text-gray-500 mt-2">
-            {stats.recordCount} enregistrement{stats.recordCount !== 1 ? 's' : ''}
-          </p>
-        </DesktopCard>
+        </div>
 
         {/* Revenu net */}
-        <DesktopCard>
-          <div className="flex items-center justify-between mb-4">
-            <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(46, 108, 246, 0.1)' }}>
-              <TrendingUp className="w-6 h-6" style={{ color: '#2E6CF6' }} />
+        <div
+          className="rounded-xl p-6 relative"
+          style={{
+            backgroundColor: '#16181d',
+            border: '1px solid rgba(46, 108, 246, 0.3)',
+            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(46, 108, 246, 0.1), 0 0 20px rgba(46, 108, 246, 0.1)',
+          }}
+        >
+          {/* Effet de bordure éclairée bleue */}
+          <div
+            className="absolute inset-0 rounded-xl pointer-events-none"
+            style={{
+              border: '1px solid rgba(46, 108, 246, 0.2)',
+              boxShadow: 'inset 0 0 30px rgba(46, 108, 246, 0.05)',
+            }}
+          />
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(46, 108, 246, 0.1)' }}>
+                <TrendingUp className="w-6 h-6" style={{ color: '#2E6CF6' }} />
+              </div>
             </div>
+            <h3 className="text-sm font-medium text-gray-400 mb-1">Revenu Net</h3>
+            <p className="text-2xl font-semibold text-white">
+              {formatEuro(stats.totalNet)} €
+            </p>
+            <p className="text-xs text-gray-500 mt-2">
+              Après cotisations
+            </p>
           </div>
-          <h3 className="text-sm font-medium text-gray-400 mb-1">Revenu Net</h3>
-          <p className="text-2xl font-semibold text-white">
-            {formatEuro(stats.totalNet)} €
-          </p>
-          <p className="text-xs text-gray-500 mt-2">
-            Après cotisations
-          </p>
-        </DesktopCard>
+        </div>
+      </div>
 
+      {/* Cartes secondaires - en grille 3 colonnes */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {/* Cotisations totales */}
         <DesktopCard>
           <div className="flex items-center justify-between mb-4">
@@ -243,14 +290,36 @@ export default function DashboardOverview() {
         )}
       </div>
 
-      {/* Upgrade Teaser */}
-      <UpgradeTeaser currentPlan={subscription.plan} />
+        {/* Upgrade Teaser */}
+        <UpgradeTeaser currentPlan={subscription.plan} />
 
       {/* Actions rapides */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Link href="/dashboard/simulateur" data-tutorial="calculator">
-          <DesktopCard className="cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg">
-            <div className="flex items-center gap-4">
+          <div
+            className="rounded-xl p-6 cursor-pointer transition-all relative group"
+            style={{
+              backgroundColor: '#16181d',
+              border: '1px solid rgba(45, 52, 65, 0.6)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.05)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(0, 208, 132, 0.4)';
+              e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 208, 132, 0.2), 0 0 20px rgba(0, 208, 132, 0.15)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(45, 52, 65, 0.6)';
+              e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.05)';
+            }}
+          >
+            <div
+              className="absolute inset-0 rounded-xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity"
+              style={{
+                border: '1px solid rgba(0, 208, 132, 0.3)',
+                boxShadow: 'inset 0 0 30px rgba(0, 208, 132, 0.08)',
+              }}
+            />
+            <div className="relative z-10 flex items-center gap-4">
               <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(0, 208, 132, 0.1)' }}>
                 <Calculator className="w-6 h-6" style={{ color: '#00D084' }} />
               </div>
@@ -261,13 +330,35 @@ export default function DashboardOverview() {
                 </p>
               </div>
             </div>
-          </DesktopCard>
+          </div>
         </Link>
 
         {(subscription.isPro || subscription.isPremium) && (
           <Link href="/dashboard/factures" data-tutorial="invoices">
-            <DesktopCard className="cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg">
-              <div className="flex items-center gap-4">
+            <div
+              className="rounded-xl p-6 cursor-pointer transition-all relative group"
+              style={{
+                backgroundColor: '#16181d',
+                border: '1px solid rgba(45, 52, 65, 0.6)',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.05)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(46, 108, 246, 0.4)';
+                e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(46, 108, 246, 0.2), 0 0 20px rgba(46, 108, 246, 0.15)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(45, 52, 65, 0.6)';
+                e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.05)';
+              }}
+            >
+              <div
+                className="absolute inset-0 rounded-xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity"
+                style={{
+                  border: '1px solid rgba(46, 108, 246, 0.3)',
+                  boxShadow: 'inset 0 0 30px rgba(46, 108, 246, 0.08)',
+                }}
+              />
+              <div className="relative z-10 flex items-center gap-4">
                 <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(46, 108, 246, 0.1)' }}>
                   <FileText className="w-6 h-6" style={{ color: '#2E6CF6' }} />
                 </div>
@@ -278,14 +369,36 @@ export default function DashboardOverview() {
                   </p>
                 </div>
               </div>
-            </DesktopCard>
+            </div>
           </Link>
         )}
 
         {subscription.isPremium && (
           <Link href="/dashboard/statistiques" data-tutorial="statistics">
-            <DesktopCard className="cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg">
-              <div className="flex items-center gap-4">
+            <div
+              className="rounded-xl p-6 cursor-pointer transition-all relative group"
+              style={{
+                backgroundColor: '#16181d',
+                border: '1px solid rgba(45, 52, 65, 0.6)',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.05)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(0, 208, 132, 0.4)';
+                e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 208, 132, 0.2), 0 0 20px rgba(0, 208, 132, 0.15)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(45, 52, 65, 0.6)';
+                e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.05)';
+              }}
+            >
+              <div
+                className="absolute inset-0 rounded-xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity"
+                style={{
+                  border: '1px solid rgba(0, 208, 132, 0.3)',
+                  boxShadow: 'inset 0 0 30px rgba(0, 208, 132, 0.08)',
+                }}
+              />
+              <div className="relative z-10 flex items-center gap-4">
                 <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(0, 208, 132, 0.1)' }}>
                   <BarChart3 className="w-6 h-6" style={{ color: '#00D084' }} />
                 </div>
@@ -296,7 +409,7 @@ export default function DashboardOverview() {
                   </p>
                 </div>
               </div>
-            </DesktopCard>
+            </div>
           </Link>
         )}
       </div>

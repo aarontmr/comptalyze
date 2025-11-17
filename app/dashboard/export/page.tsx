@@ -2,6 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { getUserPlan } from "@/lib/plan";
+import Breadcrumbs from "@/app/components/Breadcrumbs";
+import FeaturePreview from "@/app/components/FeaturePreview";
+import PlanBadge from "@/app/components/PlanBadge";
 import { Download, FileSpreadsheet, FileText, Calendar } from "lucide-react";
 import { User } from "@supabase/supabase-js";
 
@@ -11,11 +15,19 @@ export default function ExportPage() {
   const [exportType, setExportType] = useState<"excel" | "csv" | "pdf">("excel");
   const [period, setPeriod] = useState<"month" | "quarter" | "year">("month");
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
+  const [plan, setPlan] = useState<"free" | "pro" | "premium">("free");
 
   useEffect(() => {
     const getUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user || null);
+      if (session?.user) {
+        setUser(session.user);
+        const userPlan = await getUserPlan(supabase, session.user.id);
+        setPlan(userPlan);
+      } else {
+        setUser(null);
+        setPlan("free");
+      }
     };
     getUser();
   }, []);
@@ -58,9 +70,70 @@ export default function ExportPage() {
     }
   };
 
+  if (plan === "free") {
+    return (
+      <div>
+        <Breadcrumbs items={[{ label: "Aperçu", href: "/dashboard" }, { label: "Export comptable" }]} />
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold text-white">Export comptable</h1>
+          <PlanBadge plan="pro" size="lg" />
+        </div>
+        <FeaturePreview
+          title="Exportez vos données en un clic"
+          description="Générez un fichier Excel, CSV ou PDF prêt pour votre expert-comptable et vos archives."
+          benefits={[
+            "Journal comptable complet (CA, charges, factures)",
+            "Formats Excel, CSV et PDF",
+            "Filtre par mois, trimestre ou année",
+            "Parfait pour un changement de statut ou un contrôle"
+          ]}
+          plan="pro"
+          ctaText="Débloquer l’export comptable - 3,90€/mois"
+          showPreview
+          previewOpacity={0.15}
+        >
+          <div className="p-6 space-y-4">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-sm text-gray-400 mb-1">Format sélectionné</p>
+                <p className="text-lg font-semibold text-white">Excel (.xlsx)</p>
+              </div>
+              <Download className="w-8 h-8" style={{ color: "#00D084" }} />
+            </div>
+            <div className="rounded-xl p-4" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
+              <div className="flex items-center justify-between mb-2 text-xs text-gray-400">
+                <span>Date</span>
+                <span>Libellé</span>
+                <span>Montant</span>
+              </div>
+              <div className="space-y-1 text-sm text-gray-300">
+                <div className="flex items-center justify-between">
+                  <span>15/01/2025</span>
+                  <span>CA Shopify</span>
+                  <span>1 250,00 €</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>16/01/2025</span>
+                  <span>Facture client</span>
+                  <span>890,00 €</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>28/01/2025</span>
+                  <span>Cotisations URSSAF</span>
+                  <span>- 740,00 €</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </FeaturePreview>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="max-w-4xl mx-auto">
+        <Breadcrumbs items={[{ label: "Aperçu", href: "/dashboard" }, { label: "Export comptable" }]} />
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">

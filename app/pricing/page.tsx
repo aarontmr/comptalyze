@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { getUserSubscription } from "@/lib/subscriptionUtils";
 import { User } from "@supabase/supabase-js";
 import { Check, ArrowLeft } from "lucide-react";
 
 export default function PricingPage() {
+  const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
@@ -28,54 +30,17 @@ export default function PricingPage() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleCheckout = async (plan: "pro" | "premium") => {
+  const handleCheckout = (plan: "pro" | "premium") => {
     // Vérifier que l'utilisateur est connecté
     if (!user) {
-      window.location.href = "/login";
+      router.push("/login");
       return;
     }
 
     setLoading(plan);
 
-    try {
-      // Déterminer le plan avec cycle de facturation
-      const planWithCycle = billingCycle === "yearly" ? `${plan}_yearly` : plan;
-
-      // Obtenir le token de session
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        window.location.href = "/login";
-        return;
-      }
-
-      // Appeler l'API checkout pour créer une session Stripe Checkout hébergée
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({ 
-          plan: planWithCycle,
-          userId: user.id 
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.error || "Une erreur est survenue");
-        setLoading(null);
-        return;
-      }
-
-      // Rediriger vers Stripe Checkout (Apple Pay y sera disponible!)
-      window.location.href = data.url;
-    } catch (error) {
-      console.error("Erreur checkout:", error);
-      alert("Une erreur est survenue");
-      setLoading(null);
-    }
+    const planWithCycle = billingCycle === "yearly" ? `${plan}_yearly` : plan;
+    router.push(`/checkout/${planWithCycle}`);
   };
 
   // Prix et économies - OFFRE BLACK FRIDAY 🚀
@@ -132,8 +97,23 @@ export default function PricingPage() {
             Des plans simples et transparents
           </h1>
           <p className="mt-4 text-lg sm:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
-            Profitez de nos prix Black Friday réduits pour nos premiers clients.
+            Commencez gratuitement sans carte bancaire, puis débloquez toute la puissance de Comptalyze avec Pro ou Premium quand vous êtes prêt.
           </p>
+          
+          {/* Badge de confiance */}
+          <div className="mt-6 flex flex-col items-center gap-2">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium" style={{ 
+              backgroundColor: "rgba(0, 208, 132, 0.15)", 
+              color: "#00D084", 
+              border: "1px solid rgba(0, 208, 132, 0.3)" 
+            }}>
+              <span>✓</span>
+              <span>Plan gratuit – sans carte bancaire</span>
+            </div>
+            <p className="text-sm text-gray-500">
+              Créez votre compte en moins de 30 secondes
+            </p>
+          </div>
           
           {/* Toggle Mensuel/Annuel */}
           <div className="mt-12 inline-flex items-center gap-3 rounded-xl p-2" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b", boxShadow: "0 4px 12px rgba(0,0,0,0.3)" }}>
@@ -178,37 +158,67 @@ export default function PricingPage() {
         <div className="mx-auto mt-0 grid max-w-6xl gap-8 sm:grid-cols-2 lg:grid-cols-3" style={{ gridAutoRows: 'auto', alignItems: 'start' }}>
           {/* Gratuit */}
           <div className="rounded-2xl p-8 flex flex-col transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
-            <div className="mb-3 text-sm font-semibold text-gray-400 uppercase tracking-wide">Gratuit</div>
+            <div className="mb-3">
+              <div className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-1">Gratuit</div>
+              <div className="text-xs font-medium" style={{ color: "#00D084" }}>Free forever</div>
+            </div>
             <div className="mb-6">
               <div className="flex items-baseline gap-2">
                 <span className="text-5xl font-bold">0 €</span>
                 <span className="text-gray-400 text-lg">/mois</span>
               </div>
+              <p className="text-xs text-gray-500 mt-2">Parfait pour commencer à suivre vos charges URSSAF en quelques clics.</p>
             </div>
             <div className="flex-1">
-              <div className="text-xs font-bold text-gray-400 mb-4 uppercase tracking-wider">Pour découvrir</div>
+              <div className="text-xs font-bold text-gray-400 mb-4 uppercase tracking-wider">Fonctionnalités incluses</div>
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2 text-gray-300">
                   <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
-                  <span>3 enregistrements par mois</span>
+                  <span>5 simulations URSSAF sauvegardées / mois</span>
                 </li>
                 <li className="flex items-start gap-2 text-gray-300">
                   <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
-                  <span>Simulateur URSSAF (cotisations sociales)</span>
+                  <span>Calcul en temps réel des cotisations et revenu net</span>
                 </li>
                 <li className="flex items-start gap-2 text-gray-300">
                   <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
-                  <span>Projection simple de votre activité</span>
+                  <span>Dashboard basique : CA, cotisations, revenu net (30 derniers jours)</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-300">
+                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
+                  <span>1 graphique CA (3 derniers mois)</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-300">
+                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
+                  <span>1 facture / mois (PDF téléchargeable)</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-300">
+                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
+                  <span>Accès à tous les guides et tutoriels</span>
                 </li>
               </ul>
             </div>
-            <Link
-              href="/signup?plan=free"
-              className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm transition-all duration-300 hover:scale-[1.05] hover:shadow-lg cursor-pointer hover:bg-gray-800/50 active:scale-95"
-              style={{ border: "1px solid #2b2f36", backgroundColor: "#0e0f12" }}
-            >
-              Essayer gratuitement
-            </Link>
+            <div className="mt-6 space-y-2">
+              <Link
+                href="/signup?plan=free"
+                className="inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-[1.05] hover:shadow-lg cursor-pointer"
+                style={{ 
+                  border: "1px solid rgba(0, 208, 132, 0.3)", 
+                  backgroundColor: "rgba(0, 208, 132, 0.1)",
+                  color: "#00D084"
+                }}
+              >
+                Créer un compte gratuit
+              </Link>
+              <p className="text-xs text-center text-gray-500">
+                <span className="inline-flex items-center gap-1">
+                  <span style={{ color: "#00D084" }}>✓</span>
+                  Sans carte bancaire
+                </span>
+                {' • '}
+                <span>Création en moins de 30 secondes</span>
+              </p>
+            </div>
           </div>
 
           {/* Pro (highlighted) */}
@@ -540,6 +550,54 @@ export default function PricingPage() {
                 </button>
               );
             })()}
+          </div>
+        </div>
+      </section>
+
+      {/* Tableau de comparaison des plans */}
+      <section className="px-4 pb-16">
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl sm:text-3xl font-semibold mb-3">Comparer les plans</h2>
+            <p className="text-sm sm:text-base text-gray-400">
+              Choisissez le niveau qui correspond à votre activité de micro-entrepreneur.
+            </p>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left border-collapse" style={{ borderColor: "#1f232b" }}>
+              <thead>
+                <tr>
+                  <th className="px-4 py-3 text-gray-400"></th>
+                  <th className="px-4 py-3 text-gray-200 font-semibold">Free</th>
+                  <th className="px-4 py-3 text-gray-200 font-semibold">Pro</th>
+                  <th className="px-4 py-3 text-gray-200 font-semibold">Premium</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { label: "Simulations URSSAF", free: "5 / mois", pro: "Illimitées", premium: "Illimitées" },
+                  { label: "Pré-remplissage URSSAF", free: "—", pro: "—", premium: "✔" },
+                  { label: "Dashboard basique (30 jours)", free: "✔", pro: "Illimité", premium: "Illimité" },
+                  { label: "Graphiques CA (3 mois)", free: "✔", pro: "Illimité", premium: "Illimité" },
+                  { label: "Factures PDF", free: "1 / mois", pro: "Illimitées", premium: "Illimitées" },
+                  { label: "Envoi factures par email", free: "—", pro: "✔", premium: "✔" },
+                  { label: "Personnalisation factures (logo/couleurs)", free: "—", pro: "✔", premium: "✔" },
+                  { label: "Simulateur TVA", free: "—", pro: "✔", premium: "✔" },
+                  { label: "Exports comptables (Excel/CSV/PDF)", free: "—", pro: "✔", premium: "✔" },
+                  { label: "Statistiques avancées & IA", free: "—", pro: "—", premium: "✔" },
+                  { label: "Calendrier fiscal intelligent", free: "—", pro: "—", premium: "✔" },
+                  { label: "ComptaBot (assistant IA)", free: "—", pro: "—", premium: "✔" },
+                  { label: "Alertes & rappels automatiques", free: "—", pro: "—", premium: "✔" },
+                ].map((row) => (
+                  <tr key={row.label} className="border-t" style={{ borderColor: "#1f232b" }}>
+                    <td className="px-4 py-3 text-gray-300">{row.label}</td>
+                    <td className="px-4 py-3 text-gray-200">{row.free}</td>
+                    <td className="px-4 py-3 text-gray-200">{row.pro}</td>
+                    <td className="px-4 py-3 text-gray-200">{row.premium}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </section>

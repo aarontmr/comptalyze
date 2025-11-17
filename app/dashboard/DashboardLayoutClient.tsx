@@ -168,9 +168,45 @@ export default function DashboardLayoutClient({
   return (
     <>
       <div
-        className="min-h-screen flex"
-        style={{ backgroundColor: '#0e0f12', fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}
+        className="min-h-screen flex relative"
+        style={{ fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}
       >
+        {/* Fond avec gradients subtils et effets de lumière */}
+        <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
+          {/* Fond de base avec gradient */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: 'linear-gradient(135deg, #0e0f12 0%, #0a0b0e 50%, #0e0f12 100%)',
+            }}
+          />
+          
+          {/* Gradients radiaux colorés subtils */}
+          <div
+            className="absolute -top-40 -left-40 h-[800px] w-[800px] rounded-full blur-3xl opacity-15"
+            style={{ background: 'radial-gradient(circle, rgba(0, 208, 132, 0.4), transparent)' }}
+          />
+          <div
+            className="absolute top-1/4 -right-40 h-[700px] w-[700px] rounded-full blur-3xl opacity-12"
+            style={{ background: 'radial-gradient(circle, rgba(46, 108, 246, 0.4), transparent)' }}
+          />
+          <div
+            className="absolute bottom-0 left-1/3 h-[600px] w-[600px] rounded-full blur-3xl opacity-10"
+            style={{ background: 'radial-gradient(circle, rgba(139, 92, 246, 0.3), transparent)' }}
+          />
+          <div
+            className="absolute top-1/2 right-1/4 h-[500px] w-[500px] rounded-full blur-3xl opacity-8"
+            style={{ background: 'radial-gradient(circle, rgba(0, 208, 132, 0.3), transparent)' }}
+          />
+          
+          {/* Effet de lumière subtil supplémentaire */}
+          <div
+            className="absolute top-0 left-1/2 w-[600px] h-[400px] -translate-x-1/2 blur-3xl opacity-5"
+            style={{
+              background: 'radial-gradient(ellipse, rgba(255, 255, 255, 0.1), transparent)',
+            }}
+          />
+        </div>
         <aside
           className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:top-0 lg:bottom-0 lg:left-0 z-40"
           style={{
@@ -476,7 +512,7 @@ export default function DashboardLayoutClient({
           </div>
         </aside>
 
-        <div className="flex-1 flex flex-col lg:pl-64">
+        <div className="flex-1 flex flex-col lg:pl-64 relative z-10">
           <header className="lg:hidden sticky top-0 z-30 flex items-center justify-between h-16 px-4 bg-[#111216] border-b border-gray-800">
             <button
               onClick={() => setSidebarOpen(true)}

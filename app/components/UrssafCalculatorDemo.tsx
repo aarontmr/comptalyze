@@ -60,6 +60,24 @@ export default function UrssafCalculatorDemo() {
 
   return (
     <div className="w-full max-w-5xl mx-auto">
+      {/* Bandeau mode démo */}
+      <div
+        className="mb-4 rounded-xl px-4 py-3 text-sm flex flex-col sm:flex-row items-start sm:items-center gap-2"
+        style={{
+          backgroundColor: "rgba(46,108,246,0.1)",
+          border: "1px solid rgba(46,108,246,0.3)",
+        }}
+      >
+        <span
+          className="inline-flex items-center justify-center px-2 py-1 rounded-full text-xs font-semibold"
+          style={{ backgroundColor: "rgba(0,208,132,0.15)", color: "#00D084" }}
+        >
+          Mode démo
+        </span>
+        <p className="text-gray-300">
+          Données 100% fictives, aucun enregistrement n&apos;est sauvegardé. Le compte gratuit vous permet ensuite d&apos;enregistrer vos calculs réels.
+        </p>
+      </div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
