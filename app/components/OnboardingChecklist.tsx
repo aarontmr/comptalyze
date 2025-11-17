@@ -353,7 +353,7 @@ export default function OnboardingChecklist({ user, onComplete }: OnboardingChec
                 >
                   <div className="mt-0.5">
                     {isCompleted ? (
-                      <CheckCircle2 className="w-5 h-5" style={{ color: "#00D084" }} />
+                      <CheckCircle2 className="w-5 h-5 text-[#00D084]" />
                     ) : (
                       <Circle className="w-5 h-5 text-gray-500" />
                     )}
@@ -366,7 +366,7 @@ export default function OnboardingChecklist({ user, onComplete }: OnboardingChec
                         className="block"
                       >
                         <div className="flex items-center gap-2 mb-1">
-                          <Icon className="w-4 h-4" style={{ color: isCompleted ? "#00D084" : "#9ca3af" }} />
+                          <Icon className={`w-4 h-4 ${isCompleted ? "text-[#00D084]" : "text-gray-400"}`} />
                           <span className={`text-sm font-medium ${isCompleted ? "text-gray-300 line-through" : "text-white"}`}>
                             {item.label}
                           </span>
@@ -376,7 +376,7 @@ export default function OnboardingChecklist({ user, onComplete }: OnboardingChec
                     ) : (
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <Icon className="w-4 h-4" style={{ color: isCompleted ? "#00D084" : "#9ca3af" }} />
+                          <Icon className={`w-4 h-4 ${isCompleted ? "text-[#00D084]" : "text-gray-400"}`} />
                           <span className={`text-sm font-medium ${isCompleted ? "text-gray-300 line-through" : "text-white"}`}>
                             {item.label}
                           </span>
