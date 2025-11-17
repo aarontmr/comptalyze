@@ -272,7 +272,7 @@ export default function SignupPage() {
         
         // Tracker la conversion Google Ads si applicable
         const utmParams2 = getStoredUTMParams();
-        if (utmParams2.utm_source === 'google' || utmParams2.utm_medium === 'cpc') {
+        if ((utmParams2.utm_source === 'google' || utmParams2.utm_medium === 'cpc') && data.user?.id) {
           fetch('/api/track-conversion', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
