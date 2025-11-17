@@ -50,7 +50,7 @@ export default function LandingPreviewsSection() {
               }}
             >
               <Image
-                src="/mockups/dashboard-devices-mockup.png"
+                src="/deviced-mockup.png"
                 alt="Comptalyze - Dashboard sur tablette et ordinateur portable montrant les métriques financières et projections"
                 width={1400}
                 height={900}
