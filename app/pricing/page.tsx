@@ -118,38 +118,38 @@ export default function PricingPage() {
           {/* Toggle Mensuel/Annuel */}
           <div className="mt-8 sm:mt-12 flex justify-center">
             <div className="inline-flex items-center gap-2 sm:gap-3 rounded-xl p-1.5 sm:p-2" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b", boxShadow: "0 4px 12px rgba(0,0,0,0.3)" }}>
-              <button
-                onClick={() => setBillingCycle("monthly")}
+            <button
+              onClick={() => setBillingCycle("monthly")}
                 className={`px-4 sm:px-8 py-2 sm:py-3 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-300 cursor-pointer ${
-                  billingCycle === "monthly" 
-                    ? "text-white shadow-lg scale-105" 
-                    : "text-gray-400 hover:text-gray-300 hover:scale-105 hover:bg-gray-800/30"
-                }`}
-                style={billingCycle === "monthly" ? {
-                  background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                } : {}}
-              >
-                Mensuel
-              </button>
-              <button
-                onClick={() => setBillingCycle("yearly")}
+                billingCycle === "monthly" 
+                  ? "text-white shadow-lg scale-105" 
+                  : "text-gray-400 hover:text-gray-300 hover:scale-105 hover:bg-gray-800/30"
+              }`}
+              style={billingCycle === "monthly" ? {
+                background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+              } : {}}
+            >
+              Mensuel
+            </button>
+            <button
+              onClick={() => setBillingCycle("yearly")}
                 className={`px-4 sm:px-8 py-2 sm:py-3 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-300 relative cursor-pointer ${
-                  billingCycle === "yearly" 
-                    ? "text-white shadow-lg scale-105" 
-                    : "text-gray-400 hover:text-gray-300 hover:scale-105 hover:bg-gray-800/30"
-                }`}
-                style={billingCycle === "yearly" ? {
-                  background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                } : {}}
-              >
-                Annuel
+                billingCycle === "yearly" 
+                  ? "text-white shadow-lg scale-105" 
+                  : "text-gray-400 hover:text-gray-300 hover:scale-105 hover:bg-gray-800/30"
+              }`}
+              style={billingCycle === "yearly" ? {
+                background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+              } : {}}
+            >
+              Annuel
                 <span className="ml-1 sm:ml-2 text-[10px] sm:text-xs px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full font-bold" style={{ 
-                  backgroundColor: billingCycle === "yearly" ? "rgba(255,255,255,0.2)" : "#00D084",
-                  color: billingCycle === "yearly" ? "white" : "#0e0f12"
-                }}>
-                  -20%
-                </span>
-              </button>
+                backgroundColor: billingCycle === "yearly" ? "rgba(255,255,255,0.2)" : "#00D084",
+                color: billingCycle === "yearly" ? "white" : "#0e0f12"
+              }}>
+                -20%
+              </span>
+            </button>
             </div>
           </div>
         </div>

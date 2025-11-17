@@ -29,12 +29,19 @@ const nextConfig: NextConfig = {
       {
         pathname: "/hero-demo2.gif",
       },
+      {
+        pathname: "/hero-demo.gif",
+      },
     ],
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 60,
     qualities: [75, 85],
+    // Permettre les images non optimisées pour les GIFs
+    unoptimized: false,
+    // Configuration pour les domaines externes si nécessaire
+    remotePatterns: [],
   },
   
   // Optimisation du bundler
@@ -78,7 +85,7 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: '/:all*(svg|jpg|png|gif|webp|avif)',
+        source: '/:all*(svg|jpg|jpeg|png|gif|webp|avif)',
         headers: [
           {
             key: 'Cache-Control',

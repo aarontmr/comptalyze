@@ -256,7 +256,7 @@ export default function LandingPage() {
                     {/* Image des appareils mobiles */}
                     <div className="relative z-10">
                       <Image
-                        src="/devices-mockup.png"
+                        src="/mockups/devices-mockup.png"
                         alt="Application Comptalyze sur smartphone et tablette"
                         width={800}
                         height={600}
@@ -406,14 +406,12 @@ export default function LandingPage() {
             >
               {/* GIF du dashboard */}
               <div className="relative">
-                <Image
+                <img
                   src="/hero-demo2.gif"
                   alt="Dashboard Comptalyze - Interface moderne de gestion comptable en action"
-                  width={1200}
-                  height={675}
                   className="w-full h-auto"
-                  priority
-                  unoptimized
+                  loading="eager"
+                  style={{ display: 'block' }}
                 />
                 {/* Overlay subtil au hover */}
                 <div className="absolute inset-0 bg-gradient-to-br from-[#00D084]/0 via-transparent to-[#2E6CF6]/0 group-hover:from-[#00D084]/5 group-hover:to-[#2E6CF6]/5 transition-all duration-500 pointer-events-none" />

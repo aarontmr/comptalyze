@@ -248,8 +248,8 @@ export default function Header({ user }: HeaderProps) {
         borderColor: "#1f232b",
       }}
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
+      <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6 lg:px-8">
+        <div className="flex h-14 sm:h-16 items-center justify-between">
           {/* Logo */}
           <Link
             href="/"
@@ -261,7 +261,7 @@ export default function Header({ user }: HeaderProps) {
               alt="Comptalyze"
               width={180}
               height={45}
-              className="h-8 sm:h-10 md:h-12 w-auto max-w-[140px] sm:max-w-[160px] md:max-w-[180px] transition-opacity hover:opacity-90 object-contain"
+              className="h-7 sm:h-8 md:h-10 lg:h-12 w-auto max-w-[120px] sm:max-w-[140px] md:max-w-[160px] lg:max-w-[180px] transition-opacity hover:opacity-90 object-contain"
               priority
             />
           </Link>
@@ -541,14 +541,14 @@ export default function Header({ user }: HeaderProps) {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-lg transition-all hover:bg-white/5"
+            className="lg:hidden p-1.5 sm:p-2 rounded-lg transition-all hover:bg-white/5 active:bg-white/10"
             aria-label="Toggle menu"
             style={{ color: "#FFFFFFCC" }}
           >
             {mobileMenuOpen ? (
-              <X className="w-6 h-6" />
+              <X className="w-5 h-5 sm:w-6 sm:h-6" />
             ) : (
-              <Menu className="w-6 h-6" />
+              <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
             )}
           </button>
         </div>
@@ -564,9 +564,8 @@ export default function Header({ user }: HeaderProps) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+              className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden ${bannerVisible ? "top-[104px] sm:top-[112px]" : "top-14 sm:top-16"}`}
               onClick={() => setMobileMenuOpen(false)}
-              style={{ top: bannerVisible ? "112px" : "64px" }}
             />
             {/* Menu Drawer */}
             <motion.div
@@ -574,13 +573,13 @@ export default function Header({ user }: HeaderProps) {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className={`fixed right-0 bottom-0 w-full max-w-sm bg-[#0D0F14] border-l z-50 lg:hidden overflow-y-auto ${bannerVisible ? "top-[112px]" : "top-16"}`}
+              className={`fixed right-0 bottom-0 w-full sm:max-w-sm bg-[#0D0F14] border-l z-50 lg:hidden overflow-y-auto ${bannerVisible ? "top-[104px] sm:top-[112px]" : "top-14 sm:top-16"}`}
               style={{ borderColor: "#1f232b" }}
             >
-              <div className="p-6 space-y-6">
+              <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
                 {/* Fonctionnalités */}
                 <div>
-                  <div className="text-xs font-semibold uppercase tracking-wider mb-3 px-2" style={{ color: "#FFFFFF99" }}>
+                  <div className="text-xs font-semibold uppercase tracking-wider mb-2 sm:mb-3 px-2" style={{ color: "#FFFFFF99" }}>
                     Fonctionnalités
                   </div>
                   <div className="space-y-1">
@@ -593,16 +592,16 @@ export default function Header({ user }: HeaderProps) {
                           key={idx}
                           href={getHref(item.href, requiresAuth)}
                           onClick={() => setMobileMenuOpen(false)}
-                          className="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/5 group"
+                          className="flex items-center gap-2.5 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg transition-all duration-200 active:bg-white/5 group"
                         >
-                          <div className="p-1.5 rounded-lg bg-white/5 group-hover:bg-white/10 transition-colors">
-                            <Icon className="w-5 h-5" style={{ color: "#00E676" }} />
+                          <div className="p-1.5 rounded-lg bg-white/5 group-active:bg-white/10 transition-colors flex-shrink-0">
+                            <Icon className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: "#00E676" }} />
                           </div>
-                          <div className="flex-1">
+                          <div className="flex-1 min-w-0">
                             <div className="text-sm font-medium text-white">
                               {item.label}
                             </div>
-                            <div className="text-xs mt-0.5" style={{ color: "#FFFFFF99" }}>
+                            <div className="text-xs mt-0.5 leading-relaxed" style={{ color: "#FFFFFF99" }}>
                               {item.description}
                             </div>
                           </div>
@@ -614,7 +613,7 @@ export default function Header({ user }: HeaderProps) {
 
                 {/* Pour qui ? */}
                 <div>
-                  <div className="text-xs font-semibold uppercase tracking-wider mb-3 px-2" style={{ color: "#FFFFFF99" }}>
+                  <div className="text-xs font-semibold uppercase tracking-wider mb-2 sm:mb-3 px-2" style={{ color: "#FFFFFF99" }}>
                     Pour qui ?
                   </div>
                   <div className="space-y-1">
@@ -627,16 +626,16 @@ export default function Header({ user }: HeaderProps) {
                           key={idx}
                           href={getHref(item.href, requiresAuth)}
                           onClick={() => setMobileMenuOpen(false)}
-                          className="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/5 group"
+                          className="flex items-center gap-2.5 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg transition-all duration-200 active:bg-white/5 group"
                         >
-                          <div className="p-1.5 rounded-lg bg-white/5 group-hover:bg-white/10 transition-colors">
-                            <Icon className="w-5 h-5" style={{ color: "#2979FF" }} />
+                          <div className="p-1.5 rounded-lg bg-white/5 group-active:bg-white/10 transition-colors flex-shrink-0">
+                            <Icon className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: "#2979FF" }} />
                           </div>
-                          <div className="flex-1">
+                          <div className="flex-1 min-w-0">
                             <div className="text-sm font-medium text-white">
                               {item.label}
                             </div>
-                            <div className="text-xs mt-0.5" style={{ color: "#FFFFFF99" }}>
+                            <div className="text-xs mt-0.5 leading-relaxed" style={{ color: "#FFFFFF99" }}>
                               {item.description}
                             </div>
                           </div>
@@ -648,7 +647,7 @@ export default function Header({ user }: HeaderProps) {
 
                 {/* Ressources */}
                 <div>
-                  <div className="text-xs font-semibold uppercase tracking-wider mb-3 px-2" style={{ color: "#FFFFFF99" }}>
+                  <div className="text-xs font-semibold uppercase tracking-wider mb-2 sm:mb-3 px-2" style={{ color: "#FFFFFF99" }}>
                     Ressources
                   </div>
                   <div className="space-y-1">
@@ -661,16 +660,16 @@ export default function Header({ user }: HeaderProps) {
                           key={idx}
                           href={getHref(item.href, requiresAuth)}
                           onClick={() => setMobileMenuOpen(false)}
-                          className="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/5 group"
+                          className="flex items-center gap-2.5 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg transition-all duration-200 active:bg-white/5 group"
                         >
-                          <div className="p-1.5 rounded-lg bg-white/5 group-hover:bg-white/10 transition-colors">
-                            <Icon className="w-5 h-5" style={{ color: "#00E676" }} />
+                          <div className="p-1.5 rounded-lg bg-white/5 group-active:bg-white/10 transition-colors flex-shrink-0">
+                            <Icon className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: "#00E676" }} />
                           </div>
-                          <div className="flex-1">
+                          <div className="flex-1 min-w-0">
                             <div className="text-sm font-medium text-white">
                               {item.label}
                             </div>
-                            <div className="text-xs mt-0.5" style={{ color: "#FFFFFF99" }}>
+                            <div className="text-xs mt-0.5 leading-relaxed" style={{ color: "#FFFFFF99" }}>
                               {item.description}
                             </div>
                           </div>
@@ -685,9 +684,9 @@ export default function Header({ user }: HeaderProps) {
                   <Link
                     href={navigationData.tarifs.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-white/5"
+                    className="flex items-center gap-2.5 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg transition-all duration-200 active:bg-white/5"
                   >
-                    <DollarSign className="w-5 h-5" style={{ color: "#FFFFFFCC" }} />
+                    <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" style={{ color: "#FFFFFFCC" }} />
                     <span className="text-sm font-medium text-white">Tarifs</span>
                   </Link>
                 </div>
@@ -696,18 +695,18 @@ export default function Header({ user }: HeaderProps) {
                 <div className="h-px" style={{ backgroundColor: "#1f232b" }} />
 
                 {/* Actions */}
-                <div className="space-y-3 pt-2">
+                <div className="space-y-2.5 sm:space-y-3 pt-2">
                   {user ? (
                     <Link
                       href="/dashboard"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center justify-center gap-2 w-full px-6 py-3 rounded-full text-sm font-semibold text-white transition-all duration-300 hover:scale-105 active:scale-95"
+                      className="flex items-center justify-center gap-2 w-full px-5 sm:px-6 py-2.5 sm:py-3 rounded-full text-sm font-semibold text-white transition-all duration-300 active:scale-[0.98]"
                       style={{
                         background: "linear-gradient(135deg, #00E676 0%, #2979FF 100%)",
                         boxShadow: "0 4px 20px rgba(41, 121, 255, 0.4)",
                       }}
                     >
-                      <LayoutDashboard className="w-5 h-5" />
+                      <LayoutDashboard className="w-4 h-4 sm:w-5 sm:h-5" />
                       Dashboard
                     </Link>
                   ) : (
@@ -715,25 +714,25 @@ export default function Header({ user }: HeaderProps) {
                       <Link
                         href="/login"
                         onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center justify-center gap-2 w-full px-6 py-3 rounded-full text-sm font-medium transition-all duration-200 hover:bg-white/5"
+                        className="flex items-center justify-center gap-2 w-full px-5 sm:px-6 py-2.5 sm:py-3 rounded-full text-sm font-medium transition-all duration-200 active:bg-white/5"
                         style={{
                           border: "1px solid #1f232b",
                           color: "#FFFFFFCC",
                         }}
                       >
-                        <LogIn className="w-5 h-5" />
+                        <LogIn className="w-4 h-4 sm:w-5 sm:h-5" />
                         Se connecter
                       </Link>
                       <Link
                         href="/signup"
                         onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center justify-center gap-2 w-full px-6 py-3 rounded-full text-sm font-semibold text-white transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg"
+                        className="flex items-center justify-center gap-2 w-full px-5 sm:px-6 py-2.5 sm:py-3 rounded-full text-sm font-semibold text-white transition-all duration-300 active:scale-[0.98] shadow-lg"
                         style={{
                           background: "linear-gradient(135deg, #00E676 0%, #2979FF 100%)",
                           boxShadow: "0 4px 20px rgba(41, 121, 255, 0.4)",
                         }}
                       >
-                        <Sparkles className="w-5 h-5" />
+                        <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
                         Commencer gratuitement
                       </Link>
                     </>
