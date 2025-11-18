@@ -96,6 +96,25 @@ export default function LandingPage() {
       <section className="relative px-4 pt-28 pb-12 sm:pt-36 sm:pb-16 md:pt-40 md:pb-20 overflow-hidden">
         <GradientBlob />
         
+        {/* Image de fond pour mobile - optimisée */}
+        <div className="absolute inset-0 lg:hidden pointer-events-none overflow-hidden z-0">
+          <div className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-[15%] w-[140%] h-[90%] opacity-[0.15]">
+            <Image
+              src="/devices-mockup.png"
+              alt=""
+              width={800}
+              height={600}
+              className="w-full h-full object-contain"
+              loading="lazy"
+              fetchPriority="low"
+              style={{
+                filter: "blur(3px) brightness(0.8)",
+                transform: "scale(0.7) rotate(-5deg)",
+              }}
+            />
+          </div>
+        </div>
+        
         <div className="mx-auto max-w-7xl relative z-10">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center lg:items-start">
             {/* Colonne gauche - Contenu */}
