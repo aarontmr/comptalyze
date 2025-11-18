@@ -198,10 +198,6 @@ export default function PricingPage() {
                   <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
                   <span>Accès à tous les guides et tutoriels</span>
                 </li>
-                <li className="flex items-start gap-2 text-gray-300">
-                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
-                  <span>Authentification 2FA & sécurité du compte</span>
-                </li>
               </ul>
             </div>
             <div className="mt-6 space-y-2">
@@ -324,10 +320,6 @@ export default function PricingPage() {
                 <li className="flex items-start gap-2 text-gray-200">
                   <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
                   <span>Règles automatiques personnalisées</span>
-                </li>
-                <li className="flex items-start gap-2 text-gray-200">
-                  <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#00D084" }} />
-                  <span>Authentification 2FA & sécurité du compte</span>
                 </li>
               </ul>
             </div>
@@ -638,8 +630,6 @@ export default function PricingPage() {
                   { label: "Optimisation fiscale IA", free: "—", pro: "—", premium: "✔" },
                   { label: "ComptaBot (assistant IA)", free: "—", pro: "—", premium: "✔" },
                   { label: "Alertes & rappels automatiques", free: "—", pro: "—", premium: "✔" },
-                  { label: "Authentification 2FA", free: "✔", pro: "✔", premium: "✔" },
-                  { label: "Centre d'aide interactif", free: "✔", pro: "✔", premium: "✔" },
                   { label: "Programme de parrainage", free: "✔", pro: "✔", premium: "✔" },
                 ].map((row, index) => (
                   <tr 

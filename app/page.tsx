@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { Shield, TrendingUp, Percent, BarChart3, FileText, Calculator, Lock, Info, Check, Sparkles, Zap, UserPlus } from "lucide-react";
+import { Shield, TrendingUp, Percent, BarChart3, FileText, Calculator, Lock, Info, Check, Sparkles, Zap, UserPlus, FolderOpen, Users, ShieldCheck, Wallet } from "lucide-react";
 import { FadeIn, Stagger, ScaleOnHover, fadeInVariant } from "@/app/components/anim/Motion";
 import Counter from "@/app/components/anim/Counter";
 import GradientBlob from "@/app/components/anim/GradientBlob";
@@ -15,9 +15,6 @@ import UrssafCalculatorDemo from "@/app/components/UrssafCalculatorDemo";
 import Header from "@/components/Header";
 
 // Dynamic imports pour les composants lourds (chargés uniquement quand visibles)
-const TrustBadges = dynamic(() => import("@/app/components/TrustBadges"), {
-  loading: () => <div className="py-12" />,
-});
 const BeforeAfterSection = dynamic(() => import("@/app/components/BeforeAfterSection"), {
   loading: () => <div className="py-20" />,
 });
@@ -44,6 +41,7 @@ export default function LandingPage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<string>("taux-cotisations");
 
   useEffect(() => {
     const checkUser = async () => {
@@ -136,23 +134,6 @@ export default function LandingPage() {
                 </h1>
               </FadeIn>
 
-              {/* Badge N°1 sous le titre */}
-              <FadeIn delay={0.15} y={12} immediate={true}>
-                <div className="mt-4 sm:mt-6 flex justify-center lg:justify-start">
-                  <div className="inline-flex items-center gap-2 rounded-full px-4 py-2 animate-pulse" 
-                    style={{
-                      background: "linear-gradient(135deg, rgba(0, 208, 132, 0.25) 0%, rgba(46, 108, 246, 0.25) 100%)",
-                      border: "2px solid rgba(0, 208, 132, 0.5)",
-                      boxShadow: "0 4px 16px rgba(0, 208, 132, 0.3)",
-                    }}
-                  >
-                    <span className="text-xl font-bold" style={{ color: "#00D084" }}>🏆</span>
-                    <span className="text-xs sm:text-sm font-bold text-white">
-                      N°1 préféré des micro-entrepreneurs & freelances
-                    </span>
-                  </div>
-                </div>
-              </FadeIn>
 
               {/* Sous-titre */}
               <FadeIn delay={0.2} y={12} immediate={true}>
@@ -217,7 +198,7 @@ export default function LandingPage() {
                         }}
                       >
                         <UserPlus className="w-5 h-5" />
-                        Créer un compte gratuit
+                        Commencer gratuitement
                       </Link>
                     </ScaleOnHover>
                     <ScaleOnHover>
@@ -260,11 +241,30 @@ export default function LandingPage() {
                       }}
                     />
                     
+                    {/* Badge intégré à l'image - Positionné en bas */}
+                    <FadeIn delay={0.2} y={8} immediate={true}>
+                      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
+                        <div className="inline-flex items-center gap-2 rounded-full px-4 py-2.5 shadow-2xl" 
+                          style={{
+                            background: "linear-gradient(135deg, rgba(0, 208, 132, 0.95) 0%, rgba(46, 108, 246, 0.95) 100%)",
+                            border: "2px solid rgba(255, 255, 255, 0.3)",
+                            boxShadow: "0 8px 32px rgba(0, 208, 132, 0.5), 0 4px 16px rgba(46, 108, 246, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
+                            backdropFilter: "blur(10px)",
+                          }}
+                        >
+                          <span className="text-lg font-bold" style={{ color: "#ffffff" }}>🏆</span>
+                          <span className="text-xs sm:text-sm font-bold text-white whitespace-nowrap">
+                            Logiciel préféré des e-commerçants et micro entrepreneurs
+                          </span>
+                        </div>
+                      </div>
+                    </FadeIn>
+                    
                     {/* Image des appareils mobiles */}
                     <div className="relative z-10">
                       <Image
-                        src="/mockups/devices-mockup.png"
-                        alt="Application Comptalyze sur smartphone et tablette"
+                        src="/devices-mockup.png"
+                        alt="Application Comptalyze - Dashboard sur tablette et ordinateur portable montrant les métriques financières et projections"
                         width={800}
                         height={600}
                         className="w-full h-auto rounded-2xl drop-shadow-2xl object-contain"
@@ -361,94 +361,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* TRUST BADGES - Crédibilité immédiate */}
-      <TrustBadges />
-
-      {/* DEMO VIDEO HERO */}
-      <section className="relative px-4 py-12 sm:py-16">
-        <div className="mx-auto max-w-5xl">
-          <FadeIn delay={0} y={12} duration={0.5}>
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-semibold sm:text-3xl mb-3 text-white">
-                Comptalyze en 30 secondes
-              </h2>
-              <p className="text-gray-400 text-sm sm:text-base">
-                Découvrez comment gérer votre comptabilité en quelques clics
-              </p>
-            </div>
-          </FadeIn>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            whileHover={{ scale: 1.02 }}
-            className="transition-transform duration-300"
-          >
-            <div 
-              className="relative rounded-2xl overflow-hidden group"
-              style={{
-                border: "1px solid rgba(46, 108, 246, 0.2)",
-                boxShadow: "0 0 40px rgba(46, 108, 246, 0.15)"
-              }}
-            >
-              {/* GIF du dashboard */}
-              <div className="relative">
-                <img
-                  src="/hero-demo2.gif"
-                  alt="Dashboard Comptalyze - Interface moderne de gestion comptable en action"
-                  className="w-full h-auto"
-                  loading="eager"
-                  style={{ display: 'block' }}
-                />
-                {/* Overlay subtil au hover */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#00D084]/0 via-transparent to-[#2E6CF6]/0 group-hover:from-[#00D084]/5 group-hover:to-[#2E6CF6]/5 transition-all duration-500 pointer-events-none" />
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Points clés sous la vidéo */}
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
-            <FadeIn delay={0.3} y={8}>
-              <div className="flex items-center gap-3 p-4 rounded-xl" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
-                <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: "rgba(0, 208, 132, 0.1)" }}>
-                  <span className="text-xl">⚡</span>
-                </div>
-                <div>
-                  <div className="text-sm font-medium text-white">Interface intuitive</div>
-                  <div className="text-xs text-gray-400">Prise en main immédiate</div>
-                </div>
-              </div>
-            </FadeIn>
-
-            <FadeIn delay={0.4} y={8}>
-              <div className="flex items-center gap-3 p-4 rounded-xl" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
-                <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: "rgba(46, 108, 246, 0.1)" }}>
-                  <span className="text-xl">🎯</span>
-                </div>
-                <div>
-                  <div className="text-sm font-medium text-white">Résultats en temps réel</div>
-                  <div className="text-xs text-gray-400">Calculs instantanés</div>
-                </div>
-              </div>
-            </FadeIn>
-
-            <FadeIn delay={0.5} y={8}>
-              <div className="flex items-center gap-3 p-4 rounded-xl" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
-                <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: "rgba(0, 208, 132, 0.1)" }}>
-                  <span className="text-xl">📊</span>
-                </div>
-                <div>
-                  <div className="text-sm font-medium text-white">Tableaux de bord clairs</div>
-                  <div className="text-xs text-gray-400">Vision complète</div>
-                </div>
-              </div>
-            </FadeIn>
-          </div>
-        </div>
-      </section>
-
       {/* CALCULATEUR URSSAF DEMO */}
       <section id="demo" className="relative px-4 py-12 sm:py-16 md:py-20">
         <div className="mx-auto max-w-7xl">
@@ -470,7 +382,7 @@ export default function LandingPage() {
       {/* APP PREVIEWS SECTION */}
       <LandingPreviewsSection />
 
-      {/* FEATURES */}
+      {/* FEATURES & TRUST */}
       <section className="relative px-4 py-12 sm:py-16 md:py-20">
         <div className="mx-auto max-w-6xl">
           <FadeIn delay={0} y={8} duration={0.5}>
@@ -480,6 +392,7 @@ export default function LandingPage() {
           </FadeIn>
           
           <Stagger className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {/* Calculs automatisés - Fonctionnalité principale */}
             <motion.div variants={fadeInVariant}>
               <ScaleOnHover>
                 <div className="rounded-2xl p-6" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
@@ -497,6 +410,7 @@ export default function LandingPage() {
               </ScaleOnHover>
             </motion.div>
 
+            {/* Factures professionnelles - Fonctionnalité clé */}
             <motion.div variants={fadeInVariant}>
               <ScaleOnHover>
                 <div className="rounded-2xl p-6" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
@@ -514,40 +428,7 @@ export default function LandingPage() {
               </ScaleOnHover>
             </motion.div>
 
-            <motion.div variants={fadeInVariant}>
-              <ScaleOnHover>
-                <div className="rounded-2xl p-6" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
-                  <div 
-                    className="inline-flex items-center justify-center rounded-xl p-3 mb-4"
-                    style={{ backgroundColor: "rgba(0,208,132,0.1)" }}
-                  >
-                    <BarChart3 className="w-6 h-6" style={{ color: "#00D084" }} />
-                  </div>
-                  <h3 className="mb-2 text-lg font-medium">Analytics & Projections</h3>
-                  <p className="text-sm text-gray-400">
-                    Visualisez votre activité avec des graphiques clairs. Anticipez vos revenus et vos charges.
-                  </p>
-                </div>
-              </ScaleOnHover>
-            </motion.div>
-
-            <motion.div variants={fadeInVariant}>
-              <ScaleOnHover>
-                <div className="rounded-2xl p-6" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
-                  <div 
-                    className="inline-flex items-center justify-center rounded-xl p-3 mb-4"
-                    style={{ backgroundColor: "rgba(46,108,246,0.1)" }}
-                  >
-                    <TrendingUp className="w-6 h-6" style={{ color: "#2E6CF6" }} />
-                  </div>
-                  <h3 className="mb-2 text-lg font-medium">Suivi de seuils</h3>
-                  <p className="text-sm text-gray-400">
-                    Recevez des alertes avant de dépasser les plafonds CA ou TVA. Restez en conformité sans effort.
-                  </p>
-                </div>
-              </ScaleOnHover>
-            </motion.div>
-
+            {/* 100% Conforme + Sécurité - Confiance */}
             <motion.div variants={fadeInVariant}>
               <ScaleOnHover>
                 <div className="rounded-2xl p-6" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
@@ -557,14 +438,15 @@ export default function LandingPage() {
                   >
                     <Shield className="w-6 h-6" style={{ color: "#00D084" }} />
                   </div>
-                  <h3 className="mb-2 text-lg font-medium">Sécurité & RGPD</h3>
+                  <h3 className="mb-2 text-lg font-medium">100% Conforme & Sécurisé</h3>
                   <p className="text-sm text-gray-400">
-                    Données hébergées en Europe, chiffrées et conformes RGPD. Exportez ou supprimez vos données quand vous voulez.
+                    Normes URSSAF & fiscales respectées. Données hébergées en France, chiffrées et conformes RGPD.
                   </p>
                 </div>
               </ScaleOnHover>
             </motion.div>
 
+            {/* Assistant IA - Différenciation Premium */}
             <motion.div variants={fadeInVariant}>
               <ScaleOnHover>
                 <div className="rounded-2xl p-6" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
@@ -577,6 +459,42 @@ export default function LandingPage() {
                   <h3 className="mb-2 text-lg font-medium">Assistant IA (Premium)</h3>
                   <p className="text-sm text-gray-400">
                     ComptaBot répond à vos questions comptables et vous conseille sur vos dépenses déductibles.
+                  </p>
+                </div>
+              </ScaleOnHover>
+            </motion.div>
+
+            {/* Note 4.9/5 - Preuve sociale */}
+            <motion.div variants={fadeInVariant}>
+              <ScaleOnHover>
+                <div className="rounded-2xl p-6" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
+                  <div 
+                    className="inline-flex items-center justify-center rounded-xl p-3 mb-4"
+                    style={{ backgroundColor: "rgba(251,191,36,0.1)" }}
+                  >
+                    <Sparkles className="w-6 h-6" style={{ color: "#fbbf24" }} />
+                  </div>
+                  <h3 className="mb-2 text-lg font-medium">Note 4.9/5</h3>
+                  <p className="text-sm text-gray-400">
+                    847+ utilisateurs actifs nous font confiance pour gérer leur comptabilité au quotidien.
+                  </p>
+                </div>
+              </ScaleOnHover>
+            </motion.div>
+
+            {/* Sans engagement - Rassurant */}
+            <motion.div variants={fadeInVariant}>
+              <ScaleOnHover>
+                <div className="rounded-2xl p-6" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
+                  <div 
+                    className="inline-flex items-center justify-center rounded-xl p-3 mb-4"
+                    style={{ backgroundColor: "rgba(0,208,132,0.1)" }}
+                  >
+                    <Check className="w-6 h-6" style={{ color: "#00D084" }} />
+                  </div>
+                  <h3 className="mb-2 text-lg font-medium">Sans engagement</h3>
+                  <p className="text-sm text-gray-400">
+                    Annulation à tout moment. Commencez gratuitement et testez toutes les fonctionnalités sans risque.
                   </p>
                 </div>
               </ScaleOnHover>
@@ -793,104 +711,95 @@ export default function LandingPage() {
             </p>
           </FadeIn>
           
-          <Stagger className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {/* Carte 1: Taux de cotisations */}
-            <motion.div variants={fadeInVariant}>
-              <ScaleOnHover>
+          {/* Barre d'onglets horizontaux */}
+          <div className="mb-8 flex flex-wrap items-center justify-center gap-0">
+            <button 
+              onClick={() => setActiveTab("taux-cotisations")}
+              className="flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors relative" 
+              style={{ color: activeTab === "taux-cotisations" ? "#2E6CF6" : "#9ca3af" }}
+            >
+              <Percent className="w-5 h-5" strokeWidth={1.5} style={{ color: activeTab === "taux-cotisations" ? "#2E6CF6" : "#9ca3af" }} />
+              <span>Taux de cotisations</span>
+              {activeTab === "taux-cotisations" && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5" style={{ backgroundColor: "#2E6CF6" }} />
+              )}
+            </button>
+            <button 
+              onClick={() => setActiveTab("plafonds-ca")}
+              className="flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors relative hover:opacity-80" 
+              style={{ color: activeTab === "plafonds-ca" ? "#2E6CF6" : "#9ca3af" }}
+            >
+              <BarChart3 className="w-5 h-5" strokeWidth={1.5} style={{ color: activeTab === "plafonds-ca" ? "#2E6CF6" : "#9ca3af" }} />
+              <span>Plafonds de chiffre d'affaires</span>
+              {activeTab === "plafonds-ca" && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5" style={{ backgroundColor: "#2E6CF6" }} />
+              )}
+            </button>
+            <button 
+              onClick={() => setActiveTab("obligations")}
+              className="flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors relative hover:opacity-80" 
+              style={{ color: activeTab === "obligations" ? "#2E6CF6" : "#9ca3af" }}
+            >
+              <FileText className="w-5 h-5" strokeWidth={1.5} style={{ color: activeTab === "obligations" ? "#2E6CF6" : "#9ca3af" }} />
+              <span>Obligations déclaratives</span>
+              {activeTab === "obligations" && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5" style={{ backgroundColor: "#2E6CF6" }} />
+              )}
+            </button>
+            <button 
+              onClick={() => setActiveTab("exemple")}
+              className="flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors relative hover:opacity-80" 
+              style={{ color: activeTab === "exemple" ? "#2E6CF6" : "#9ca3af" }}
+            >
+              <Calculator className="w-5 h-5" strokeWidth={1.5} style={{ color: activeTab === "exemple" ? "#2E6CF6" : "#9ca3af" }} />
+              <span>Exemple concret</span>
+              {activeTab === "exemple" && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5" style={{ backgroundColor: "#2E6CF6" }} />
+              )}
+            </button>
+            <button 
+              onClick={() => setActiveTab("tva")}
+              className="flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors relative hover:opacity-80" 
+              style={{ color: activeTab === "tva" ? "#2E6CF6" : "#9ca3af" }}
+            >
+              <Percent className="w-5 h-5" strokeWidth={1.5} style={{ color: activeTab === "tva" ? "#2E6CF6" : "#9ca3af" }} />
+              <span>TVA et franchise en base</span>
+              {activeTab === "tva" && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5" style={{ backgroundColor: "#2E6CF6" }} />
+              )}
+            </button>
+            <button 
+              onClick={() => setActiveTab("impot")}
+              className="flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors relative hover:opacity-80" 
+              style={{ color: activeTab === "impot" ? "#2E6CF6" : "#9ca3af" }}
+            >
+              <Wallet className="w-5 h-5" strokeWidth={1.5} style={{ color: activeTab === "impot" ? "#2E6CF6" : "#9ca3af" }} />
+              <span>Impôt sur le revenu — Versement libératoire</span>
+              {activeTab === "impot" && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5" style={{ backgroundColor: "#2E6CF6" }} />
+              )}
+            </button>
+          </div>
+          
+          {/* Contenu des cartes selon l'onglet actif */}
+          <AnimatePresence mode="wait">
+            {activeTab === "taux-cotisations" && (
+              <motion.div
+                key="taux-cotisations"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="flex justify-center"
+              >
                 <motion.div 
-                  className="relative rounded-xl p-6 transition-all cursor-default"
+                  className="relative rounded-xl p-8 transition-all cursor-default max-w-2xl w-full"
                   style={{ 
                     backgroundColor: "#16181d",
                     border: "1px solid #1f232b",
                     boxShadow: "0 4px 12px rgba(0,0,0,0.3)"
                   }}
                   whileHover={{ 
-                    scale: 1.02,
-                    boxShadow: "0 8px 24px rgba(46,108,246,0.15)",
-                    borderColor: "rgba(46,108,246,0.3)"
-                  }}
-                >
-                  {/* Gradient top border */}
-                  <div 
-                    className="absolute top-0 left-0 right-0 h-1 rounded-t-xl"
-                    style={{
-                      background: "linear-gradient(90deg, #00D084 0%, #2E6CF6 100%)",
-                    }}
-                  />
-                  
-                  <div className="mt-2 mb-4">
-                    <Percent 
-                      className="w-6 h-6"
-                      style={{
-                        background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                        backgroundClip: "text"
-                      }}
-                    />
-                  </div>
-                  <h3 className="mb-2 text-lg font-medium">Taux de cotisations</h3>
-                  <p className="text-sm text-gray-400">
-                    <strong className="text-gray-300">12,3%</strong> pour les ventes, <strong className="text-gray-300">21,1%</strong> pour les activités libérales, <strong className="text-gray-300">21,2%</strong> pour les services.
-                  </p>
-                </motion.div>
-              </ScaleOnHover>
-            </motion.div>
-
-            {/* Carte 2: Plafonds de CA */}
-            <motion.div variants={fadeInVariant}>
-              <ScaleOnHover>
-                <motion.div 
-                  className="relative rounded-xl p-6 transition-all cursor-default"
-                  style={{ 
-                    backgroundColor: "#16181d",
-                    border: "1px solid #1f232b",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.3)"
-                  }}
-                  whileHover={{ 
-                    scale: 1.02,
-                    boxShadow: "0 8px 24px rgba(46,108,246,0.15)",
-                    borderColor: "rgba(46,108,246,0.3)"
-                  }}
-                >
-                  <div 
-                    className="absolute top-0 left-0 right-0 h-1 rounded-t-xl"
-                    style={{
-                      background: "linear-gradient(90deg, #00D084 0%, #2E6CF6 100%)",
-                    }}
-                  />
-                  
-                  <div className="mt-2 mb-4">
-                    <BarChart3 
-                      className="w-6 h-6"
-                      style={{
-                        background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                        backgroundClip: "text"
-                      }}
-                    />
-                  </div>
-                  <h3 className="mb-2 text-lg font-medium">Plafonds de chiffre d'affaires</h3>
-                  <p className="text-sm text-gray-400">
-                    <strong className="text-gray-300">77 700 €</strong> pour les services, <strong className="text-gray-300">188 700 €</strong> pour les ventes. Au-delà, vous basculez vers le régime réel simplifié.
-                  </p>
-                </motion.div>
-              </ScaleOnHover>
-            </motion.div>
-
-            {/* Carte 3: Obligations */}
-            <motion.div variants={fadeInVariant}>
-              <ScaleOnHover>
-                <motion.div 
-                  className="relative rounded-xl p-6 transition-all cursor-default"
-                  style={{ 
-                    backgroundColor: "#16181d",
-                    border: "1px solid #1f232b",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.3)"
-                  }}
-                  whileHover={{ 
-                    scale: 1.02,
                     boxShadow: "0 8px 24px rgba(46,108,246,0.15)",
                     borderColor: "rgba(46,108,246,0.3)"
                   }}
@@ -901,38 +810,55 @@ export default function LandingPage() {
                       background: "linear-gradient(90deg, #00D084 0%, #2E6CF6 100%)",
                     }}
                   />
-                  
-                  <div className="mt-2 mb-4">
-                    <FileText 
-                      className="w-6 h-6"
-                      style={{
-                        background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                        backgroundClip: "text"
-                      }}
-                    />
-                  </div>
-                  <h3 className="mb-2 text-lg font-medium">Obligations déclaratives</h3>
-                  <p className="text-sm text-gray-400">
-                    Déclaration URSSAF mensuelle ou trimestrielle. Compte bancaire dédié obligatoire si CA &gt; 10 000 €/an.
+                  <h3 className="mb-4 text-xl font-semibold text-white">Taux de cotisations</h3>
+                  <p className="mb-6 text-base text-gray-300 leading-relaxed">
+                    Les cotisations sociales en micro-entreprise sont calculées selon un <strong className="text-white">taux forfaitaire</strong> appliqué directement sur votre chiffre d'affaires encaissé. Pas de comptabilité compliquée : vous payez un pourcentage fixe de vos recettes.
                   </p>
-                </motion.div>
-              </ScaleOnHover>
-            </motion.div>
+                  
+                  <div className="grid sm:grid-cols-3 gap-4 mb-6">
+                    <div className="p-4 rounded-lg" style={{ backgroundColor: "rgba(0, 208, 132, 0.1)", border: "1px solid rgba(0, 208, 132, 0.2)" }}>
+                      <div className="text-2xl font-bold text-white mb-1">12,3%</div>
+                      <div className="text-sm text-gray-400">Ventes de marchandises</div>
+                      <div className="text-xs text-gray-500 mt-1">BIC - Vente</div>
+                    </div>
+                    <div className="p-4 rounded-lg" style={{ backgroundColor: "rgba(46, 108, 246, 0.1)", border: "1px solid rgba(46, 108, 246, 0.2)" }}>
+                      <div className="text-2xl font-bold text-white mb-1">21,1%</div>
+                      <div className="text-sm text-gray-400">Activités libérales</div>
+                      <div className="text-xs text-gray-500 mt-1">BNC - Libéral</div>
+                    </div>
+                    <div className="p-4 rounded-lg" style={{ backgroundColor: "rgba(139, 92, 246, 0.1)", border: "1px solid rgba(139, 92, 246, 0.2)" }}>
+                      <div className="text-2xl font-bold text-white mb-1">21,2%</div>
+                      <div className="text-sm text-gray-400">Prestations de services</div>
+                      <div className="text-xs text-gray-500 mt-1">BIC - Service</div>
+                    </div>
+                  </div>
 
-            {/* Carte 4: Exemple concret */}
-            <motion.div variants={fadeInVariant}>
-              <ScaleOnHover>
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: "rgba(0, 208, 132, 0.05)", border: "1px solid rgba(0, 208, 132, 0.15)" }}>
+                    <p className="text-sm text-gray-300">
+                      <strong className="text-white">💡 Bon à savoir :</strong> Ces taux incluent toutes les cotisations sociales (retraite, maladie, famille, formation professionnelle). Le calcul est automatique avec Comptalyze dès la saisie de votre CA.
+                    </p>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+
+            {activeTab === "plafonds-ca" && (
+              <motion.div
+                key="plafonds-ca"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="flex justify-center"
+              >
                 <motion.div 
-                  className="relative rounded-xl p-6 transition-all cursor-default"
+                  className="relative rounded-xl p-8 transition-all cursor-default max-w-2xl w-full"
                   style={{ 
                     backgroundColor: "#16181d",
                     border: "1px solid #1f232b",
                     boxShadow: "0 4px 12px rgba(0,0,0,0.3)"
                   }}
                   whileHover={{ 
-                    scale: 1.02,
                     boxShadow: "0 8px 24px rgba(46,108,246,0.15)",
                     borderColor: "rgba(46,108,246,0.3)"
                   }}
@@ -943,34 +869,544 @@ export default function LandingPage() {
                       background: "linear-gradient(90deg, #00D084 0%, #2E6CF6 100%)",
                     }}
                   />
-                  
-                  <div className="mt-2 mb-4">
-                    <Calculator 
-                      className="w-6 h-6"
-                      style={{
-                        background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                        backgroundClip: "text"
-                      }}
-                    />
-                  </div>
-                  <h3 className="mb-2 text-lg font-medium">Exemple concret</h3>
-                  <p className="text-sm text-gray-400">
-                    Avec <strong className="text-gray-300">2 000 €</strong> de CA (activité libérale) : <strong className="text-gray-300">424 €</strong> de cotisations, soit <strong className="text-gray-300">1 576 €</strong> net.
+                  <h3 className="mb-4 text-xl font-semibold text-white">Plafonds de chiffre d'affaires</h3>
+                  <p className="mb-6 text-base text-gray-300 leading-relaxed">
+                    Le régime micro-entreprise impose des <strong className="text-white">plafonds annuels de chiffre d'affaires</strong>. Si vous dépassez ces seuils, vous basculez automatiquement vers le régime réel simplifié l'année suivante.
                   </p>
-                </motion.div>
-              </ScaleOnHover>
-            </motion.div>
+                  
+                  <div className="grid sm:grid-cols-2 gap-4 mb-6">
+                    <div className="p-5 rounded-lg" style={{ backgroundColor: "rgba(0, 208, 132, 0.1)", border: "1px solid rgba(0, 208, 132, 0.2)" }}>
+                      <div className="text-3xl font-bold text-white mb-2">77 700 €</div>
+                      <div className="text-base font-medium text-gray-300 mb-2">Prestations de services</div>
+                      <div className="text-sm text-gray-400">BIC - Services (BIC) et activités libérales (BNC)</div>
+                    </div>
+                    <div className="p-5 rounded-lg" style={{ backgroundColor: "rgba(46, 108, 246, 0.1)", border: "1px solid rgba(46, 108, 246, 0.2)" }}>
+                      <div className="text-3xl font-bold text-white mb-2">188 700 €</div>
+                      <div className="text-base font-medium text-gray-300 mb-2">Ventes de marchandises</div>
+                      <div className="text-sm text-gray-400">BIC - Vente et fourniture de logement</div>
+                    </div>
+                  </div>
 
-            {/* Nouvelles cartes 5 et 6 */}
-            <ExtraInfoCards />
-          </Stagger>
+                  <div className="p-4 rounded-lg mb-4" style={{ backgroundColor: "rgba(245, 158, 11, 0.1)", border: "1px solid rgba(245, 158, 11, 0.2)" }}>
+                    <p className="text-sm text-gray-300">
+                      <strong className="text-white">⚠️ Attention :</strong> Si vous dépassez le plafond, vous devez tenir une comptabilité complète et déclarer la TVA. Comptalyze vous alerte automatiquement lorsque vous approchez des seuils.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: "rgba(0, 208, 132, 0.05)", border: "1px solid rgba(0, 208, 132, 0.15)" }}>
+                    <p className="text-sm text-gray-300">
+                      <strong className="text-white">💡 Astuce :</strong> En cas d'activité mixte (ventes + services), le plafond applicable est celui des ventes (188 700 €) si les ventes représentent plus de 50% du CA total.
+                    </p>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+
+            {activeTab === "obligations" && (
+              <motion.div
+                key="obligations"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="flex justify-center"
+              >
+                <motion.div 
+                  className="relative rounded-xl p-8 transition-all cursor-default max-w-2xl w-full"
+                  style={{ 
+                    backgroundColor: "#16181d",
+                    border: "1px solid #1f232b",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.3)"
+                  }}
+                  whileHover={{ 
+                    boxShadow: "0 8px 24px rgba(46,108,246,0.15)",
+                    borderColor: "rgba(46,108,246,0.3)"
+                  }}
+                >
+                  <div 
+                    className="absolute top-0 left-0 right-0 h-1 rounded-t-xl"
+                    style={{
+                      background: "linear-gradient(90deg, #00D084 0%, #2E6CF6 100%)",
+                    }}
+                  />
+                  <h3 className="mb-4 text-xl font-semibold text-white">Obligations déclaratives</h3>
+                  <p className="mb-6 text-base text-gray-300 leading-relaxed">
+                    En tant que micro-entrepreneur, vous avez des <strong className="text-white">obligations déclaratives</strong> à respecter. Le non-respect peut entraîner des pénalités et des majorations.
+                  </p>
+                  
+                  <div className="space-y-4 mb-6">
+                    <div className="p-4 rounded-lg" style={{ backgroundColor: "rgba(46, 108, 246, 0.1)", border: "1px solid rgba(46, 108, 246, 0.2)" }}>
+                      <div className="text-base font-semibold text-white mb-2">📅 Déclaration URSSAF</div>
+                      <div className="text-sm text-gray-300 mb-1">• <strong>Mensuelle</strong> : avant le dernier jour du mois suivant</div>
+                      <div className="text-sm text-gray-300 mb-1">• <strong>Trimestrielle</strong> : avant le dernier jour du mois suivant le trimestre</div>
+                      <div className="text-xs text-gray-400 mt-2">Vous pouvez choisir votre fréquence lors de la création de votre activité</div>
+                    </div>
+
+                    <div className="p-4 rounded-lg" style={{ backgroundColor: "rgba(0, 208, 132, 0.1)", border: "1px solid rgba(0, 208, 132, 0.2)" }}>
+                      <div className="text-base font-semibold text-white mb-2">🏦 Compte bancaire dédié</div>
+                      <div className="text-sm text-gray-300">
+                        Obligatoire si votre CA dépasse <strong className="text-white">10 000 €</strong> sur deux années consécutives. 
+                        Ce compte doit être utilisé exclusivement pour votre activité professionnelle.
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-lg" style={{ backgroundColor: "rgba(139, 92, 246, 0.1)", border: "1px solid rgba(139, 92, 246, 0.2)" }}>
+                      <div className="text-base font-semibold text-white mb-2">📊 Tenue d'un livre des recettes</div>
+                      <div className="text-sm text-gray-300">
+                        Vous devez tenir un registre chronologique de toutes vos recettes avec les dates, montants et moyens de paiement.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: "rgba(245, 158, 11, 0.1)", border: "1px solid rgba(245, 158, 11, 0.2)" }}>
+                    <p className="text-sm text-gray-300">
+                      <strong className="text-white">⚠️ Sanctions :</strong> En cas de déclaration tardive, vous encourez une majoration de 10% des cotisations dues, plus 0,4% par mois de retard.
+                    </p>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+
+            {activeTab === "exemple" && (
+              <motion.div
+                key="exemple"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="flex justify-center"
+              >
+                <motion.div 
+                  className="relative rounded-xl p-8 transition-all cursor-default max-w-2xl w-full"
+                  style={{ 
+                    backgroundColor: "#16181d",
+                    border: "1px solid #1f232b",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.3)"
+                  }}
+                  whileHover={{ 
+                    boxShadow: "0 8px 24px rgba(46,108,246,0.15)",
+                    borderColor: "rgba(46,108,246,0.3)"
+                  }}
+                >
+                  <div 
+                    className="absolute top-0 left-0 right-0 h-1 rounded-t-xl"
+                    style={{
+                      background: "linear-gradient(90deg, #00D084 0%, #2E6CF6 100%)",
+                    }}
+                  />
+                  <h3 className="mb-4 text-xl font-semibold text-white">Exemple concret</h3>
+                  <p className="mb-6 text-base text-gray-300 leading-relaxed">
+                    Voici des exemples de calculs pour mieux comprendre le fonctionnement du régime micro-entreprise :
+                  </p>
+                  
+                  <div className="space-y-4 mb-6">
+                    <div className="p-5 rounded-lg" style={{ backgroundColor: "rgba(46, 108, 246, 0.1)", border: "1px solid rgba(46, 108, 246, 0.2)" }}>
+                      <div className="text-base font-semibold text-white mb-3">💼 Activité libérale (BNC)</div>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-400">Chiffre d'affaires :</span>
+                          <span className="text-white font-semibold">2 000 €</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-400">Taux de cotisations (21,1%) :</span>
+                          <span className="text-white font-semibold">424 €</span>
+                        </div>
+                        <div className="border-t border-gray-600 pt-2 mt-2 flex justify-between items-center">
+                          <span className="text-gray-300 font-medium">Revenu net :</span>
+                          <span className="text-white font-bold text-lg">1 576 €</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-5 rounded-lg" style={{ backgroundColor: "rgba(0, 208, 132, 0.1)", border: "1px solid rgba(0, 208, 132, 0.2)" }}>
+                      <div className="text-base font-semibold text-white mb-3">🛒 Vente de marchandises (BIC)</div>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-400">Chiffre d'affaires :</span>
+                          <span className="text-white font-semibold">5 000 €</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-400">Taux de cotisations (12,3%) :</span>
+                          <span className="text-white font-semibold">615 €</span>
+                        </div>
+                        <div className="border-t border-gray-600 pt-2 mt-2 flex justify-between items-center">
+                          <span className="text-gray-300 font-medium">Revenu net :</span>
+                          <span className="text-white font-bold text-lg">4 385 €</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-5 rounded-lg" style={{ backgroundColor: "rgba(139, 92, 246, 0.1)", border: "1px solid rgba(139, 92, 246, 0.2)" }}>
+                      <div className="text-base font-semibold text-white mb-3">🔧 Prestations de services (BIC)</div>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-400">Chiffre d'affaires :</span>
+                          <span className="text-white font-semibold">3 500 €</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-400">Taux de cotisations (21,2%) :</span>
+                          <span className="text-white font-semibold">742 €</span>
+                        </div>
+                        <div className="border-t border-gray-600 pt-2 mt-2 flex justify-between items-center">
+                          <span className="text-gray-300 font-medium">Revenu net :</span>
+                          <span className="text-white font-bold text-lg">2 758 €</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: "rgba(0, 208, 132, 0.05)", border: "1px solid rgba(0, 208, 132, 0.15)" }}>
+                    <p className="text-sm text-gray-300">
+                      <strong className="text-white">💡 Note :</strong> Ces calculs sont automatiques avec Comptalyze. Il vous suffit de saisir votre CA et le système calcule instantanément vos cotisations et votre revenu net.
+                    </p>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+
+            {activeTab === "tva" && (
+              <motion.div
+                key="tva"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="flex justify-center"
+              >
+                <motion.div 
+                  className="relative rounded-xl p-8 transition-all cursor-default max-w-2xl w-full"
+                  style={{ 
+                    backgroundColor: "#16181d",
+                    border: "1px solid #1f232b",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.3)"
+                  }}
+                  whileHover={{ 
+                    boxShadow: "0 8px 24px rgba(46,108,246,0.15)",
+                    borderColor: "rgba(46,108,246,0.3)"
+                  }}
+                >
+                  <div 
+                    className="absolute top-0 left-0 right-0 h-1 rounded-t-xl"
+                    style={{
+                      background: "linear-gradient(90deg, #00D084 0%, #2E6CF6 100%)",
+                    }}
+                  />
+                  <h3 className="mb-4 text-xl font-semibold text-white">TVA et franchise en base</h3>
+                  <p className="mb-6 text-base text-gray-300 leading-relaxed">
+                    La <strong className="text-white">franchise en base de TVA</strong> vous permet de ne pas facturer la TVA à vos clients tant que vous restez sous certains seuils. C'est un avantage important pour rester compétitif.
+                  </p>
+                  
+                  <div className="grid sm:grid-cols-2 gap-4 mb-6">
+                    <div className="p-5 rounded-lg" style={{ backgroundColor: "rgba(0, 208, 132, 0.1)", border: "1px solid rgba(0, 208, 132, 0.2)" }}>
+                      <div className="text-2xl font-bold text-white mb-2">36 800 €</div>
+                      <div className="text-base font-medium text-gray-300 mb-2">Prestations de services</div>
+                      <div className="text-sm text-gray-400">BIC - Services et activités libérales (BNC)</div>
+                    </div>
+                    <div className="p-5 rounded-lg" style={{ backgroundColor: "rgba(46, 108, 246, 0.1)", border: "1px solid rgba(46, 108, 246, 0.2)" }}>
+                      <div className="text-2xl font-bold text-white mb-2">91 900 €</div>
+                      <div className="text-base font-medium text-gray-300 mb-2">Ventes de marchandises</div>
+                      <div className="text-sm text-gray-400">BIC - Vente et fourniture de logement</div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-lg mb-4" style={{ backgroundColor: "rgba(245, 158, 11, 0.1)", border: "1px solid rgba(245, 158, 11, 0.2)" }}>
+                    <div className="text-base font-semibold text-white mb-2">⚠️ Dépassement des seuils</div>
+                    <p className="text-sm text-gray-300">
+                      Si vous dépassez le seuil, vous devez <strong className="text-white">facturer la TVA dès le mois de dépassement</strong> et pour toute l'année suivante. 
+                      Vous devez également tenir une comptabilité complète et déclarer la TVA mensuellement ou trimestriellement.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: "rgba(0, 208, 132, 0.05)", border: "1px solid rgba(0, 208, 132, 0.15)" }}>
+                    <p className="text-sm text-gray-300">
+                      <strong className="text-white">💡 Comptalyze vous protège :</strong> Notre système vous alerte automatiquement lorsque vous approchez des seuils de TVA, vous permettant d'anticiper et de vous préparer à la transition.
+                    </p>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+
+            {activeTab === "impot" && (
+              <motion.div
+                key="impot"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="flex justify-center"
+              >
+                <motion.div 
+                  className="relative rounded-xl p-8 transition-all cursor-default max-w-2xl w-full"
+                  style={{ 
+                    backgroundColor: "#16181d",
+                    border: "1px solid #1f232b",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.3)"
+                  }}
+                  whileHover={{ 
+                    boxShadow: "0 8px 24px rgba(46,108,246,0.15)",
+                    borderColor: "rgba(46,108,246,0.3)"
+                  }}
+                >
+                  <div 
+                    className="absolute top-0 left-0 right-0 h-1 rounded-t-xl"
+                    style={{
+                      background: "linear-gradient(90deg, #00D084 0%, #2E6CF6 100%)",
+                    }}
+                  />
+                  <h3 className="mb-4 text-xl font-semibold text-white">Impôt sur le revenu — Versement libératoire</h3>
+                  <p className="mb-6 text-base text-gray-300 leading-relaxed">
+                    Le <strong className="text-white">versement libératoire</strong> vous permet de payer l'impôt sur le revenu en même temps que vos cotisations sociales, directement sur votre CA. 
+                    C'est une option intéressante si vous êtes dans certaines tranches d'imposition.
+                  </p>
+                  
+                  <div className="grid sm:grid-cols-3 gap-4 mb-6">
+                    <div className="p-4 rounded-lg" style={{ backgroundColor: "rgba(0, 208, 132, 0.1)", border: "1px solid rgba(0, 208, 132, 0.2)" }}>
+                      <div className="text-2xl font-bold text-white mb-1">1%</div>
+                      <div className="text-sm text-gray-400">Ventes de marchandises</div>
+                      <div className="text-xs text-gray-500 mt-1">BIC - Vente</div>
+                    </div>
+                    <div className="p-4 rounded-lg" style={{ backgroundColor: "rgba(46, 108, 246, 0.1)", border: "1px solid rgba(46, 108, 246, 0.2)" }}>
+                      <div className="text-2xl font-bold text-white mb-1">1,7%</div>
+                      <div className="text-sm text-gray-400">Services BIC</div>
+                      <div className="text-xs text-gray-500 mt-1">BIC - Service</div>
+                    </div>
+                    <div className="p-4 rounded-lg" style={{ backgroundColor: "rgba(139, 92, 246, 0.1)", border: "1px solid rgba(139, 92, 246, 0.2)" }}>
+                      <div className="text-2xl font-bold text-white mb-1">2,2%</div>
+                      <div className="text-sm text-gray-400">Activités libérales</div>
+                      <div className="text-xs text-gray-500 mt-1">BNC - Libéral</div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-lg mb-4" style={{ backgroundColor: "rgba(46, 108, 246, 0.1)", border: "1px solid rgba(46, 108, 246, 0.2)" }}>
+                    <div className="text-base font-semibold text-white mb-2">📋 Conditions d'éligibilité</div>
+                    <ul className="text-sm text-gray-300 space-y-1 list-disc list-inside">
+                      <li>Revenu fiscal de référence (RFR) inférieur à un certain seuil</li>
+                      <li>Revenu fiscal de référence du foyer fiscal inférieur au plafond</li>
+                      <li>Option à exercer avant le 1er janvier de l'année concernée</li>
+                    </ul>
+                  </div>
+
+                  <div className="p-4 rounded-lg mb-4" style={{ backgroundColor: "rgba(245, 158, 11, 0.1)", border: "1px solid rgba(245, 158, 11, 0.2)" }}>
+                    <p className="text-sm text-gray-300">
+                      <strong className="text-white">⚠️ Important :</strong> Ces taux s'ajoutent aux cotisations sociales. 
+                      Le versement libératoire n'est pas toujours avantageux selon votre situation fiscale. 
+                      Il est recommandé de comparer avec le régime classique.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: "rgba(0, 208, 132, 0.05)", border: "1px solid rgba(0, 208, 132, 0.15)" }}>
+                    <p className="text-sm text-gray-300">
+                      <strong className="text-white">💡 Comptalyze vous aide :</strong> Notre simulateur compare automatiquement le versement libératoire avec le régime classique selon votre CA et votre situation, pour vous aider à faire le meilleur choix.
+                    </p>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </section>
 
       {/* BEFORE/AFTER COMPARISON */}
       <BeforeAfterSection />
+
+      {/* AUTOMATISATION SHOPIFY/STRIPE - ROI SECTION */}
+      <section className="relative px-4 py-12 sm:py-16 md:py-20">
+        <div className="mx-auto max-w-6xl">
+          <FadeIn delay={0} y={12}>
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" 
+                style={{
+                  backgroundColor: "rgba(0, 208, 132, 0.1)",
+                  border: "1px solid rgba(0, 208, 132, 0.3)"
+                }}
+              >
+                <Zap className="w-4 h-4" style={{ color: "#00D084" }} />
+                <span className="text-sm font-semibold" style={{ color: "#00D084" }}>Premium Feature</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+                Import Automatique Shopify / Stripe
+              </h2>
+              <p className="text-lg text-gray-400 max-w-3xl mx-auto">
+                <strong className="text-white">Fini la saisie manuelle.</strong> Votre CA est importé, agrégé et envoyé par email chaque fin de mois. 
+                <span className="text-[#00D084]"> Économisez 1h15/mois.</span>
+              </p>
+            </div>
+          </FadeIn>
+
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-8 mb-12">
+            {/* Comment ça marche */}
+            <FadeIn delay={0.2} y={12}>
+              <div className="rounded-2xl p-5 sm:p-6 lg:p-8" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
+                <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #00D084, #2E6CF6)" }}>
+                    <span className="text-white font-bold">1</span>
+                  </div>
+                  Comment ça marche ?
+                </h3>
+                <ul className="space-y-4 text-gray-300">
+                  <li className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: "rgba(0, 208, 132, 0.2)" }}>
+                      <Check className="w-4 h-4" style={{ color: "#00D084" }} />
+                    </div>
+                    <div>
+                      <strong className="text-white">Connectez en 1 clic</strong>
+                      <div className="text-sm text-gray-400 mt-1">OAuth sécurisé Shopify/Stripe. Vos tokens sont chiffrés (AES-256).</div>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: "rgba(0, 208, 132, 0.2)" }}>
+                      <Check className="w-4 h-4" style={{ color: "#00D084" }} />
+                    </div>
+                    <div>
+                      <strong className="text-white">Sync automatique</strong>
+                      <div className="text-sm text-gray-400 mt-1">Dernier jour du mois à 23h : le système récupère toutes vos transactions.</div>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: "rgba(0, 208, 132, 0.2)" }}>
+                      <Check className="w-4 h-4" style={{ color: "#00D084" }} />
+                    </div>
+                    <div>
+                      <strong className="text-white">Enregistrement + Email</strong>
+                      <div className="text-sm text-gray-400 mt-1">CA total calculé, enregistré dans Comptalyze + email récap envoyé.</div>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: "rgba(0, 208, 132, 0.2)" }}>
+                      <Check className="w-4 h-4" style={{ color: "#00D084" }} />
+                    </div>
+                    <div>
+                      <strong className="text-white">Pré-remplissage URSSAF</strong>
+                      <div className="text-sm text-gray-400 mt-1">Vos déclarations sont pré-remplies. Vous gagnez 15 min à chaque fois.</div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </FadeIn>
+
+            {/* ROI Calculator */}
+            <FadeIn delay={0.4} y={12}>
+              <div className="rounded-2xl p-5 sm:p-6 lg:p-8" style={{ background: "linear-gradient(135deg, rgba(0, 208, 132, 0.1), rgba(46, 108, 246, 0.1))", border: "1px solid rgba(0, 208, 132, 0.3)" }}>
+                <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #00D084, #2E6CF6)" }}>
+                    <span className="text-white">💰</span>
+                  </div>
+                  Calcul du ROI
+                </h3>
+                <div className="space-y-6">
+                  <div>
+                    <div className="flex justify-between items-baseline mb-2">
+                      <span className="text-gray-300">Saisie manuelle CA</span>
+                      <span className="text-white font-bold">30 min/mois</span>
+                    </div>
+                    <div className="flex justify-between items-baseline mb-2">
+                      <span className="text-gray-300">Déclarations URSSAF</span>
+                      <span className="text-white font-bold">30 min/mois</span>
+                    </div>
+                    <div className="flex justify-between items-baseline mb-2">
+                      <span className="text-gray-300">Vérifications/exports</span>
+                      <span className="text-white font-bold">15 min/mois</span>
+                    </div>
+                    <div className="h-px my-4" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)" }} />
+                    <div className="flex justify-between items-baseline mb-4">
+                      <span className="text-lg font-semibold text-white">Total économisé</span>
+                      <span className="text-2xl font-bold text-[#00D084]">1h15/mois</span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-xl" style={{ backgroundColor: "rgba(0, 208, 132, 0.1)" }}>
+                    <div className="text-sm text-gray-300 mb-2">Sur 1 an :</div>
+                    <div className="text-3xl font-bold text-white mb-1">15 heures économisées</div>
+                    <div className="text-sm text-gray-400">
+                      Valeur : <span className="text-white font-semibold">375€</span> (à 25€/h)
+                    </div>
+                  </div>
+
+                  <div className="text-center pt-4">
+                    <div className="text-sm text-gray-400 mb-2">Prix Premium : 7,90€/mois</div>
+                    <div className="text-2xl font-bold" style={{ background: "linear-gradient(135deg, #00D084, #2E6CF6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                      Rentabilisé en 2 semaines
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </FadeIn>
+          </div>
+
+          {/* Email Preview */}
+          <FadeIn delay={0.6} y={12}>
+            <div className="text-center mb-6 sm:mb-8">
+              <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 px-4">Email mensuel automatique</h3>
+              <p className="text-sm sm:text-base text-gray-400 mb-6 sm:mb-8 px-4">Chaque fin de mois, recevez un récap de votre CA importé</p>
+            </div>
+            <div className="max-w-2xl mx-auto">
+              <div className="rounded-2xl overflow-hidden shadow-2xl" style={{ border: "1px solid #1f232b" }}>
+                {/* Email Header */}
+                <div className="p-4 sm:p-6 text-center" style={{ background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)" }}>
+                  <h4 className="text-xl sm:text-2xl font-bold text-white mb-1">✅ CA Importé !</h4>
+                  <p className="text-sm sm:text-base text-white/90">janvier 2025</p>
+                </div>
+                {/* Email Body */}
+                <div className="p-4 sm:p-6 lg:p-8" style={{ backgroundColor: "#14161b" }}>
+                  <p className="text-sm sm:text-base text-gray-300 mb-3 sm:mb-4">Bonjour ! 👋</p>
+                  <p className="text-sm sm:text-base text-gray-300 mb-4 sm:mb-6">Votre chiffre d'affaires du mois de <strong className="text-white">janvier 2025</strong> a été importé automatiquement.</p>
+                  
+                  <div className="p-4 sm:p-6 rounded-xl mb-4 sm:mb-6 text-center" style={{ background: "linear-gradient(135deg, rgba(0, 208, 132, 0.1), rgba(46, 108, 246, 0.1))", border: "1px solid rgba(0, 208, 132, 0.3)" }}>
+                    <div className="text-xs sm:text-sm text-gray-400 mb-2 uppercase tracking-wide">CA Total</div>
+                    <div className="text-3xl sm:text-4xl font-bold" style={{ background: "linear-gradient(135deg, #00D084, #2E6CF6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                      4 700 €
+                    </div>
+                  </div>
+
+                  <div className="mb-4 sm:mb-6">
+                    <div className="text-sm font-semibold text-white mb-2 sm:mb-3">Détails par source</div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between p-3 rounded-lg" style={{ backgroundColor: "#1a1d24" }}>
+                        <span className="text-gray-300">🛒 Shopify</span>
+                        <span className="font-semibold text-white">3 500 €</span>
+                      </div>
+                      <div className="flex justify-between p-3 rounded-lg" style={{ backgroundColor: "#1a1d24" }}>
+                        <span className="text-gray-300">💳 Stripe</span>
+                        <span className="font-semibold text-white">1 200 €</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="text-center">
+                    <button className="px-6 py-3 rounded-lg text-white font-semibold text-sm sm:text-base min-h-[48px]" style={{ background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)" }}>
+                      Voir mon dashboard
+                    </button>
+                  </div>
+
+                  <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t text-xs sm:text-sm text-gray-400 text-center" style={{ borderColor: "#1f232b" }}>
+                    💡 <strong>Astuce :</strong> Ces données sont déjà pré-remplies dans votre simulateur URSSAF !
+                  </div>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+
+          {/* CTA Final */}
+          <FadeIn delay={0.8} y={12}>
+            <div className="text-center mt-12">
+              <Link
+                href="/signup?plan=premium"
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-white font-semibold text-lg transition-all hover:scale-105"
+                style={{
+                  background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
+                  boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
+                }}
+              >
+                <Sparkles className="w-5 h-5" />
+                Passer à Premium dès 7,90 €/mois
+              </Link>
+              <p className="text-sm text-gray-400 mt-4">
+                Paiement sécurisé • Annulation en 1 clic
+              </p>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
 
       {/* PRICING PREVIEW */}
       <section className="relative px-4 py-12 sm:py-16 md:py-20">
@@ -1029,10 +1465,6 @@ export default function LandingPage() {
                     <li className="flex items-start gap-2 text-gray-300">
                       <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
                       <span>Accès à tous les guides et tutoriels</span>
-                    </li>
-                    <li className="flex items-start gap-2 text-gray-300">
-                      <Check className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "#6b7280" }} />
-                      <span>Authentification 2FA & sécurité du compte</span>
                     </li>
                   </ul>
                 </div>
@@ -1244,205 +1676,6 @@ export default function LandingPage() {
             </ScaleOnHover>
           </motion.div>
         </Stagger>
-      </section>
-
-      {/* AUTOMATISATION SHOPIFY/STRIPE - ROI SECTION */}
-      <section className="relative px-4 py-12 sm:py-16 md:py-20">
-        <div className="mx-auto max-w-6xl">
-          <FadeIn delay={0} y={12}>
-            <div className="text-center mb-12">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" 
-                style={{
-                  backgroundColor: "rgba(0, 208, 132, 0.1)",
-                  border: "1px solid rgba(0, 208, 132, 0.3)"
-                }}
-              >
-                <Zap className="w-4 h-4" style={{ color: "#00D084" }} />
-                <span className="text-sm font-semibold" style={{ color: "#00D084" }}>Premium Feature</span>
-              </div>
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-                Import Automatique Shopify / Stripe
-              </h2>
-              <p className="text-lg text-gray-400 max-w-3xl mx-auto">
-                <strong className="text-white">Fini la saisie manuelle.</strong> Votre CA est importé, agrégé et envoyé par email chaque fin de mois. 
-                <span className="text-[#00D084]"> Économisez 10h/mois.</span>
-              </p>
-            </div>
-          </FadeIn>
-
-          <div className="grid md:grid-cols-2 gap-6 sm:gap-8 mb-12">
-            {/* Comment ça marche */}
-            <FadeIn delay={0.2} y={12}>
-              <div className="rounded-2xl p-5 sm:p-6 lg:p-8" style={{ backgroundColor: "#14161b", border: "1px solid #1f232b" }}>
-                <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #00D084, #2E6CF6)" }}>
-                    <span className="text-white font-bold">1</span>
-                  </div>
-                  Comment ça marche ?
-                </h3>
-                <ul className="space-y-4 text-gray-300">
-                  <li className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: "rgba(0, 208, 132, 0.2)" }}>
-                      <Check className="w-4 h-4" style={{ color: "#00D084" }} />
-                    </div>
-                    <div>
-                      <strong className="text-white">Connectez en 1 clic</strong>
-                      <div className="text-sm text-gray-400 mt-1">OAuth sécurisé Shopify/Stripe. Vos tokens sont chiffrés (AES-256).</div>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: "rgba(0, 208, 132, 0.2)" }}>
-                      <Check className="w-4 h-4" style={{ color: "#00D084" }} />
-                    </div>
-                    <div>
-                      <strong className="text-white">Sync automatique</strong>
-                      <div className="text-sm text-gray-400 mt-1">Dernier jour du mois à 23h : le système récupère toutes vos transactions.</div>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: "rgba(0, 208, 132, 0.2)" }}>
-                      <Check className="w-4 h-4" style={{ color: "#00D084" }} />
-                    </div>
-                    <div>
-                      <strong className="text-white">Enregistrement + Email</strong>
-                      <div className="text-sm text-gray-400 mt-1">CA total calculé, enregistré dans Comptalyze + email récap envoyé.</div>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: "rgba(0, 208, 132, 0.2)" }}>
-                      <Check className="w-4 h-4" style={{ color: "#00D084" }} />
-                    </div>
-                    <div>
-                      <strong className="text-white">Pré-remplissage URSSAF</strong>
-                      <div className="text-sm text-gray-400 mt-1">Vos déclarations sont pré-remplies. Vous gagnez 15 min à chaque fois.</div>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </FadeIn>
-
-            {/* ROI Calculator */}
-            <FadeIn delay={0.4} y={12}>
-              <div className="rounded-2xl p-5 sm:p-6 lg:p-8" style={{ background: "linear-gradient(135deg, rgba(0, 208, 132, 0.1), rgba(46, 108, 246, 0.1))", border: "1px solid rgba(0, 208, 132, 0.3)" }}>
-                <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #00D084, #2E6CF6)" }}>
-                    <span className="text-white">💰</span>
-                  </div>
-                  Calcul du ROI
-                </h3>
-                <div className="space-y-6">
-                  <div>
-                    <div className="flex justify-between items-baseline mb-2">
-                      <span className="text-gray-300">Saisie manuelle CA</span>
-                      <span className="text-white font-bold">10 min/mois</span>
-                    </div>
-                    <div className="flex justify-between items-baseline mb-2">
-                      <span className="text-gray-300">Déclarations URSSAF</span>
-                      <span className="text-white font-bold">15 min/mois</span>
-                    </div>
-                    <div className="flex justify-between items-baseline mb-2">
-                      <span className="text-gray-300">Vérifications/exports</span>
-                      <span className="text-white font-bold">5 min/mois</span>
-                    </div>
-                    <div className="h-px my-4" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)" }} />
-                    <div className="flex justify-between items-baseline mb-4">
-                      <span className="text-lg font-semibold text-white">Total économisé</span>
-                      <span className="text-2xl font-bold text-[#00D084]">30 min/mois</span>
-                    </div>
-                  </div>
-
-                  <div className="p-4 rounded-xl" style={{ backgroundColor: "rgba(0, 208, 132, 0.1)" }}>
-                    <div className="text-sm text-gray-300 mb-2">Sur 1 an :</div>
-                    <div className="text-3xl font-bold text-white mb-1">6 heures économisées</div>
-                    <div className="text-sm text-gray-400">
-                      Valeur : <span className="text-white font-semibold">150€</span> (à 25€/h)
-                    </div>
-                  </div>
-
-                  <div className="text-center pt-4">
-                    <div className="text-sm text-gray-400 mb-2">Prix Premium : 7,90€/mois</div>
-                    <div className="text-2xl font-bold" style={{ background: "linear-gradient(135deg, #00D084, #2E6CF6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-                      Rentabilisé en 2 semaines
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </FadeIn>
-          </div>
-
-          {/* Email Preview */}
-          <FadeIn delay={0.6} y={12}>
-            <div className="text-center mb-6 sm:mb-8">
-              <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 px-4">Email mensuel automatique</h3>
-              <p className="text-sm sm:text-base text-gray-400 mb-6 sm:mb-8 px-4">Chaque fin de mois, recevez un récap de votre CA importé</p>
-            </div>
-            <div className="max-w-2xl mx-auto">
-              <div className="rounded-2xl overflow-hidden shadow-2xl" style={{ border: "1px solid #1f232b" }}>
-                {/* Email Header */}
-                <div className="p-4 sm:p-6 text-center" style={{ background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)" }}>
-                  <h4 className="text-xl sm:text-2xl font-bold text-white mb-1">✅ CA Importé !</h4>
-                  <p className="text-sm sm:text-base text-white/90">janvier 2025</p>
-                </div>
-                {/* Email Body */}
-                <div className="p-4 sm:p-6 lg:p-8" style={{ backgroundColor: "#14161b" }}>
-                  <p className="text-sm sm:text-base text-gray-300 mb-3 sm:mb-4">Bonjour ! 👋</p>
-                  <p className="text-sm sm:text-base text-gray-300 mb-4 sm:mb-6">Votre chiffre d'affaires du mois de <strong className="text-white">janvier 2025</strong> a été importé automatiquement.</p>
-                  
-                  <div className="p-4 sm:p-6 rounded-xl mb-4 sm:mb-6 text-center" style={{ background: "linear-gradient(135deg, rgba(0, 208, 132, 0.1), rgba(46, 108, 246, 0.1))", border: "1px solid rgba(0, 208, 132, 0.3)" }}>
-                    <div className="text-xs sm:text-sm text-gray-400 mb-2 uppercase tracking-wide">CA Total</div>
-                    <div className="text-3xl sm:text-4xl font-bold" style={{ background: "linear-gradient(135deg, #00D084, #2E6CF6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-                      4 700 €
-                    </div>
-                  </div>
-
-                  <div className="mb-4 sm:mb-6">
-                    <div className="text-sm font-semibold text-white mb-2 sm:mb-3">Détails par source</div>
-                    <div className="space-y-2">
-                      <div className="flex justify-between p-3 rounded-lg" style={{ backgroundColor: "#1a1d24" }}>
-                        <span className="text-gray-300">🛒 Shopify</span>
-                        <span className="font-semibold text-white">3 500 €</span>
-                      </div>
-                      <div className="flex justify-between p-3 rounded-lg" style={{ backgroundColor: "#1a1d24" }}>
-                        <span className="text-gray-300">💳 Stripe</span>
-                        <span className="font-semibold text-white">1 200 €</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="text-center">
-                    <button className="px-6 py-3 rounded-lg text-white font-semibold text-sm sm:text-base min-h-[48px]" style={{ background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)" }}>
-                      Voir mon dashboard
-                    </button>
-                  </div>
-
-                  <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t text-xs sm:text-sm text-gray-400 text-center" style={{ borderColor: "#1f232b" }}>
-                    💡 <strong>Astuce :</strong> Ces données sont déjà pré-remplies dans votre simulateur URSSAF !
-                  </div>
-                </div>
-              </div>
-            </div>
-          </FadeIn>
-
-          {/* CTA Final */}
-          <FadeIn delay={0.8} y={12}>
-            <div className="text-center mt-12">
-              <Link
-                href="/signup?plan=premium"
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-white font-semibold text-lg transition-all hover:scale-105"
-                style={{
-                  background: "linear-gradient(135deg, #00D084 0%, #2E6CF6 100%)",
-                  boxShadow: "0 8px 28px rgba(46,108,246,0.35)",
-                }}
-              >
-                <Sparkles className="w-5 h-5" />
-                Passer à Premium dès 7,90 €/mois
-              </Link>
-              <p className="text-sm text-gray-400 mt-4">
-                Paiement sécurisé • Annulation en 1 clic
-              </p>
-            </div>
-          </FadeIn>
-        </div>
       </section>
 
       {/* TESTIMONIALS */}

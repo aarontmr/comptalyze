@@ -152,7 +152,7 @@ export default function LogicielMicroEntrepriseLanding() {
             }}
           >
             <Image
-              src="/previews/Dashboard.PNG"
+              src="/mockups/devices-mockup.png"
               alt="Dashboard Comptalyze - Logiciel micro-entreprise"
               width={1200}
               height={800}

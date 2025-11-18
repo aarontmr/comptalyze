@@ -68,13 +68,13 @@ const navigationData = {
     items: [
       {
         label: "E-commerce",
-        href: "/logiciel-micro-entreprise",
+        href: "/pour-qui/e-commerce",
         icon: ShoppingBag,
         description: "Parfait pour les boutiques en ligne",
       },
       {
         label: "Freelances",
-        href: "/logiciel-micro-entreprise",
+        href: "/pour-qui/freelances",
         icon: Briefcase,
         description: "Gérez votre activité freelance",
       },
@@ -86,7 +86,7 @@ const navigationData = {
       },
       {
         label: "Services",
-        href: "/logiciel-micro-entreprise",
+        href: "/pour-qui/services",
         icon: Store,
         description: "Idéal pour les prestations de services",
       },

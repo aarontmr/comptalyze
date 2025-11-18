@@ -33,7 +33,7 @@ export default function LandingPreviewsSection() {
               >
                 <Image
                   src="/mockups/devices-mockup.png"
-                  alt="Comptalyze - Dashboard sur tablette et ordinateur portable montrant les métriques financières et projections"
+                  alt="Comptalyze - Application sur smartphone et tablette montrant les intégrations Shopify/Stripe et le calculateur URSSAF"
                   width={1400}
                   height={900}
                   className="w-full h-auto"
