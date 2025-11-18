@@ -220,14 +220,14 @@ export default function ComparaisonsPage() {
         }}
       >
         <h2 className="text-xl font-semibold text-white mb-4">Détail par période</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full">
+        <div className="overflow-x-auto -mx-6 px-6">
+          <table className="w-full min-w-[600px]">
             <thead>
               <tr className="border-b" style={{ borderColor: "#1f232b" }}>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-400">Période</th>
-                <th className="text-right py-3 px-4 text-sm font-semibold text-gray-400">CA</th>
-                <th className="text-right py-3 px-4 text-sm font-semibold text-gray-400">Revenu net</th>
-                <th className="text-right py-3 px-4 text-sm font-semibold text-gray-400">Croissance</th>
+                <th className="text-left py-3 px-2 sm:px-4 text-sm font-semibold text-gray-400 whitespace-nowrap">Période</th>
+                <th className="text-right py-3 px-2 sm:px-4 text-sm font-semibold text-gray-400 whitespace-nowrap">CA</th>
+                <th className="text-right py-3 px-2 sm:px-4 text-sm font-semibold text-gray-400 whitespace-nowrap">Revenu net</th>
+                <th className="text-right py-3 px-2 sm:px-4 text-sm font-semibold text-gray-400 whitespace-nowrap">Croissance</th>
               </tr>
             </thead>
             <tbody>
@@ -237,10 +237,10 @@ export default function ComparaisonsPage() {
                   className="border-b hover:bg-gray-800/30 transition-colors"
                   style={{ borderColor: "#1f232b" }}
                 >
-                  <td className="py-3 px-4 text-white font-medium">{item.period}</td>
-                  <td className="py-3 px-4 text-right text-white">{item.ca.toFixed(2)} €</td>
-                  <td className="py-3 px-4 text-right text-white">{item.net.toFixed(2)} €</td>
-                  <td className="py-3 px-4 text-right">
+                  <td className="py-3 px-2 sm:px-4 text-white font-medium whitespace-nowrap">{item.period}</td>
+                  <td className="py-3 px-2 sm:px-4 text-right text-white whitespace-nowrap">{Math.round(item.ca * 100) / 100} €</td>
+                  <td className="py-3 px-2 sm:px-4 text-right text-white whitespace-nowrap">{Math.round(item.net * 100) / 100} €</td>
+                  <td className="py-3 px-2 sm:px-4 text-right whitespace-nowrap">
                     <div className="flex items-center justify-end gap-2">
                       {getGrowthIcon(item.growth)}
                       <span className={getGrowthColor(item.growth)}>
