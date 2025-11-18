@@ -96,25 +96,6 @@ export default function LandingPage() {
       <section className="relative px-4 pt-28 pb-12 sm:pt-36 sm:pb-16 md:pt-40 md:pb-20 overflow-hidden">
         <GradientBlob />
         
-        {/* Image de fond pour mobile - optimisée */}
-        <div className="absolute inset-0 lg:hidden pointer-events-none overflow-hidden z-0">
-          <div className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-[15%] w-[140%] h-[90%] opacity-[0.15]">
-            <Image
-              src="/devices-mockup.png"
-              alt=""
-              width={800}
-              height={600}
-              className="w-full h-full object-contain"
-              loading="lazy"
-              fetchPriority="low"
-              style={{
-                filter: "blur(3px) brightness(0.8)",
-                transform: "scale(0.7) rotate(-5deg)",
-              }}
-            />
-          </div>
-        </div>
-        
         <div className="mx-auto max-w-7xl relative z-10">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center lg:items-start">
             {/* Colonne gauche - Contenu */}
@@ -240,7 +221,7 @@ export default function LandingPage() {
               </FadeIn>
             </div>
 
-            {/* Colonne droite - Image des appareils mobiles */}
+            {/* Colonne droite - Image des appareils (Desktop) */}
             <FadeIn delay={0.15} y={12} duration={0.6} immediate={true}>
               <div className="relative hidden lg:flex items-center justify-center lg:justify-end mt-8 lg:mt-0 order-first lg:order-last">
                 <div className="relative w-full max-w-lg mx-auto lg:mx-0">
@@ -298,6 +279,69 @@ export default function LandingPage() {
               </div>
             </FadeIn>
           </div>
+
+          {/* Image pour mobile - Section dédiée mieux intégrée */}
+          <FadeIn delay={0.35} y={12} duration={0.6} immediate={true}>
+            <div className="lg:hidden mt-12 -mx-4 px-4">
+              <div className="relative rounded-2xl overflow-hidden" 
+                style={{
+                  background: "linear-gradient(135deg, rgba(0,208,132,0.05) 0%, rgba(46,108,246,0.05) 100%)",
+                  border: "1px solid rgba(46,108,246,0.2)",
+                  boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
+                }}
+              >
+                {/* Gradient overlay pour mieux intégrer */}
+                <div 
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background: "linear-gradient(to bottom, transparent 0%, rgba(14,15,18,0.3) 50%, rgba(14,15,18,0.6) 100%)",
+                  }}
+                />
+                
+                {/* Image avec effet de profondeur */}
+                <div className="relative px-4 pt-6 pb-8">
+                  <div className="relative">
+                    {/* Effet de lueur subtil */}
+                    <div 
+                      className="absolute inset-0 rounded-xl blur-2xl opacity-40"
+                      style={{
+                        background: "linear-gradient(135deg, rgba(0,208,132,0.3) 0%, rgba(46,108,246,0.3) 100%)",
+                        transform: "scale(1.1)",
+                      }}
+                    />
+                    
+                    <Image
+                      src="/devices-mockup.png"
+                      alt="Application Comptalyze - Interface sur différents appareils"
+                      width={800}
+                      height={600}
+                      className="w-full h-auto rounded-xl relative z-10 object-contain"
+                      loading="lazy"
+                      style={{
+                        filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.4))",
+                      }}
+                    />
+                  </div>
+                  
+                  {/* Badge en bas de l'image */}
+                  <div className="mt-6 flex justify-center">
+                    <div className="inline-flex items-center gap-2 rounded-full px-4 py-2 shadow-lg" 
+                      style={{
+                        background: "linear-gradient(135deg, rgba(0, 208, 132, 0.9) 0%, rgba(46, 108, 246, 0.9) 100%)",
+                        border: "1px solid rgba(255, 255, 255, 0.2)",
+                        boxShadow: "0 4px 16px rgba(0, 208, 132, 0.4)",
+                      }}
+                    >
+                      <span className="text-base font-bold" style={{ color: "#ffffff" }}>🏆</span>
+                      <span className="text-xs font-semibold text-white">
+                        Logiciel préféré des e-commerçants
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
 
           {/* Social Proof */}
           <FadeIn delay={0.4} y={12} duration={0.5}>
