@@ -1,7 +1,7 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState, useTransition } from 'react';
 import Link from 'next/link';
 import { LayoutDashboard, Calculator, BarChart3, User } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
@@ -24,6 +24,8 @@ const navItems: NavItem[] = [
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const [user, setUser] = useState<SupabaseUser | null>(null);
 
   useEffect(() => {
@@ -53,6 +55,13 @@ export default function BottomNav() {
     return true;
   });
 
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    startTransition(() => {
+      router.push(href);
+    });
+  };
+
   return (
     <nav
       className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-800 pb-safe"
@@ -60,6 +69,9 @@ export default function BottomNav() {
         backgroundColor: '#16181d',
         paddingBottom: 'max(8px, env(safe-area-inset-bottom))',
         minHeight: '60px',
+        willChange: 'transform',
+        transform: 'translateZ(0)',
+        backfaceVisibility: 'hidden',
       }}
     >
       <div className={`max-w-screen-md mx-auto grid`} style={{ gridTemplateColumns: `repeat(${filteredNavItems.length}, minmax(0, 1fr))` }}>
@@ -72,10 +84,16 @@ export default function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex flex-col items-center justify-center gap-1 py-2.5 min-h-[60px] transition-colors ${
+              prefetch={true}
+              onClick={(e) => handleLinkClick(e, item.href)}
+              className={`flex flex-col items-center justify-center gap-1 py-2.5 min-h-[60px] transition-all duration-200 ${
                 isActive ? 'text-white' : 'text-gray-400'
-              }`}
+              } ${isPending ? 'opacity-70' : ''}`}
               aria-label={item.label}
+              style={{
+                willChange: 'transform',
+                transform: 'translateZ(0)',
+              }}
             >
               <div className="relative flex items-center justify-center h-6">
                 <Icon className="w-5 h-5" />
