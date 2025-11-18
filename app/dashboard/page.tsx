@@ -293,8 +293,8 @@ export default function DashboardOverview() {
         {/* Upgrade Teaser */}
         <UpgradeTeaser currentPlan={subscription.plan} />
 
-      {/* Conseil IA (Premium) */}
-      {subscription.isPremium && user && preferences.showHelperTexts && (
+      {/* Analyse IA (Premium) */}
+      {subscription.isPremium && user && (
         <div className="mb-8">
           <PremiumAdvice userId={user.id} />
         </div>
@@ -587,8 +587,8 @@ export default function DashboardOverview() {
           </Card>
         )}
 
-        {/* Conseil IA (Premium) */}
-        {subscription.isPremium && user && preferences.showHelperTexts && (
+        {/* Analyse IA (Premium) */}
+        {subscription.isPremium && user && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -600,7 +600,7 @@ export default function DashboardOverview() {
                   <Sparkles className="w-5 h-5" style={{ color: '#00D084' }} />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-sm font-semibold text-white mb-2">Conseil IA</h3>
+                  <h3 className="text-sm font-semibold text-white mb-2">Analyse IA</h3>
                   <PremiumAdvice userId={user.id} />
                 </div>
               </div>

@@ -90,7 +90,7 @@ export default function PremiumAdvice({ userId }: PremiumAdviceProps) {
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold text-white">
             <span className="inline-block mr-2">✨</span>
-            Conseil IA (Premium)
+            Analyse IA
           </h3>
           <button
             onClick={() => loadAdvice()}
