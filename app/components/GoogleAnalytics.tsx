@@ -46,6 +46,8 @@ export default function GoogleAnalytics() {
             gtag('config', '${GA_MEASUREMENT_ID}', {
               page_path: window.location.pathname,
             });
+            // Google Ads conversion tracking
+            gtag('config', 'AW-17719086824');
           `,
         }}
       />

@@ -127,7 +127,7 @@ export default function SignupPage() {
           // Tracker la conversion Google Ads "Inscription" (campagne leads) pour OAuth
           if ((window as any).gtag) {
             (window as any).gtag('event', 'conversion', {
-              'send_to': 'AW-17719086824/9vA6CK2sqMIbEOidj4FC',
+              'send_to': 'AW-17719086824/jiy9CMHhssIbEOidj4FC',
               'value': 1.0,
               'currency': 'EUR'
             });
