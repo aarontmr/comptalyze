@@ -22,7 +22,7 @@ export const deleteAccountSchema = z.object({
 export const exportDataSchema = z.object({
   userId: z.string().uuid('ID utilisateur invalide'),
   exportType: z.enum(['csv', 'excel'], {
-    errorMap: () => ({ message: 'Type d\'export invalide (csv ou excel)' }),
+    message: 'Type d\'export invalide (csv ou excel)',
   }).optional(),
   period: z.string().optional(),
   date: z.string().optional(),
@@ -83,7 +83,7 @@ export const createInvoiceSchema = z.object({
  */
 export const checkoutSchema = z.object({
   plan: z.enum(['pro', 'premium', 'pro_yearly', 'premium_yearly'], {
-    errorMap: () => ({ message: 'Plan invalide' }),
+    message: 'Plan invalide',
   }),
   userId: z.string().uuid('ID utilisateur invalide'),
   gclid: z.string().optional(),
