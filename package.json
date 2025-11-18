@@ -7,6 +7,8 @@
     "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 NEXT_PRIVATE_TURBOPACK=false next build",
     "start": "next start",
     "lint": "eslint",
+    "security:audit": "npm audit --production",
+    "security:check": "npm audit --production && npm run lint",
     "check-env": "node scripts/check-env.js",
     "check-connection": "node scripts/check-connection.js",
     "check-demo": "node scripts/check-demo-deps.mjs",
@@ -31,8 +33,10 @@
     "@stripe/react-stripe-js": "^5.3.0",
     "@stripe/stripe-js": "^8.3.0",
     "@supabase/supabase-js": "^2.78.0",
+    "@types/dompurify": "^3.0.5",
     "classnames": "^2.5.1",
     "date-fns-tz": "^3.2.0",
+    "dompurify": "^3.3.0",
     "framer-motion": "^12.23.24",
     "gray-matter": "^4.0.3",
     "lucide-react": "^0.552.0",
@@ -48,7 +52,8 @@
     "remark-gfm": "^4.0.1",
     "resend": "^6.4.0",
     "speakeasy": "^2.0.0",
-    "stripe": "^19.2.0"
+    "stripe": "^19.2.0",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

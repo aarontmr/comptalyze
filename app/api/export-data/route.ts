@@ -1,11 +1,26 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { verifyUserOwnership } from '@/lib/auth';
+import { exportDataSchema, validateAndParse } from '@/lib/validation';
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const { userId, exportType, period, date } = await req.json();
+    const body = await req.json();
+    
+    // Valider les données d'entrée
+    const validation = validateAndParse(exportDataSchema, body);
+    if (!validation.success) {
+      return NextResponse.json({ error: validation.error }, { status: 400 });
+    }
 
-    if (!userId) {
-      return NextResponse.json({ error: "userId requis" }, { status: 400 });
+    const { userId, exportType, period, date } = validation.data;
+
+    // Vérifier que l'utilisateur authentifié correspond au userId fourni
+    const authResult = await verifyUserOwnership(req, userId);
+    if (!authResult.isAuthenticated) {
+      return NextResponse.json(
+        { error: authResult.error },
+        { status: authResult.status }
+      );
     }
 
     // TODO: Récupérer les données depuis Supabase
@@ -24,11 +39,8 @@ ${date},Exemple de facture,500,Facture`;
       },
     });
   } catch (error: any) {
-    console.error("Erreur lors de l'export:", error);
-    return NextResponse.json(
-      { error: "Erreur lors de l'export" },
-      { status: 500 }
-    );
+    const { handleInternalError } = await import('@/lib/error-handler');
+    return handleInternalError(error);
   }
 }
 

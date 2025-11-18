@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { verifyAdmin } from '@/lib/auth';
+import { adminEmailSchema, validateAndParse } from '@/lib/validation';
 
 export const runtime = 'nodejs';
 
@@ -13,21 +15,34 @@ if (!supabaseUrl || !supabaseServiceKey) {
 const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
 /**
- * Route pour activer Pro sur un compte (pour les tests uniquement)
+ * Route pour activer Pro sur un compte
  * 
- * ⚠️ SÉCURITÉ : Cette route devrait être protégée en production
- * Pour les tests, passez votre email en paramètre
+ * ⚠️ PROTÉGÉE : Requiert authentification admin
  * 
  * Usage : POST /api/admin/set-pro
+ * Headers: { "Authorization": "Bearer <token>" }
  * Body: { "email": "votre@email.com" }
  */
 export async function POST(req: NextRequest) {
   try {
-    const { email } = await req.json();
-
-    if (!email) {
-      return NextResponse.json({ error: 'Email requis' }, { status: 400 });
+    // Vérifier l'authentification admin
+    const authResult = await verifyAdmin(req);
+    if (!authResult.isAuthenticated) {
+      return NextResponse.json(
+        { error: authResult.error },
+        { status: authResult.status }
+      );
     }
+
+    const body = await req.json();
+    
+    // Valider les données d'entrée
+    const validation = validateAndParse(adminEmailSchema, body);
+    if (!validation.success) {
+      return NextResponse.json({ error: validation.error }, { status: 400 });
+    }
+
+    const { email } = validation.data;
 
     // Trouver l'utilisateur par email
     const { data: users, error: findError } = await supabaseAdmin.auth.admin.listUsers();
@@ -94,8 +109,8 @@ export async function POST(req: NextRequest) {
       ],
     });
   } catch (error: any) {
-    console.error('Erreur:', error);
-    return NextResponse.json({ error: error.message || 'Erreur serveur' }, { status: 500 });
+    const { handleInternalError } = await import('@/lib/error-handler');
+    return handleInternalError(error);
   }
 }
 

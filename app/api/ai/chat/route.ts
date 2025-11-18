@@ -52,11 +52,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Fonctionnalité réservée au plan Premium' }, { status: 403 });
     }
 
-    const { message, conversationHistory } = await req.json();
-
-    if (!message || typeof message !== 'string') {
-      return NextResponse.json({ error: 'Message requis' }, { status: 400 });
+    const body = await req.json();
+    
+    // Valider les données d'entrée avec Zod
+    const { aiChatSchema, validateAndParse } = await import('@/lib/validation');
+    const validation = validateAndParse(aiChatSchema, body);
+    if (!validation.success) {
+      return NextResponse.json({ error: validation.error }, { status: 400 });
     }
+
+    const { message, conversationHistory } = validation.data;
 
     // Récupérer les enregistrements CA de l'utilisateur
     const { data: records, error: recordsError } = await supabaseAdmin

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { verifyUserOwnership } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
@@ -6,8 +7,13 @@ export async function GET(request: NextRequest) {
     const userId = searchParams.get('userId');
     const returnUrl = searchParams.get('return') || '/dashboard';
 
-    if (!userId) {
-      return NextResponse.json({ error: 'userId requis' }, { status: 400 });
+    // Vérifier que l'utilisateur authentifié correspond au userId fourni
+    const authResult = await verifyUserOwnership(request, userId);
+    if (!authResult.isAuthenticated) {
+      return NextResponse.json(
+        { error: authResult.error },
+        { status: authResult.status }
+      );
     }
 
     // Vérifier si les credentials Stripe sont configurées

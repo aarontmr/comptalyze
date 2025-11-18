@@ -412,6 +412,13 @@ export default function Chatbot({ user }: ChatbotProps) {
 
   // Rendre le markdown basique (gras, listes)
   const renderMarkdown = (text: string) => {
+    // Import dynamique de DOMPurify pour éviter les erreurs SSR
+    if (typeof window === 'undefined') {
+      return text.split('\n').map((line, i) => <span key={i} className="block">{line}</span>);
+    }
+
+    const DOMPurify = require('dompurify');
+    
     return text
       .split('\n')
       .map((line, i) => {
@@ -421,7 +428,12 @@ export default function Chatbot({ user }: ChatbotProps) {
         if (line.trim().startsWith('•')) {
           formatted = `<span class="block ml-2">${formatted}</span>`;
         }
-        return <span key={i} dangerouslySetInnerHTML={{ __html: formatted }} className="block" />;
+        // Sanitizer le HTML pour prévenir XSS
+        const sanitized = DOMPurify.sanitize(formatted, {
+          ALLOWED_TAGS: ['strong', 'span', 'em', 'br'],
+          ALLOWED_ATTR: ['class'],
+        });
+        return <span key={i} dangerouslySetInnerHTML={{ __html: sanitized }} className="block" />;
       });
   };
 

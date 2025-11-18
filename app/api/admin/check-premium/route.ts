@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { verifyAdmin } from '@/lib/auth';
+import { adminEmailSchema, validateAndParse } from '@/lib/validation';
 
 export const runtime = 'nodejs';
 
@@ -14,14 +16,28 @@ const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
 /**
  * Route pour vérifier le statut Premium d'un utilisateur
+ * ⚠️ PROTÉGÉE : Requiert authentification admin
  */
 export async function POST(req: NextRequest) {
   try {
-    const { email } = await req.json();
-
-    if (!email) {
-      return NextResponse.json({ error: 'Email requis' }, { status: 400 });
+    // Vérifier l'authentification admin
+    const authResult = await verifyAdmin(req);
+    if (!authResult.isAuthenticated) {
+      return NextResponse.json(
+        { error: authResult.error },
+        { status: authResult.status }
+      );
     }
+
+    const body = await req.json();
+    
+    // Valider les données d'entrée
+    const validation = validateAndParse(adminEmailSchema, body);
+    if (!validation.success) {
+      return NextResponse.json({ error: validation.error }, { status: 400 });
+    }
+
+    const { email } = validation.data;
 
     // Trouver l'utilisateur par email
     const { data: users, error: findError } = await supabaseAdmin.auth.admin.listUsers();
@@ -69,7 +85,8 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Erreur serveur' }, { status: 500 });
+    const { handleInternalError } = await import('@/lib/error-handler');
+    return handleInternalError(error);
   }
 }
 

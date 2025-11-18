@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { verifyUserOwnership } from '@/lib/auth';
+import { deleteAccountSchema, validateAndParse } from '@/lib/validation';
 
 export const runtime = 'nodejs';
 
@@ -24,28 +26,32 @@ const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
  *   - email_preferences (préférences email)
  * 
  * ⚠️ ATTENTION : Cette action est IRRÉVERSIBLE
+ * ⚠️ PROTÉGÉE : L'utilisateur ne peut supprimer que son propre compte
  */
 export async function POST(req: NextRequest) {
   try {
-    const { userId, confirmationText } = await req.json();
-
-    if (!userId) {
-      return NextResponse.json({ error: 'ID utilisateur requis' }, { status: 400 });
-    }
-
-    // Vérification de la confirmation
-    if (confirmationText !== 'SUPPRIMER') {
-      return NextResponse.json({ 
-        error: 'Confirmation invalide. Vous devez taper "SUPPRIMER" pour confirmer.' 
-      }, { status: 400 });
-    }
-
-    // 1. Vérifier que l'utilisateur existe
-    const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(userId);
+    const body = await req.json();
     
-    if (userError || !userData?.user) {
-      return NextResponse.json({ error: 'Utilisateur non trouvé' }, { status: 404 });
+    // Valider les données d'entrée
+    const validation = validateAndParse(deleteAccountSchema, body);
+    if (!validation.success) {
+      return NextResponse.json({ error: validation.error }, { status: 400 });
     }
+
+    const { userId, confirmationText } = validation.data;
+
+    // Vérifier que l'utilisateur authentifié correspond au userId fourni
+    const authResult = await verifyUserOwnership(req, userId);
+    if (!authResult.isAuthenticated) {
+      return NextResponse.json(
+        { error: authResult.error },
+        { status: authResult.status }
+      );
+    }
+
+    // userId est déjà vérifié via verifyUserOwnership
+    const userIdToDelete = authResult.userId;
+    const userEmail = authResult.user.email;
 
     // 2. Supprimer les données dans les tables
     // Ordre important : supprimer d'abord les tables dépendantes, puis l'utilisateur
@@ -54,7 +60,7 @@ export async function POST(req: NextRequest) {
     const { error: recordsError } = await supabaseAdmin
       .from('ca_records')
       .delete()
-      .eq('user_id', userId);
+      .eq('user_id', userIdToDelete);
 
     if (recordsError) {
       console.error('Erreur lors de la suppression des ca_records:', recordsError);
@@ -64,7 +70,7 @@ export async function POST(req: NextRequest) {
     const { error: invoicesError } = await supabaseAdmin
       .from('invoices')
       .delete()
-      .eq('user_id', userId);
+      .eq('user_id', userIdToDelete);
 
     if (invoicesError) {
       console.error('Erreur lors de la suppression des invoices:', invoicesError);
@@ -74,7 +80,7 @@ export async function POST(req: NextRequest) {
     const { error: prefsError } = await supabaseAdmin
       .from('email_preferences')
       .delete()
-      .eq('user_id', userId);
+      .eq('user_id', userIdToDelete);
 
     if (prefsError) {
       console.error('Erreur lors de la suppression des préférences email:', prefsError);
@@ -84,14 +90,14 @@ export async function POST(req: NextRequest) {
     const { error: subsError } = await supabaseAdmin
       .from('subscriptions')
       .delete()
-      .eq('user_id', userId);
+      .eq('user_id', userIdToDelete);
 
     if (subsError) {
       console.error('Erreur lors de la suppression des subscriptions:', subsError);
     }
 
     // 3. Supprimer l'utilisateur de auth.users
-    const { error: deleteUserError } = await supabaseAdmin.auth.admin.deleteUser(userId);
+    const { error: deleteUserError } = await supabaseAdmin.auth.admin.deleteUser(userIdToDelete);
 
     if (deleteUserError) {
       console.error('Erreur lors de la suppression de l\'utilisateur:', deleteUserError);
@@ -100,17 +106,15 @@ export async function POST(req: NextRequest) {
       }, { status: 500 });
     }
 
-    console.log(`✅ Compte utilisateur ${userId} (${userData.user.email}) supprimé avec succès`);
+    console.log(`✅ Compte utilisateur ${userIdToDelete} (${userEmail}) supprimé avec succès`);
 
     return NextResponse.json({
       success: true,
       message: 'Votre compte et toutes vos données ont été supprimés définitivement.',
     });
   } catch (error: any) {
-    console.error('Erreur lors de la suppression du compte:', error);
-    return NextResponse.json({ 
-      error: error.message || 'Erreur serveur lors de la suppression du compte' 
-    }, { status: 500 });
+    const { handleInternalError } = await import('@/lib/error-handler');
+    return handleInternalError(error);
   }
 }
 

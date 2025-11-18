@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { runMonthlyImportJob } from '@/app/lib/cron/import-ca';
+import { verifyAdmin } from '@/lib/auth';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -23,33 +24,12 @@ export async function POST(req: NextRequest) {
       );
     }
     
-    // Vérifier l'authentification
-    const authHeader = req.headers.get('authorization');
-    const token = authHeader?.replace('Bearer ', '');
-    
-    if (!token) {
+    // Vérifier l'authentification admin
+    const authResult = await verifyAdmin(req);
+    if (!authResult.isAuthenticated) {
       return NextResponse.json(
-        { error: 'Token manquant' },
-        { status: 401 }
-      );
-    }
-    
-    // Vérifier le token et l'accès admin
-    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
-    
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Token invalide' },
-        { status: 401 }
-      );
-    }
-    
-    const isAdmin = user.user_metadata?.is_admin === true;
-    
-    if (!isAdmin) {
-      return NextResponse.json(
-        { error: 'Accès admin requis' },
-        { status: 403 }
+        { error: authResult.error },
+        { status: authResult.status }
       );
     }
     
@@ -57,7 +37,7 @@ export async function POST(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const dryRun = searchParams.get('dryRun') === '1' || searchParams.get('dryRun') === 'true';
     
-    console.log(`🚀 Import CA manuel déclenché par admin ${user.email} (dryRun: ${dryRun})`);
+    console.log(`🚀 Import CA manuel déclenché par admin ${authResult.user.email} (dryRun: ${dryRun})`);
     
     // Exécuter l'import
     const result = await runMonthlyImportJob(dryRun);
@@ -68,11 +48,8 @@ export async function POST(req: NextRequest) {
       result,
     });
   } catch (error: any) {
-    console.error('Erreur import manuel:', error);
-    return NextResponse.json(
-      { error: error.message || 'Erreur serveur' },
-      { status: 500 }
-    );
+    const { handleInternalError } = await import('@/lib/error-handler');
+    return handleInternalError(error);
   }
 }
 
