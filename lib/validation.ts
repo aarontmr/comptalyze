@@ -10,9 +10,10 @@ import { z } from 'zod';
  */
 export const deleteAccountSchema = z.object({
   userId: z.string().uuid('ID utilisateur invalide'),
-  confirmationText: z.literal('SUPPRIMER', {
-    errorMap: () => ({ message: 'Vous devez taper "SUPPRIMER" pour confirmer' }),
-  }),
+  confirmationText: z.string().refine(
+    (val) => val === 'SUPPRIMER',
+    { message: 'Vous devez taper "SUPPRIMER" pour confirmer' }
+  ),
 });
 
 /**
