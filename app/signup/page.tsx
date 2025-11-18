@@ -123,6 +123,17 @@ export default function SignupPage() {
       async (event, session) => {
         if (event === 'SIGNED_IN' && session) {
           setSuccessMessage('Inscription réussie...');
+          
+          // Tracker la conversion Google Ads "Inscription" (campagne leads) pour OAuth
+          if ((window as any).gtag) {
+            (window as any).gtag('event', 'conversion', {
+              'send_to': 'AW-17719086824/9vA6CK2sqMIbEOidj4FC',
+              'value': 1.0,
+              'currency': 'EUR'
+            });
+            console.log('✅ Google Ads conversion "Inscription" déclenchée (OAuth)');
+          }
+          
           setTimeout(() => {
             router.push('/dashboard');
           }, 500);
@@ -304,7 +315,17 @@ export default function SignupPage() {
           verification_required: true 
         });
         
-        // Tracker la conversion Google Ads si applicable
+        // Tracker la conversion Google Ads "Inscription" (campagne leads)
+        if ((window as any).gtag) {
+          (window as any).gtag('event', 'conversion', {
+            'send_to': 'AW-17719086824/9vA6CK2sqMIbEOidj4FC',
+            'value': 1.0,
+            'currency': 'EUR'
+          });
+          console.log('✅ Google Ads conversion "Inscription" déclenchée');
+        }
+        
+        // Tracker la conversion Google Ads si applicable (ancien système)
         const utmParams = getStoredUTMParams();
         if (utmParams.utm_source === 'google' || utmParams.utm_medium === 'cpc') {
           fetch('/api/track-conversion', {
@@ -333,7 +354,17 @@ export default function SignupPage() {
           verification_required: false 
         });
         
-        // Tracker la conversion Google Ads si applicable
+        // Tracker la conversion Google Ads "Inscription" (campagne leads)
+        if ((window as any).gtag) {
+          (window as any).gtag('event', 'conversion', {
+            'send_to': 'AW-17719086824/9vA6CK2sqMIbEOidj4FC',
+            'value': 1.0,
+            'currency': 'EUR'
+          });
+          console.log('✅ Google Ads conversion "Inscription" déclenchée');
+        }
+        
+        // Tracker la conversion Google Ads si applicable (ancien système)
         const utmParams2 = getStoredUTMParams();
         if ((utmParams2.utm_source === 'google' || utmParams2.utm_medium === 'cpc') && data.user?.id) {
           fetch('/api/track-conversion', {

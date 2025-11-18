@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { FileText, Calculator, TrendingUp, Calendar } from 'lucide-react';
+import { FileText, Calculator, TrendingUp, Calendar, Zap, DollarSign } from 'lucide-react';
 
 export default function BlogPage() {
   const articles = [
@@ -52,6 +52,22 @@ export default function BlogPage() {
       category: 'Guides',
       readTime: '8 min',
       icon: FileText,
+    },
+    {
+      slug: 'automatisation-comptable-micro-entrepreneur-2025',
+      title: 'Automatisation Comptable Micro-Entrepreneur 2025 : Outils et Stratégies',
+      description: 'Automatisez votre comptabilité en micro-entreprise : outils SaaS, intégrations bancaires, facturation automatique, rappels URSSAF. Guide complet 2025 pour gagner du temps.',
+      category: 'Automatisation',
+      readTime: '14 min',
+      icon: Zap,
+    },
+    {
+      slug: 'optimisation-fiscale-micro-entreprise-2025',
+      title: 'Optimisation Fiscale Micro-Entreprise 2025 : Stratégies et Conseils',
+      description: 'Optimisez votre fiscalité en micro-entreprise : versement libératoire, abattements, déductions, planification fiscale. Guide complet 2025 pour réduire vos impôts légalement.',
+      category: 'Fiscalité',
+      readTime: '16 min',
+      icon: DollarSign,
     },
   ];
 

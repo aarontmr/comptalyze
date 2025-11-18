@@ -152,6 +152,24 @@ export default function AnalyticsProvider({ children }: AnalyticsProviderProps) 
         </>
       )}
 
+      {/* Google Ads - Conversion Linker (pour toutes les pages) */}
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=AW-17719086824"
+        strategy="afterInteractive"
+      />
+      <Script
+        id="google-ads-conversion-linker"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-17719086824');
+          `,
+        }}
+      />
+
       {/* Meta Pixel (Facebook) */}
       {META_PIXEL_ID && (
         <Script
