@@ -277,7 +277,7 @@ export default function Header({ user }: HeaderProps) {
               alt="Comptalyze"
               width={140}
               height={35}
-              className="h-6 sm:h-7 md:h-8 lg:h-9 w-auto max-w-[100px] sm:max-w-[110px] md:max-w-[120px] lg:max-w-[140px] transition-opacity hover:opacity-90 object-contain"
+              className="h-5 sm:h-6 md:h-7 lg:h-8 w-auto max-w-[90px] sm:max-w-[100px] md:max-w-[110px] lg:max-w-[120px] transition-opacity hover:opacity-90 object-contain"
               priority
             />
           </Link>
