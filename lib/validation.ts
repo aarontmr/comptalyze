@@ -103,7 +103,7 @@ export function validateAndParse<T>(
   }
   
   // Retourner le premier message d'erreur
-  const firstError = result.error.errors[0];
+  const firstError = result.error.issues[0];
   return {
     success: false,
     error: firstError?.message || 'Données invalides',
