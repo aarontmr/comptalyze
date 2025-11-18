@@ -204,6 +204,11 @@ export default function ProjectionsPage() {
                   backgroundColor: "#0e0f12",
                   border: "1px solid #2d3441",
                   borderRadius: "8px",
+                  color: "#fff",
+                }}
+                formatter={(value: number, name: string) => {
+                  const roundedValue = Math.round(value * 100) / 100;
+                  return [`${roundedValue.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`, name];
                 }}
               />
               <Legend />
@@ -237,14 +242,14 @@ export default function ProjectionsPage() {
         }}
       >
         <h2 className="text-xl font-semibold text-white mb-4">Détail mensuel</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full">
+        <div className="overflow-x-auto -mx-6 px-6">
+          <table className="w-full min-w-[600px]">
             <thead>
               <tr className="border-b" style={{ borderColor: "#1f232b" }}>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-400">Mois</th>
-                <th className="text-right py-3 px-4 text-sm font-semibold text-gray-400">CA projeté</th>
-                <th className="text-right py-3 px-4 text-sm font-semibold text-gray-400">Cotisations</th>
-                <th className="text-right py-3 px-4 text-sm font-semibold text-gray-400">Revenu net</th>
+                <th className="text-left py-3 px-2 sm:px-4 text-sm font-semibold text-gray-400 whitespace-nowrap">Mois</th>
+                <th className="text-right py-3 px-2 sm:px-4 text-sm font-semibold text-gray-400 whitespace-nowrap">CA projeté</th>
+                <th className="text-right py-3 px-2 sm:px-4 text-sm font-semibold text-gray-400 whitespace-nowrap">Cotisations</th>
+                <th className="text-right py-3 px-2 sm:px-4 text-sm font-semibold text-gray-400 whitespace-nowrap">Revenu net</th>
               </tr>
             </thead>
             <tbody>
@@ -254,15 +259,15 @@ export default function ProjectionsPage() {
                   className="border-b hover:bg-gray-800/30 transition-colors"
                   style={{ borderColor: "#1f232b" }}
                 >
-                  <td className="py-3 px-4 text-white">{projection.month}</td>
-                  <td className="py-3 px-4 text-right text-white font-medium">
-                    {projection.projectedCA.toFixed(2)} €
+                  <td className="py-3 px-2 sm:px-4 text-white whitespace-nowrap">{projection.month}</td>
+                  <td className="py-3 px-2 sm:px-4 text-right text-white font-medium whitespace-nowrap">
+                    {Math.round(projection.projectedCA * 100) / 100} €
                   </td>
-                  <td className="py-3 px-4 text-right text-gray-400">
-                    {(projection.projectedCA - projection.projectedNet).toFixed(2)} €
+                  <td className="py-3 px-2 sm:px-4 text-right text-gray-400 whitespace-nowrap">
+                    {Math.round((projection.projectedCA - projection.projectedNet) * 100) / 100} €
                   </td>
-                  <td className="py-3 px-4 text-right" style={{ color: "#00D084" }}>
-                    {projection.projectedNet.toFixed(2)} €
+                  <td className="py-3 px-2 sm:px-4 text-right whitespace-nowrap" style={{ color: "#00D084" }}>
+                    {Math.round(projection.projectedNet * 100) / 100} €
                   </td>
                 </tr>
               ))}
