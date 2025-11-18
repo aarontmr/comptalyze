@@ -259,9 +259,9 @@ export default function Header({ user }: HeaderProps) {
             <Image
               src={logo}
               alt="Comptalyze"
-              width={180}
-              height={45}
-              className="h-7 sm:h-8 md:h-10 lg:h-12 w-auto max-w-[120px] sm:max-w-[140px] md:max-w-[160px] lg:max-w-[180px] transition-opacity hover:opacity-90 object-contain"
+              width={140}
+              height={35}
+              className="h-6 sm:h-7 md:h-8 lg:h-9 w-auto max-w-[100px] sm:max-w-[110px] md:max-w-[120px] lg:max-w-[140px] transition-opacity hover:opacity-90 object-contain"
               priority
             />
           </Link>
