@@ -229,9 +229,21 @@ export default function Header({ user }: HeaderProps) {
       setBannerVisible(banner !== null && banner.getBoundingClientRect().height > 0);
     };
     
+    // Vérifier immédiatement
     checkBanner();
-    const interval = setInterval(checkBanner, 100);
-    return () => clearInterval(interval);
+    
+    // Utiliser requestAnimationFrame pour la première vérification après le rendu
+    const rafId = requestAnimationFrame(() => {
+      checkBanner();
+    });
+    
+    // Ensuite utiliser un intervalle moins fréquent
+    const interval = setInterval(checkBanner, 500);
+    
+    return () => {
+      cancelAnimationFrame(rafId);
+      clearInterval(interval);
+    };
   }, []);
 
   return (
@@ -246,6 +258,10 @@ export default function Header({ user }: HeaderProps) {
           ? "rgba(13, 15, 20, 0.8)"
           : "#0D0F14",
         borderColor: "#1f232b",
+        opacity: 1,
+        visibility: "visible",
+        willChange: "transform",
+        transform: "translateZ(0)",
       }}
     >
       <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6 lg:px-8">
@@ -543,12 +559,22 @@ export default function Header({ user }: HeaderProps) {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="lg:hidden p-1.5 sm:p-2 rounded-lg transition-all hover:bg-white/5 active:bg-white/10"
             aria-label="Toggle menu"
-            style={{ color: "#FFFFFFCC" }}
+            style={{ 
+              color: "#FFFFFFCC",
+              willChange: "transform",
+              transform: "translateZ(0)",
+              backfaceVisibility: "hidden",
+              opacity: 1,
+              visibility: "visible",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
             {mobileMenuOpen ? (
-              <X className="w-5 h-5 sm:w-6 sm:h-6" />
+              <X className="w-5 h-5 sm:w-6 sm:h-6" style={{ display: "block", opacity: 1 }} />
             ) : (
-              <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
+              <Menu className="w-5 h-5 sm:w-6 sm:h-6" style={{ display: "block", opacity: 1 }} />
             )}
           </button>
         </div>
